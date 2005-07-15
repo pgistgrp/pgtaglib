@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+
+<faces-config>
+
+    <!-- PGIST Components -->
+
+
+
+    <!-- Custom Renderers -->
+    <render-kit>
+
+
+        <renderer>
+            <description>
+                Renderer for a UIData component that can serve as the basis for
+                different markup creation for the components that are children
+                of the child UIColumn components.
+            </description>
+            <component-family>javax.faces.Data</component-family>
+            <renderer-type>ListTable</renderer-type>
+            <renderer-class>components.renderkit.ListTableRenderer</renderer-class>
+        </renderer>
+
+
+    </render-kit>
+
+
+</faces-config>

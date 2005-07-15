@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE taglib
+  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+  "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+
+<taglib>
+
+    <tlib-version>0.03</tlib-version>
+    <jsp-version>1.2</jsp-version>
+    <short-name>PGIST Tag Library</short-name>
+    <uri>http://www.pgist.org/jsf/components</uri>
+    <description>
+        This tag library contains tags for several useful components for PGIST.
+    </description>
+
+
+    <tag>
+        <name>listTable</name>
+        <tag-class>org.pgist.taglib.ListTableTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>
+            Render the components of the child UIColumn components under the
+            UIData component associated with this tag, once per row.  The actual
+            renderer class (org.pgist.renderkit.ListTableRenderer) can serve as
+            the base class for more specialized markup generation.
+        </description>
+        <attribute>
+            <name>binding</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Value binding expression to bind this component to a backing bean.
+            </description>
+        </attribute>
+        <attribute>
+            <name>first</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Zero-relative row index of the first row to be displayed.  If not
+                specified, the default value is zero (i.e. the first row of the
+                underlying data model).
+            </description>
+        </attribute>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Component identifier of this component.
+            </description>
+        </attribute>
+        <attribute>
+            <name>rendered</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Flag indicating whether or not this component should be rendered.
+                If not specified, the default value is "true".
+            </description>
+        </attribute>
+        <attribute>
+            <name>rows</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                The maximum number of rows (from the underlying data model) to be
+                rendered. If not specified, the default value is zero, which indicates
+                that all remaining rows should be rendered.
+            </description>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                The CSS style class to use when rendering the entire table, if any.
+            </description>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Value binding expression pointing at (a) a DataModel instance,
+                (b) an array of objects, (c) a List of objects, (d) a
+                java.sql.ResultSet (or RowSet), (d) a javax.servlet.jsp.jstl.sql.Result
+                object, or (e) a JavaBean (which will be treated as a one-row dataset).
+            </description>
+        </attribute>
+        <attribute>
+            <name>var</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Attribute key under which an object representing the current row
+                will be exposed as a request scope attribute.  If not specified, no
+                such row data object will be exposed.
+            </description>
+          </attribute>
+    </tag>
+
+
+</taglib>
+
