@@ -70,6 +70,14 @@
             </description>
         </attribute>
         <attribute>
+            <name>width</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                The width of the table
+            </description>
+        </attribute>
+        <attribute>
             <name>styleClass</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>

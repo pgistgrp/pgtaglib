@@ -22,7 +22,7 @@
             </description>
             <component-family>javax.faces.Data</component-family>
             <renderer-type>ListTable</renderer-type>
-            <renderer-class>components.renderkit.ListTableRenderer</renderer-class>
+            <renderer-class>org.pgist.renderkit.ListTableRenderer</renderer-class>
         </renderer>
 
 
