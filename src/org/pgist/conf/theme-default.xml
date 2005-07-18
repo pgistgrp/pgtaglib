@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<theme name="default">
+
+
+    <listTable>
+        <table>
+            <property name="width"       value="100%"/>
+            <property name="rules"       value="all"/>
+            <property name="bgcolor"     value="#F6F6F4"/>
+            <property name="frame"       value="box"/>
+            <property name="cellspacing" value="1"/>
+            <property name="cellpadding" value="2"/>
+            <property name="border"      value="1"/>
+            <property name="style"       value="border-collapse:collapse; border:solid 2px #8CACBB;"/>
+        </table>
+        <caption>
+            <property name="color"   value=""/>
+            <property name="bgcolor" value=""/>
+        </caption>
+        <header>
+            <property name="style" value=""/>
+        </header>
+        <row>
+            <background-color value="red"/>
+            <background-color value="green"/>
+            <background-color value="blue"/>
+            <property name="hightlight"  value="#AFD671"/>
+            <property name="style"       value="background-color:${background-color}"/>
+            <property name="onmouseover" value="this.style.backgroundColor='${hightlight}'"/>
+            <property name="onmouseout"  value="this.style.backgroundColor='${background-color}'"/>
+        </row>
+        <footer>
+        </footer>
+        <scroller>
+        </scroller>
+    </listTable>
+    
+    
+    <scroller>
+        <image>
+            <property name="pg" value="/images/pg.gif" />
+            <property name="i"  value="/images/i.gif" />
+            <property name="st" value="/images/st.gif" />
+        </image>
+    </scroller>
+    
+    
+</theme>
+
