@@ -7,8 +7,15 @@ import javax.faces.component.UIData;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
+import org.pgist.conf.Caption;
+import org.pgist.conf.ListTableTag;
+import org.pgist.conf.Table;
+import org.pgist.conf.Theme;
+import org.pgist.conf.ThemeManager;
+
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * <p><code>Renderer</code> that supports generating markup for the per-row data
@@ -25,6 +32,14 @@ import java.util.Iterator;
 public class ListTableRenderer extends BaseRenderer {
 
     
+    private static ThreadLocal themeVar = new ThreadLocal();
+    
+    
+    public Theme getTheme() {
+        return (Theme) themeVar.get();
+    }
+    
+    
     // -------------------------------------------------------- Renderer Methods
 
 
@@ -38,11 +53,18 @@ public class ListTableRenderer extends BaseRenderer {
      */
     public void encodeBegin(FacesContext context, UIComponent component)
         throws IOException {
-
+        
         super.encodeBegin(context, component);
+        
         ResponseWriter writer = context.getResponseWriter();
         UIData data = (UIData) component;
-
+        
+        String theme = (String) data.getAttributes().get("theme");
+        if (theme==null || "".equals(theme)) theme = "default";
+        Theme theTheme = ThemeManager.getTheme(theme);
+        if (theTheme==null) theTheme = ThemeManager.getTheme("default");
+        themeVar.set(theTheme);
+        
         // Render the beginning of this table
         data.setRowIndex(-1);
         tableBegin(context, data, writer);
@@ -300,51 +322,41 @@ public class ListTableRenderer extends BaseRenderer {
         // Render the outermost table element
         writer.startElement("table", data);
         
-        //styleClass
-        String styleClass = (String) data.getAttributes().get("styleClass");
-        if (styleClass != null) {
-            writer.writeAttribute("class", styleClass, "styleClass");
-        } else {
-            writer.writeAttribute("rules", "all", null);
-            writer.writeAttribute("bgcolor", "#F6F6F4", null);
-            writer.writeAttribute("frame", "box", null);
-            writer.writeAttribute("cellspacing", "1", null);
-            writer.writeAttribute("cellpadding", "2", null);
-            writer.writeAttribute("border", "1", null);
-            writer.writeAttribute("style", "border-collapse:collapse; border:solid 2px #8CACBB;", null);
-        }
+        Theme theme = getTheme();
+        ListTableTag listTableTag = (ListTableTag) theme.getTag("listTable");
+        Table table = listTableTag.getTable();
         
-        //width
-        String width = (String) data.getAttributes().get("width");
-        if (width != null) {
-            writer.writeAttribute("width", width, "width");
-        } else {
-            writer.writeAttribute("width", "100%", null);
-        }
+        for (Iterator iter=table.getProperties().entrySet().iterator(); iter.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String name = (String) entry.getKey();
+            String value = (String) entry.getValue();
+            writer.writeAttribute(name, value, null);
+        }//for iter
         
         writer.writeText("\n", null);
 
         //caption
-        UIComponent caption = data.getFacet("caption");
-        if (caption != null) {
-            writer.startElement("caption", caption);
-            encodeRecursive(context, caption);
+        UIComponent theCaption = data.getFacet("caption");
+        if (theCaption != null) {
+            Caption captionTag = (Caption) listTableTag.getCaption();
+            writer.startElement(captionTag.compose(), theCaption);
+            encodeRecursive(context, theCaption);
             writer.endElement("caption");
             writer.writeText("\n", null);
         }
         
         // Render the table and column headers (if any)
-        UIComponent header = data.getFacet("header");
+        UIComponent theHeader = data.getFacet("header");
         int n = getColumnHeaderCount(data);
-        if ((header != null) || (n > 0)) {
-            writer.startElement("thead", header);
+        if ((theHeader != null) || (n > 0)) {
+            writer.startElement("thead", theHeader);
         }
-        if (header != null) {
-            writer.startElement("tr", header);
-            writer.startElement("th", header);
+        if (theHeader != null) {
+            writer.startElement("tr", theHeader);
+            writer.startElement("th height=\"30px\"", theHeader);
             writer.writeAttribute("colspan", "" + getColumnCount(data), null);
             writer.writeText("\n", null);
-            encodeRecursive(context, header);
+            encodeRecursive(context, theHeader);
             writer.writeText("\n", null);
             writer.endElement("th");
             writer.endElement("tr");
@@ -359,7 +371,7 @@ public class ListTableRenderer extends BaseRenderer {
                 if (!(column instanceof UIColumn)) {
                     continue;
                 }
-                writer.startElement("th", column);
+                writer.startElement("th height=\"30px\"", column);
                 UIComponent facet = column.getFacet("header");
                 if (facet != null) {
                     encodeRecursive(context, facet);
@@ -370,7 +382,7 @@ public class ListTableRenderer extends BaseRenderer {
             writer.endElement("tr");
             writer.writeText("\n", null);
         }
-        if ((header != null) || (n > 0)) {
+        if ((theHeader != null) || (n > 0)) {
             writer.endElement("thead");
             writer.writeText("\n", null);
         }

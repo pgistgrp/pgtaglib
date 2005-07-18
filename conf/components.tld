@@ -60,6 +60,15 @@
             </description>
         </attribute>
         <attribute>
+            <name>theme</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Flag indicating whether or not this component should be rendered.
+                If not specified, the default value is "true".
+            </description>
+        </attribute>
+        <attribute>
             <name>rows</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
@@ -67,22 +76,6 @@
                 The maximum number of rows (from the underlying data model) to be
                 rendered. If not specified, the default value is zero, which indicates
                 that all remaining rows should be rendered.
-            </description>
-        </attribute>
-        <attribute>
-            <name>width</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description>
-                The width of the table
-            </description>
-        </attribute>
-        <attribute>
-            <name>styleClass</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description>
-                The CSS style class to use when rendering the entire table, if any.
             </description>
         </attribute>
         <attribute>
