@@ -33,16 +33,6 @@
             </description>
         </attribute>
         <attribute>
-            <name>first</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description>
-                Zero-relative row index of the first row to be displayed.  If not
-                specified, the default value is zero (i.e. the first row of the
-                underlying data model).
-            </description>
-        </attribute>
-        <attribute>
             <name>id</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
@@ -63,20 +53,13 @@
             <name>theme</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
-            <description>
-                Flag indicating whether or not this component should be rendered.
-                If not specified, the default value is "true".
-            </description>
+            <description>asdfas</description>
         </attribute>
         <attribute>
-            <name>rows</name>
+            <name>width</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
-            <description>
-                The maximum number of rows (from the underlying data model) to be
-                rendered. If not specified, the default value is zero, which indicates
-                that all remaining rows should be rendered.
-            </description>
+            <description>sadfasd</description>
         </attribute>
         <attribute>
             <name>value</name>
@@ -99,6 +82,62 @@
                 such row data object will be exposed.
             </description>
           </attribute>
+    </tag>
+
+
+    <tag>
+        <name>scroller</name>
+        <tag-class>org.pgist.taglib.ScrollerTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>
+            Render a set of hyperlinks to enable navigation over results that span
+            across several pages.  Child tags nested inside this tag must be:
+            * facet tags that can optionally nest panel_group tag that provide widgets
+            * for easy navigation.
+        </description>
+        <attribute>
+            <name>binding</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Value binding expression to bind this component to a backing bean.
+            </description>
+        </attribute>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Component id of this component.
+            </description>
+        </attribute>
+        <attribute>
+            <name>for</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                The data grid component for which this acts as a scroller.
+            </description>
+        </attribute>
+        <attribute>
+            <name>navFacetOrientation</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                When rendering a widget representing "page navigation" where
+                should the facet markup be rendered in relation to the page
+                navigation widget?  Values are "NORTH", "SOUTH", "EAST", "WEST".
+                Case insensitive.
+            </description>
+        </attribute>
+        <attribute>
+            <name>actionListener</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                 Optional method binding reference to handle scroll event.
+            </description>
+        </attribute>
     </tag>
 
 

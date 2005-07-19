@@ -9,6 +9,7 @@ import javax.faces.context.ResponseWriter;
 
 import org.pgist.conf.Caption;
 import org.pgist.conf.ListTableTag;
+import org.pgist.conf.Row;
 import org.pgist.conf.Table;
 import org.pgist.conf.Theme;
 import org.pgist.conf.ThemeManager;
@@ -59,6 +60,7 @@ public class ListTableRenderer extends BaseRenderer {
         ResponseWriter writer = context.getResponseWriter();
         UIData data = (UIData) component;
         
+        //Get theme definition
         String theme = (String) data.getAttributes().get("theme");
         if (theme==null || "".equals(theme)) theme = "default";
         Theme theTheme = ThemeManager.getTheme(theme);
@@ -229,12 +231,18 @@ public class ListTableRenderer extends BaseRenderer {
      */
     protected void rowBegin(FacesContext context, UIData data,
                             ResponseWriter writer) throws IOException {
-        int alter = 2;
-        if ( (data.getRowIndex() % alter) == 0) {
-            writer.startElement("tr style=\"background-color:white;\" onmouseover=\"this.style.backgroundColor='#AFD671'\" onmouseout=\"this.style.backgroundColor='white'\"", data);
-        } else {
-            writer.startElement("tr style=\"background-color:#DEE7EC;\" onmouseover=\"this.style.backgroundColor='#AFD671'\" onmouseout=\"this.style.backgroundColor='#DEE7EC'\"", data);
-        }
+
+        Theme theme = getTheme();
+        ListTableTag listTableTag = (ListTableTag) theme.getTag("listTable");
+        Row row = (Row) listTableTag.getRow();
+
+        int alter = row.alterSize();
+        String alterColor = row.getColor(data.getRowIndex() % alter);
+        writer.startElement("tr", data);
+        writer.writeAttribute("style", "background-color:"+alterColor+";", null);
+        writer.writeAttribute("onmouseover", "this.style.backgroundColor='"+row.getHighlight()+"'", null);
+        writer.writeAttribute("onmouseout", "this.style.backgroundColor='"+alterColor+"'", null);
+
         writer.writeText("\n", null);
     }
 
@@ -326,11 +334,18 @@ public class ListTableRenderer extends BaseRenderer {
         ListTableTag listTableTag = (ListTableTag) theme.getTag("listTable");
         Table table = listTableTag.getTable();
         
+        String width = (String) data.getAttributes().get("width");
+        boolean hasWidth = false;
+        if (width!=null && !"".equals(width)) hasWidth = true;
         for (Iterator iter=table.getProperties().entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
             String name = (String) entry.getKey();
             String value = (String) entry.getValue();
-            writer.writeAttribute(name, value, null);
+            if (hasWidth && "width".equals(name)) {
+                writer.writeAttribute(name, width, null);
+            } else {
+                writer.writeAttribute(name, value, null);
+            }
         }//for iter
         
         writer.writeText("\n", null);
@@ -353,7 +368,7 @@ public class ListTableRenderer extends BaseRenderer {
         }
         if (theHeader != null) {
             writer.startElement("tr", theHeader);
-            writer.startElement("th height=\"30px\"", theHeader);
+            writer.startElement("th", theHeader);
             writer.writeAttribute("colspan", "" + getColumnCount(data), null);
             writer.writeText("\n", null);
             encodeRecursive(context, theHeader);
@@ -362,6 +377,7 @@ public class ListTableRenderer extends BaseRenderer {
             writer.endElement("tr");
             writer.writeText("\n", null);
         }
+        
         if (n > 0) {
             writer.startElement("tr", data);
             writer.writeText("\n", null);
@@ -371,7 +387,7 @@ public class ListTableRenderer extends BaseRenderer {
                 if (!(column instanceof UIColumn)) {
                     continue;
                 }
-                writer.startElement("th height=\"30px\"", column);
+                writer.startElement("th", column);
                 UIComponent facet = column.getFacet("header");
                 if (facet != null) {
                     encodeRecursive(context, facet);

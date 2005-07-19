@@ -88,6 +88,10 @@ public class ThemeManager {
         digester.addCallParam("theme/listTable/header/property", 1, "value");
 
         digester.addRule("theme/listTable/row", rule);
+        digester.addCallMethod("theme/listTable/row/alter-color", "addColor", 1);
+        digester.addCallParam("theme/listTable/row/alter-color", 0, "value");
+        digester.addCallMethod("theme/listTable/row/highlight", "setHighlight", 1);
+        digester.addCallParam("theme/listTable/row/highlight", 0, "value");
         digester.addCallMethod("theme/listTable/row/property", "addProperty", 2);
         digester.addCallParam("theme/listTable/row/property", 0, "name");
         digester.addCallParam("theme/listTable/row/property", 1, "value");
@@ -112,12 +116,11 @@ public class ThemeManager {
 
         try {
             Theme theme = (Theme) digester.parse(stream);
-            System.out.println("+++++ "+theme.getName());
+            System.out.println("    import theme "+theme.getName());
             themes.put(theme.getName(), theme);
             for (Iterator iter=theme.getTags().entrySet().iterator(); iter.hasNext(); ) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 Tag tag = (Tag) entry.getValue();
-                System.out.println("**** "+tag.getClass().getName());
                 if (tag instanceof ListTableTag) {
                     ListTableTag listTable = (ListTableTag) tag;
                     tag = listTable.getTable();

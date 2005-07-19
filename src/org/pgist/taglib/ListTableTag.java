@@ -16,30 +16,6 @@ public class ListTableTag extends UIComponentTag {
     // -------------------------------------------------------------- Attributes
 
 
-    private String first = null;
-
-
-    public void setFirst(String first) {
-        this.first = first;
-    }
-
-
-    private String rows = null;
-
-
-    public void setRows(String rows) {
-        this.rows = rows;
-    }
-
-
-    private String styleClass = null;
-
-
-    public void setStyleClass(String styleClass) {
-        this.styleClass = styleClass;
-    }
-
-
     private String value = null;
 
 
@@ -79,9 +55,6 @@ public class ListTableTag extends UIComponentTag {
 
     public void release() {
         super.release();
-        first = null;
-        rows = null;
-        styleClass = null;
         value = null;
         var = null;
     }
@@ -90,39 +63,6 @@ public class ListTableTag extends UIComponentTag {
     protected void setProperties(UIComponent component) {
 
         super.setProperties(component);
-
-        if (first != null) {
-            if (isValueReference(first)) {
-                ValueBinding vb =
-                    getFacesContext().getApplication().
-                    createValueBinding(first);
-                component.setValueBinding("first", vb);
-            } else {
-                ((UIData) component).setFirst(Integer.parseInt(first));
-            }
-        }
-
-        if (rows != null) {
-            if (isValueReference(rows)) {
-                ValueBinding vb =
-                    getFacesContext().getApplication().
-                    createValueBinding(rows);
-                component.setValueBinding("rows", vb);
-            } else {
-                ((UIData) component).setRows(Integer.parseInt(rows));
-            }
-        }
-
-        if (styleClass != null) {
-            if (isValueReference(styleClass)) {
-                ValueBinding vb =
-                    getFacesContext().getApplication().
-                    createValueBinding(styleClass);
-                component.setValueBinding("styleClass", vb);
-            } else {
-                component.getAttributes().put("styleClass", styleClass);
-            }
-        }
 
         if (value != null) {
             if (isValueReference(value)) {
