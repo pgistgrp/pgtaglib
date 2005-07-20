@@ -2,7 +2,6 @@ package org.pgist.conf;
 
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.faces.context.ExternalContext;
@@ -101,11 +100,6 @@ public class ThemeManager {
         digester.addCallParam("theme/listTable/footer/property", 0, "name");
         digester.addCallParam("theme/listTable/footer/property", 1, "value");
 
-        digester.addRule("theme/listTable/scroller", rule);
-        digester.addCallMethod("theme/listTable/scroller/property", "addProperty", 2);
-        digester.addCallParam("theme/listTable/scroller/property", 0, "name");
-        digester.addCallParam("theme/listTable/scroller/property", 1, "value");
-
         digester.addObjectCreate("theme/scroller", ScrollerTag.class);
         digester.addSetNext("theme/scroller", "addTag");
         
@@ -118,17 +112,6 @@ public class ThemeManager {
             Theme theme = (Theme) digester.parse(stream);
             System.out.println("    import theme "+theme.getName());
             themes.put(theme.getName(), theme);
-            for (Iterator iter=theme.getTags().entrySet().iterator(); iter.hasNext(); ) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                Tag tag = (Tag) entry.getValue();
-                if (tag instanceof ListTableTag) {
-                    ListTableTag listTable = (ListTableTag) tag;
-                    tag = listTable.getTable();
-                } else if (tag instanceof ScrollerTag) {
-                    ScrollerTag scroller = (ScrollerTag) tag;
-                    tag = scroller.getImage();
-                }
-            }
             stream.close();
         } catch (Exception e) {
             e.printStackTrace();

@@ -3,6 +3,7 @@ package org.pgist.taglib;
 import org.pgist.component.ScrollerComponent;
 
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIData;
 import javax.faces.context.FacesContext;
 import javax.faces.el.MethodBinding;
 import javax.faces.el.ValueBinding;
@@ -17,11 +18,26 @@ import javax.faces.webapp.UIComponentTag;
  */
 public class ScrollerTag extends UIComponentTag {
 
+    
+    protected String value = null;
     protected String actionListener = null;
+    protected String width = null;
+    protected String theme = null;
 
-    protected String navFacetOrientation = null;
+    
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-    protected String forValue = null;
+    
+    public String getComponentType() {
+        return ("javax.faces.Data");
+    }
+
+    
+    public String getRendererType() {
+        return ("Scroller");
+    }
 
     
     /**
@@ -33,82 +49,66 @@ public class ScrollerTag extends UIComponentTag {
     }
 
     
-    /*
-     * When rendering a widget representing "page navigation" where
-     * should the facet markup be rendered in relation to the page
-     * navigation widget?  Values are "NORTH", "SOUTH", "EAST", "WEST".
-     * Case insensitive. This can be value or a value binding 
-     * reference expression.
-     */
-    public void setNavFacetOrientation(String navFacetOrientation) {
-        this.navFacetOrientation = navFacetOrientation;
+    public void setWidth(String width) {
+        this.width = width;
     }
 
     
-    /*
-     * The data grid component for which this acts as a scroller.
-     * This can be value or a value binding reference expression.
-     */
-    public void setFor(String newForValue) {
-        forValue = newForValue;
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
     
-    public String getComponentType() {
-        return ("Scroller");
-    }
-
-    
-    public String getRendererType() {
-        return (null);
-    }
-
     public void release() {
         super.release();
-        this.navFacetOrientation = null;
     }
 
     
     protected void setProperties(UIComponent component) {
         super.setProperties(component);
         FacesContext context = FacesContext.getCurrentInstance();
-        ValueBinding vb = null;
+
+        if (value != null) {
+            if (isValueReference(value)) {
+                ValueBinding vb =
+                    getFacesContext().getApplication().
+                    createValueBinding(value);
+                component.setValueBinding("value", vb);
+            } else {
+                ((UIData) component).setValue(value);
+            }
+        }
 
         if (actionListener != null) {
             if (isValueReference(actionListener)) {
                 Class args[] = { ActionEvent.class };
                 MethodBinding mb = FacesContext.getCurrentInstance()
-                        .getApplication().createMethodBinding(actionListener,
-                                args);
-                ((ScrollerComponent) component).setActionListener(mb);
+                        .getApplication().createMethodBinding(actionListener, args);
+                //((ScrollerComponent) component).setActionListener(mb);
             } else {
                 Object params[] = { actionListener };
                 throw new javax.faces.FacesException();
             }
         }
 
-        // if the attributes are values set them directly on the component, if
-        // not set the ValueBinding reference so that the expressions can be
-        // evaluated lazily.
-        if (navFacetOrientation != null) {
-            if (isValueReference(navFacetOrientation)) {
-                vb = context.getApplication().createValueBinding(
-                        navFacetOrientation);
-                component.setValueBinding("navFacetOrientation", vb);
+        if (width != null) {
+            if (isValueReference(width)) {
+                ValueBinding vb = context.getApplication().createValueBinding(width);
+                component.setValueBinding("width", vb);
             } else {
-                component.getAttributes().put("navFacetOrientation",
-                        navFacetOrientation);
+                component.getAttributes().put("width", width);
             }
         }
 
-        if (forValue != null) {
-            if (isValueReference(forValue)) {
-                vb = context.getApplication().createValueBinding(forValue);
-                component.setValueBinding("for", vb);
+        if (theme != null) {
+            if (isValueReference(theme)) {
+                ValueBinding vb = context.getApplication().createValueBinding(theme);
+                component.setValueBinding("theme", vb);
             } else {
-                component.getAttributes().put("for", forValue);
+                component.getAttributes().put("theme", theme);
             }
         }
+        
     }//setProperties()
     
     

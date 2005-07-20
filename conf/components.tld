@@ -96,14 +96,6 @@
             * for easy navigation.
         </description>
         <attribute>
-            <name>binding</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description>
-                Value binding expression to bind this component to a backing bean.
-            </description>
-        </attribute>
-        <attribute>
             <name>id</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
@@ -112,30 +104,38 @@
             </description>
         </attribute>
         <attribute>
-            <name>for</name>
-            <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description>
-                The data grid component for which this acts as a scroller.
-            </description>
-        </attribute>
-        <attribute>
-            <name>navFacetOrientation</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description>
-                When rendering a widget representing "page navigation" where
-                should the facet markup be rendered in relation to the page
-                navigation widget?  Values are "NORTH", "SOUTH", "EAST", "WEST".
-                Case insensitive.
-            </description>
-        </attribute>
-        <attribute>
             <name>actionListener</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <description>
-                 Optional method binding reference to handle scroll event.
+                 Optional method binding reference to handle tree expansion and contraction events.
+            </description>
+        </attribute>
+        <attribute>
+            <name>width</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Component id of this component.
+            </description>
+        </attribute>
+        <attribute>
+            <name>theme</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Component id of this component.
+            </description>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Value binding expression pointing at (a) a DataModel instance,
+                (b) an array of objects, (c) a List of objects, (d) a
+                java.sql.ResultSet (or RowSet), (d) a javax.servlet.jsp.jstl.sql.Result
+                object, or (e) a JavaBean (which will be treated as a one-row dataset).
             </description>
         </attribute>
     </tag>

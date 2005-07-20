@@ -14,7 +14,6 @@ public class ListTableTag extends Tag {
     private Header   header;
     private Row      row;
     private Footer   footer;
-    private Scroller scroller;
     
     
     public ListTableTag() {
@@ -70,15 +69,5 @@ public class ListTableTag extends Tag {
         this.row = row;
     }
     
-
-    public Scroller getScroller() {
-        return scroller;
-    }
-    
-
-    public void setScroller(Scroller scroller) {
-        this.scroller = scroller;
-    }
-
 
 }

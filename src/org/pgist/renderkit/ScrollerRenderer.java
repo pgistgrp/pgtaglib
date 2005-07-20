@@ -1,16 +1,23 @@
 package org.pgist.renderkit;
 
 
+import java.io.IOException;
+import java.util.Iterator;
+
 import javax.faces.component.UIColumn;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
+import org.pgist.conf.Image;
+import org.pgist.conf.ScrollerTag;
+import org.pgist.conf.Theme;
 import org.pgist.conf.ThemeManager;
+import org.pgist.util.PageSetting;
 
-import java.io.IOException;
-import java.util.Iterator;
+import com.sun.faces.renderkit.html_basic.ImageRenderer;
+import com.sun.faces.renderkit.html_basic.OutputLinkRenderer;
 
 /**
  * <p><code>Renderer</code> that supports generating markup for the per-row data
@@ -27,9 +34,25 @@ import java.util.Iterator;
 public class ScrollerRenderer extends BaseRenderer {
 
     
+    protected ImageRenderer imageRenderer;
+    protected OutputLinkRenderer outputLinkRenderer;
+    private static ThreadLocal themeVar = new ThreadLocal();
+    
+    
+    public ScrollerRenderer() {
+        imageRenderer = new ImageRenderer();
+        outputLinkRenderer = new OutputLinkRenderer();
+    }
+    
+    
     // -------------------------------------------------------- Renderer Methods
 
 
+    public Theme getTheme() {
+        return (Theme) themeVar.get();
+    }
+
+    
     /**
      * <p>Render the beginning of the table for our associated data.</p>
      *
@@ -44,9 +67,13 @@ public class ScrollerRenderer extends BaseRenderer {
         super.encodeBegin(context, component);
         ResponseWriter writer = context.getResponseWriter();
         UIData data = (UIData) component;
-
-        //temp
-        ThemeManager.getTheme("test");
+        
+        //Get theme definition
+        String theme = (String) data.getAttributes().get("theme");
+        if (theme==null || "".equals(theme)) theme = "default";
+        Theme theTheme = ThemeManager.getTheme(theme);
+        if (theTheme==null) theTheme = ThemeManager.getTheme("default");
+        themeVar.set(theTheme);
         
         // Render the beginning of this table
         data.setRowIndex(-1);
@@ -89,9 +116,9 @@ public class ScrollerRenderer extends BaseRenderer {
             }
 
             // Render the beginning, body, and ending of this row
-            rowBegin(context, data, writer);
-            rowBody(context, data, writer);
-            rowEnd(context, data, writer);
+            //rowBegin(context, data, writer);
+            //rowBody(context, data, writer);
+            //rowEnd(context, data, writer);
 
         }
 
@@ -305,81 +332,64 @@ public class ScrollerRenderer extends BaseRenderer {
         // Render the outermost table element
         writer.startElement("table", data);
         
-        //styleClass
-        String styleClass = (String) data.getAttributes().get("styleClass");
-        if (styleClass != null) {
-            writer.writeAttribute("class", styleClass, "styleClass");
-        } else {
-            writer.writeAttribute("rules", "all", null);
-            writer.writeAttribute("bgcolor", "#F6F6F4", null);
-            writer.writeAttribute("frame", "box", null);
-            writer.writeAttribute("cellspacing", "1", null);
-            writer.writeAttribute("cellpadding", "2", null);
-            writer.writeAttribute("border", "1", null);
-            writer.writeAttribute("style", "border-collapse:collapse; border:solid 2px #8CACBB;", null);
-        }
+        Theme theme = getTheme();
+        ScrollerTag scrollerTag = (ScrollerTag) theme.getTag("scroller");
+        Image image = scrollerTag.getImage();
+        System.out.println(image);
         
-        //width
         String width = (String) data.getAttributes().get("width");
-        if (width != null) {
-            writer.writeAttribute("width", width, "width");
+        if (width!=null && !"".equals(width)) {
+            writer.writeAttribute("width", width, null);
         } else {
             writer.writeAttribute("width", "100%", null);
         }
         
-        writer.writeText("\n", null);
-
-        //caption
-        UIComponent caption = data.getFacet("caption");
-        if (caption != null) {
-            writer.startElement("caption", caption);
-            encodeRecursive(context, caption);
-            writer.endElement("caption");
-            writer.writeText("\n", null);
-        }
+        writer.startElement("tr", data);
+        writer.startElement("td", data);
+        writer.writeAttribute("align", "center", null);
         
-        // Render the table and column headers (if any)
-        UIComponent header = data.getFacet("header");
-        int n = getColumnHeaderCount(data);
-        if ((header != null) || (n > 0)) {
-            writer.startElement("thead", header);
-        }
-        if (header != null) {
-            writer.startElement("tr", header);
-            writer.startElement("th", header);
-            writer.writeAttribute("colspan", "" + getColumnCount(data), null);
-            writer.writeText("\n", null);
-            encodeRecursive(context, header);
-            writer.writeText("\n", null);
-            writer.endElement("th");
-            writer.endElement("tr");
-            writer.writeText("\n", null);
-        }
-        if (n > 0) {
-            writer.startElement("tr", data);
-            writer.writeText("\n", null);
-            Iterator columns = data.getChildren().iterator();
-            while (columns.hasNext()) {
-                UIComponent column = (UIComponent) columns.next();
-                if (!(column instanceof UIColumn)) {
-                    continue;
-                }
-                writer.startElement("th", column);
-                UIComponent facet = column.getFacet("header");
-                if (facet != null) {
-                    encodeRecursive(context, facet);
-                }
-                writer.endElement("th");
-                writer.writeText("\n", null);
-            }
-            writer.endElement("tr");
-            writer.writeText("\n", null);
-        }
-        if ((header != null) || (n > 0)) {
-            writer.endElement("thead");
-            writer.writeText("\n", null);
-        }
-
+        writer.startElement("table", data);
+        writer.startElement("tr", data);
+        
+        PageSetting setting = (PageSetting) data.getValue();
+        writer.startElement("td", data);
+        writer.writeText("Result:", null);
+        writer.startElement("br", data);
+        writer.startElement("span style=\"color:red;\"", data);
+        writer.writeText(""+setting.getPageSize(), null);
+        writer.endElement("span");
+        writer.writeText(" pages", null);
+        
+        writer.startElement("td", data);
+        writer.startElement("img", data);
+        writer.writeAttribute("src", "/pgist/images/"+image.getProperty("pgi"), null);
+        writer.startElement("br", data);
+        writer.writeText("Prev", null);
+        
+        writer.startElement("td", data);
+        writer.startElement("img", data);
+        writer.writeAttribute("src", "/pgist/images/"+image.getProperty("s"), null);
+        writer.startElement("br", data);
+        writer.writeText("1", null);
+        
+        writer.startElement("td", data);
+        writer.startElement("img", data);
+        writer.writeAttribute("src", "/pgist/images/"+image.getProperty("s"), null);
+        writer.startElement("br", data);
+        writer.writeText("2", null);
+        
+        writer.startElement("td", data);
+        writer.startElement("img", data);
+        writer.writeAttribute("src", "/pgist/images/"+image.getProperty("s"), null);
+        writer.startElement("br", data);
+        writer.writeText("3", null);
+        
+        writer.startElement("td", data);
+        writer.startElement("img", data);
+        writer.writeAttribute("src", "/pgist/images/"+image.getProperty("t"), null);
+        writer.startElement("br", data);
+        writer.writeText("Next", null);
+        
         // Render the beginning of the table body
         writer.startElement("tbody", data);
         writer.writeText("\n", null);

@@ -8,7 +8,7 @@
 
 
     <!-- PGIST Components -->
-    <component>
+    <!--component>
         <component-type>Scroller</component-type>
         <component-class>org.pgist.component.ScrollerComponent</component-class>
         <facet>
@@ -53,7 +53,7 @@
         <component-extension>
             <component-family>Scroller</component-family>
         </component-extension>
-    </component>
+    </component-->
 
 
     <!-- Custom Renderers -->
@@ -72,6 +72,18 @@
         </renderer>
 
 
+        <renderer>
+            <description>
+                Renderer for a UIData component that can serve as the basis for
+                different markup creation for the components that are children
+                of the child UIColumn components.
+            </description>
+            <component-family>javax.faces.Data</component-family>
+            <renderer-type>Scroller</renderer-type>
+            <renderer-class>org.pgist.renderkit.ScrollerRenderer</renderer-class>
+        </renderer>
+        
+        
     </render-kit>
 
 

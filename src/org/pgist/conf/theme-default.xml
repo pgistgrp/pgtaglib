@@ -31,16 +31,17 @@
         </row>
         <footer>
         </footer>
-        <scroller>
-        </scroller>
     </listTable>
     
     
     <scroller>
         <image>
-            <property name="pgi" value="/images/pgi.gif" />
-            <property name="s"  value="/images/s.gif" />
-            <property name="t" value="/images/t.gif" />
+            <property name="pgi" value="pgi.png" />
+            <property name="s"   value="s.png" />
+            <property name="t"   value="t.png" />
+            <property name="pgi1" value="pgi1.png" />
+            <property name="s1"   value="s1.png" />
+            <property name="t1"   value="t1.png" />
         </image>
     </scroller>
     

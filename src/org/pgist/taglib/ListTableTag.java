@@ -17,6 +17,8 @@ public class ListTableTag extends UIComponentTag {
 
 
     private String value = null;
+    private String var = null;
+    private String width = null;
 
 
     public void setValue(String value) {
@@ -24,17 +26,11 @@ public class ListTableTag extends UIComponentTag {
     }
 
 
-    private String var = null;
-
-
     public void setVar(String var) {
         this.var = var;
     }
 
 
-    private String width = null;
-
-    
     public void setWidth(String width) {
         this.width = width;
     }

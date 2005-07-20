@@ -23,8 +23,6 @@ public class PropertyInsertRule extends Rule {
             obj = new Row();
         } else if ("footer".equals(name)) {
             obj = new Footer();
-        } else if ("scroller".equals(name)) {
-            obj = new Scroller();
         } else if ("image".equals(name)) {
             obj = new Image();
         }
@@ -61,14 +59,10 @@ public class PropertyInsertRule extends Rule {
             Footer footer = (Footer) set;
             ListTableTag listTable = (ListTableTag) digester.peek();
             listTable.setFooter(footer);
-        } else if ("scroller".equals(name)) {
-            Scroller scroller = (Scroller) set;
-            ListTableTag listTable = (ListTableTag) digester.peek();
-            listTable.setScroller(scroller);
         } else if ("image".equals(name)) {
             Image image = (Image) set;
-            ScrollerTag scroller = (ScrollerTag) digester.peek();
-            scroller.setImage(image);
+            ScrollerTag scrollerTag = (ScrollerTag) digester.peek();
+            scrollerTag.setImage(image);
         }
     }
     
