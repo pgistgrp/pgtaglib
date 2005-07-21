@@ -353,6 +353,7 @@ public class ScrollerRenderer extends BaseRenderer {
         
         PageSetting setting = (PageSetting) data.getValue();
         writer.startElement("td", data);
+        writer.writeAttribute("style", "padding-right:20px; border-right:1px dotted #FF0000", null);
         writer.writeText("Result:", null);
         writer.startElement("br", data);
         writer.startElement("span style=\"color:red;\"", data);
@@ -361,38 +362,108 @@ public class ScrollerRenderer extends BaseRenderer {
         writer.writeText(" pages", null);
         
         writer.startElement("td", data);
+        writer.writeAttribute("align", "right", null);
         writer.startElement("img", data);
         writer.writeAttribute("src", "/pgist/images/"+image.getProperty("pgi"), null);
+        writer.writeAttribute("width", "60", null);
+        writer.writeAttribute("height", "18", null);
         writer.startElement("br", data);
         writer.writeText("Prev", null);
         
         writer.startElement("td", data);
+        writer.writeAttribute("align", "center", null);
+        writer.startElement("a", data);
+        writer.writeAttribute("href", "aaaaaa", null);
         writer.startElement("img", data);
         writer.writeAttribute("src", "/pgist/images/"+image.getProperty("s"), null);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("width", "12", null);
+        writer.writeAttribute("height", "18", null);
         writer.startElement("br", data);
         writer.writeText("1", null);
+        writer.endElement("a");
         
         writer.startElement("td", data);
+        writer.writeAttribute("align", "center", null);
+        writer.startElement("a", data);
+        writer.writeAttribute("href", "aaaaaa", null);
         writer.startElement("img", data);
         writer.writeAttribute("src", "/pgist/images/"+image.getProperty("s"), null);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("width", "12", null);
+        writer.writeAttribute("height", "18", null);
         writer.startElement("br", data);
         writer.writeText("2", null);
+        writer.endElement("a");
         
         writer.startElement("td", data);
+        writer.writeAttribute("align", "center", null);
+        writer.startElement("a", data);
+        writer.writeAttribute("href", "aaaaaa", null);
         writer.startElement("img", data);
         writer.writeAttribute("src", "/pgist/images/"+image.getProperty("s"), null);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("width", "12", null);
+        writer.writeAttribute("height", "18", null);
         writer.startElement("br", data);
         writer.writeText("3", null);
+        writer.endElement("a");
         
         writer.startElement("td", data);
+        writer.writeAttribute("style", "border-right:1px dotted #FF0000", null);
+        writer.writeAttribute("align", "left", null);
         writer.startElement("img", data);
         writer.writeAttribute("src", "/pgist/images/"+image.getProperty("t"), null);
+        writer.writeAttribute("width", "50", null);
+        writer.writeAttribute("height", "18", null);
         writer.startElement("br", data);
         writer.writeText("Next", null);
         
-        // Render the beginning of the table body
-        writer.startElement("tbody", data);
-        writer.writeText("\n", null);
+        writer.startElement("td", data);
+        writer.writeAttribute("align", "center", null);
+        writer.writeAttribute("style", "padding-left:20px; padding-right:20px; border-right:1px dotted #FF0000", null);
+        writer.writeText("Page:", null);
+        writer.startElement("input", data);
+        writer.writeAttribute("type", "text", null);
+        writer.writeAttribute("style", "border:thin dotted #800080;width:40px;", null);
+        writer.startElement("br", data);
+        writer.startElement("input", data);
+        writer.writeAttribute("type", "submit", null);
+        writer.writeAttribute("value", "Go", null);
+        
+        writer.startElement("td", data);
+        writer.writeAttribute("align", "center", null);
+        writer.writeAttribute("style", "padding-left:20px;", null);
+        writer.writeText("Rows Per Page:", null);
+        writer.startElement("br", data);
+        writer.startElement("select", data);
+
+        writer.startElement("option", data);
+        writer.writeAttribute("value", "10", null);
+        writer.writeText("10", null);
+        writer.endElement("option");
+        
+        writer.startElement("option", data);
+        writer.writeAttribute("value", "20", null);
+        writer.writeText("20", null);
+        writer.endElement("option");
+        
+        writer.startElement("option", data);
+        writer.writeAttribute("value", "30", null);
+        writer.writeText("30", null);
+        writer.endElement("option");
+
+        writer.startElement("option", data);
+        writer.writeAttribute("value", "50", null);
+        writer.writeText("50", null);
+        writer.endElement("option");
+
+        writer.startElement("option", data);
+        writer.writeAttribute("value", "100", null);
+        writer.writeText("100", null);
+        writer.endElement("option");
+        
+        writer.endElement("select");
 
     }
 

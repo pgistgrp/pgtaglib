@@ -31,12 +31,12 @@ public class ScrollerTag extends UIComponentTag {
 
     
     public String getComponentType() {
-        return ("javax.faces.Data");
+        return ("Scroller");
     }
 
     
     public String getRendererType() {
-        return ("Scroller");
+        return (null);
     }
 
     
@@ -84,7 +84,7 @@ public class ScrollerTag extends UIComponentTag {
                 Class args[] = { ActionEvent.class };
                 MethodBinding mb = FacesContext.getCurrentInstance()
                         .getApplication().createMethodBinding(actionListener, args);
-                //((ScrollerComponent) component).setActionListener(mb);
+                ((ScrollerComponent) component).setActionListener(mb);
             } else {
                 Object params[] = { actionListener };
                 throw new javax.faces.FacesException();

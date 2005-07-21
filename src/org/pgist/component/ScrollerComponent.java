@@ -1,6 +1,11 @@
 package org.pgist.component;
 
+import org.pgist.conf.Image;
+import org.pgist.conf.ScrollerTag;
+import org.pgist.conf.Theme;
+import org.pgist.conf.ThemeManager;
 import org.pgist.renderkit.Util;
+import org.pgist.util.PageSetting;
 
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
@@ -26,31 +31,11 @@ import java.util.Map;
  */
 public class ScrollerComponent extends UICommand {
 
-    public static final String NORTH = "NORTH";
-
-    public static final String SOUTH = "SOUTH";
-
-    public static final String EAST = "EAST";
-
-    public static final String WEST = "WEST";
-
-    public static final String BOTH = "BOTH";
-
-    public static final int ACTION_NEXT = -1;
-
-    public static final int ACTION_PREVIOUS = -2;
-
-    public static final int ACTION_NUMBER = -3;
+    public static final int ACTION_JUMP = -1;
+    public static final int ACTION_DIRECT = -2;
+    public static final int ACTION_ROWOFPAGE = -3;
 
     public static final String FORM_NUMBER_ATTR = "com.sun.faces.FormNumber";
-
-    
-    /**
-     * The component attribute that tells where to put the user supplied
-     * markup in relation to the "jump to the Nth page of results"
-     * widget.
-     */
-    public static final String FACET_MARKUP_ORIENTATION_ATTR = "navFacetOrientation";
 
     
     public ScrollerComponent() {
@@ -59,12 +44,20 @@ public class ScrollerComponent extends UICommand {
     }
 
     
+    /**
+     * <p>Return the component family for this component.</p>
+     */
+    public String getFamily() {
+        return ("Scroller");
+    }
+    
+
     public void decode(FacesContext context) {
+        System.out.println("@@@@@@@@@@  ScrollerComponent : decode");
         String curPage = null;
         String action = null;
         int actionInt = 0;
         int currentPage = 1;
-        int currentRow = 1;
         String clientId = getClientId(context);
         Map requestParameterMap = (Map) context.getExternalContext()
                 .getRequestParameterMap();
@@ -76,28 +69,25 @@ public class ScrollerComponent extends UICommand {
         MethodBinding mb = Util.createConstantMethodBinding(action);
 
         this.getAttributes().put("action", mb);
-        curPage = (String) requestParameterMap.get(clientId + "_curPage");
+        curPage = (String) requestParameterMap.get(clientId + "_page");
         currentPage = Integer.valueOf(curPage).intValue();
+
+        PageSetting setting = (PageSetting) getValue();
 
         // Assert that action's length is 1.
         switch (actionInt = Integer.valueOf(action).intValue()) {
-            case ACTION_NEXT:
-                currentPage++;
+            case ACTION_JUMP:
+                setting.setPage(currentPage);
                 break;
-            case ACTION_PREVIOUS:
-                currentPage--;
-                // Assert 1 < currentPage
+            case ACTION_ROWOFPAGE:
+                curPage = (String) requestParameterMap.get(clientId + "_rowOfPage");
+                currentPage = Integer.valueOf(curPage).intValue();
+                setting.setRowOfPage(currentPage);
                 break;
             default:
-                currentPage = actionInt;
-                break;
         }
-        // from the currentPage, calculate the current row to scroll to.
-        currentRow = (currentPage - 1) * getRowsPerPage(context);
-        this.getAttributes().put("currentPage", new Integer(currentPage));
-        this.getAttributes().put("currentRow", new Integer(currentRow));
         this.queueEvent(new ActionEvent(this));
-    }
+    }//decode()
     
 
     public void encodeBegin(FacesContext context) throws IOException {
@@ -106,69 +96,197 @@ public class ScrollerComponent extends UICommand {
     
 
     public void encodeEnd(FacesContext context) throws IOException {
-        int currentPage = 1;
-
-        ResponseWriter writer = context.getResponseWriter();
-
+        System.out.println("@@@@@@@@@@  ScrollerComponent : encodeEnd");
+        //Get theme definition
+        String themeName = (String) getAttributes().get("theme");
+        if (themeName==null || "".equals(themeName)) themeName = "default";
+        Theme theme = ThemeManager.getTheme(themeName);
+        if (theme==null) theme = ThemeManager.getTheme("default");
+        
         String clientId = getClientId(context);
-        Integer curPage = (Integer) getAttributes().get("currentPage");
-        if (curPage != null) {
-            currentPage = curPage.intValue();
+        int formNumber = getFormNumber(context);
+        
+        ResponseWriter writer = context.getResponseWriter();
+        writer.startElement("table", null);
+        
+        ScrollerTag scrollerTag = (ScrollerTag) theme.getTag("scroller");
+        Image image = scrollerTag.getImage();
+        
+        String width = (String) getAttributes().get("width");
+        if (width!=null && !"".equals(width)) {
+            writer.writeAttribute("width", width, null);
+        } else {
+            writer.writeAttribute("width", "100%", null);
         }
-        int totalPages = getTotalPages(context);
-
-        writer.write("<table border=\"0\" cellpadding=\"0\" align=\"center\">");
-        writer.write("<tr align=\"center\" valign=\"top\">");
-        writer
-                .write("<td><font size=\"-1\">Result&nbsp;Page:&nbsp;</font></td>");
-
-        // write the Previous link if necessary
-        writer.write("<td>");
-        writeNavWidgetMarkup(context, clientId, ACTION_PREVIOUS,
-                (1 < currentPage));
-        // last arg is true iff we're not the first page
-        writer.write("</td>");
-
-        // render the page navigation links
-        int i = 0;
-        int first = 1;
-        int last = totalPages;
-
-        if (10 < currentPage) {
-            first = currentPage - 10;
+        
+        writer.startElement("tr", null);
+        writer.startElement("td", null);
+        writer.writeAttribute("align", "center", null);
+        
+        writer.startElement("table", null);
+        writer.startElement("tr", null);
+        
+        PageSetting setting = (PageSetting) getValue();
+        int page = setting.getPage();
+        System.out.println("head: "+setting.getHead()+" | tail: "+setting.getTail());
+        
+        writer.startElement("td", null);
+        writer.writeAttribute("style", "padding-right:20px; border-right:1px dotted #FF0000", null);
+        writer.writeText("Result:", null);
+        writer.startElement("br", null);
+        writer.startElement("span style=\"color:red;\"", null);
+        writer.writeText(""+setting.getPageSize(), null);
+        writer.endElement("span");
+        writer.writeText(" pages", null);
+        
+        //prev
+        writer.startElement("td", null);
+        writer.writeAttribute("align", "right", null);
+        String imgURL = "";
+        if (page==1) {
+            imgURL = image.getProperty("pgi");
+        } else {
+            writer.startElement("a", null);
+            writer.writeAttribute("href", "#", null);
+            writer.writeAttribute("onmousedown", getScrollPage(clientId, formNumber, page-1, ACTION_JUMP), null);
+            imgURL = image.getProperty("pgi1");
         }
-        if ((currentPage + 9) < totalPages) {
-            last = currentPage + 9;
+        writer.startElement("img", null);
+        writer.writeAttribute("src", "/pgist/images/"+imgURL, null);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("width", "60", null);
+        writer.writeAttribute("height", "18", null);
+        writer.startElement("br", null);
+        writer.writeText("Prev", null);
+        if (page>1) {
+            writer.endElement("a");
         }
-        for (i = first; i <= last; i++) {
-            writer.write("<td>");
-            writeNavWidgetMarkup(context, clientId, i, (i != currentPage));
-            writer.write("</td>");
+        writer.endElement("td");
+        
+        //internal numbers
+        for (int i=setting.getHead(), size=setting.getTail(); i<=size; i++) {
+            writer.startElement("td", null);
+            writer.writeAttribute("align", "center", null);
+            String s;
+            if (i==page) {
+                writer.startElement("span", null);
+                writer.writeAttribute("style", "color:red;", null);
+                s = "s1";
+            } else {
+                writer.startElement("a", null);
+                writer.writeAttribute("href", "#", null);
+                writer.writeAttribute("onmousedown", getScrollPage(clientId, formNumber, i, ACTION_JUMP), null);
+                s = "s";
+            }
+            writer.startElement("img", null);
+            writer.writeAttribute("src", "/pgist/images/"+image.getProperty(s), null);
+            writer.writeAttribute("border", "0", null);
+            writer.writeAttribute("width", "12", null);
+            writer.writeAttribute("height", "18", null);
+            writer.startElement("br", null);
+            writer.writeText(""+i, null);
+            if (i==page) {
+                writer.endElement("span");
+            } else {
+                writer.endElement("a");
+            }
+        }//for i
+        writer.endElement("td");
+        
+        //next
+        writer.startElement("td", null);
+        writer.writeAttribute("style", "border-right:1px dotted #FF0000", null);
+        writer.writeAttribute("align", "left", null);
+        imgURL = "";
+        if (page==setting.getPageSize()) {
+            imgURL = image.getProperty("t");
+        } else {
+            writer.startElement("a", null);
+            writer.writeAttribute("href", "#", null);
+            writer.writeAttribute("onmousedown", getScrollPage(clientId, formNumber, page+1, ACTION_JUMP), null);
+            imgURL = image.getProperty("t1");
         }
+        writer.startElement("img", null);
+        writer.writeAttribute("src", "/pgist/images/"+imgURL, null);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("width", "50", null);
+        writer.writeAttribute("height", "18", null);
+        writer.startElement("br", null);
+        writer.writeText("Next", null);
+        if (page>1) {
+            writer.endElement("a");
+        }
+        writer.endElement("td");
 
-        // write the Next link if necessary
-        writer.write("<td>");
-        writeNavWidgetMarkup(context, clientId, ACTION_NEXT,
-                (currentPage < totalPages));
-        writer.write("</td>");
-        writer.write("</tr>");
-        writer.write(getHiddenFields(clientId));
-        writer.write("</table>");
-    }
+        //directly go
+        writer.startElement("td", null);
+        writer.writeAttribute("align", "center", null);
+        writer.writeAttribute("style", "padding-left:20px; padding-right:20px; border-right:1px dotted #FF0000", null);
+        writer.writeText("Page:", null);
+        writer.startElement("input", null);
+        writer.writeAttribute("type", "text", null);
+        writer.writeAttribute("style", "border:thin dotted #800080;width:40px;", null);
+        writer.startElement("br", null);
+        writer.startElement("input", null);
+        writer.writeAttribute("type", "submit", null);
+        writer.writeAttribute("value", "Go", null);
+        
+        //rows per page
+        writer.startElement("td", null);
+        writer.writeAttribute("align", "center", null);
+        writer.writeAttribute("style", "padding-left:20px;", null);
+        writer.writeText("Rows Per Page:", null);
+        writer.startElement("br", null);
+        writer.startElement("select", null);
+        writer.writeAttribute("onChange", getScrollPage(clientId, formNumber, page+1, ACTION_ROWOFPAGE), null);
+        int[] options = setting.getOptions();
+        for (int i=0; i<options.length; i++) {
+            if (options[i]==setting.getRowOfPage()) {
+                writer.startElement("option selected", null);
+            } else {
+                writer.startElement("option", null);
+            }
+            writer.writeAttribute("value", ""+options[i], null);
+            writer.writeText(""+options[i], null);
+            writer.endElement("option");
+        }//for i
+        writer.endElement("select");
+
+        writer.endElement("td");
+        writer.endElement("tr");
+        writer.endElement("table");
+        
+        writer.endElement("td");
+        writer.endElement("tr");
+        writer.endElement("table");
+
+        //page
+        writer.startElement("input", null);
+        writer.writeAttribute("type", "hidden", null);
+        writer.writeAttribute("name", clientId+"_page", null);
+        writer.endElement("input");
+        //action
+        writer.startElement("input", null);
+        writer.writeAttribute("type", "hidden", null);
+        writer.writeAttribute("name", clientId+"_action", null);
+        writer.endElement("input");
+        //rowOfPage
+        writer.startElement("input", null);
+        writer.writeAttribute("type", "hidden", null);
+        writer.writeAttribute("name", clientId+"_rowOfPage", null);
+        writer.endElement("input");
+    }//encodeEnd()
     
+
+    private String getScrollPage(String clientId, int formNumber, int page, int action) {
+        return "document.forms[" + formNumber + "]['" + clientId
+            + "_action'].value='" +action + "';document.forms[" + formNumber + "]['" + clientId
+            + "_page'].value='" + page + "';document.forms[" + formNumber + "].submit()";
+    }//getScrollPage()
+
 
     public boolean getRendersChildren() {
         return true;
-    }
-    
-
-    /**
-     * <p>Return the component family for this component.</p>
-     */
-    public String getFamily() {
-
-        return ("Scroller");
-
     }
     
 
@@ -184,7 +302,7 @@ public class ScrollerComponent extends UICommand {
     protected void writeNavWidgetMarkup(FacesContext context, String clientId,
             int navActionType, boolean enabled) throws IOException {
         ResponseWriter writer = context.getResponseWriter();
-        String facetOrientation = NORTH;
+        String facetOrientation = "NORTH";
         String facetName = null;
         String linkText = null;
         String localLinkText = null;
@@ -194,11 +312,11 @@ public class ScrollerComponent extends UICommand {
 
         // Assign values for local variables based on the navActionType
         switch (navActionType) {
-            case ACTION_NEXT:
+            case 1:
                 facetName = "next";
                 linkText = "Next";
                 break;
-            case ACTION_PREVIOUS:
+            case 2:
                 facetName = "previous";
                 linkText = "Previous";
                 break;
@@ -218,8 +336,8 @@ public class ScrollerComponent extends UICommand {
         // leverage any navigation facets we have
         writer.write("\n&nbsp;");
         if (enabled) {
-            writer.write("<a "
-                    + getAnchorAttrs(context, clientId, navActionType) + ">");
+            //writer.write("<a "
+            //        + getAnchorAttrs(context, clientId, navActionType) + ">");
         }
 
         facet = getFacet(facetName);
@@ -230,22 +348,22 @@ public class ScrollerComponent extends UICommand {
             if (isPageNumber) {
                 // See if the user specified an orientation
                 String facetO = (String) getAttributes().get(
-                        FACET_MARKUP_ORIENTATION_ATTR);
+                        "FACET_MARKUP_ORIENTATION_ATTR");
                 if (facet != null) {
                     facetOrientation = facetO;
                     // verify that the orientation is valid
-                    if (!(facetOrientation.equalsIgnoreCase(NORTH)
-                            || facetOrientation.equalsIgnoreCase(SOUTH)
-                            || facetOrientation.equalsIgnoreCase(EAST) || facetOrientation
-                            .equalsIgnoreCase(WEST))) {
-                        facetOrientation = NORTH;
+                    if (!(facetOrientation.equalsIgnoreCase("NORTH")
+                            || facetOrientation.equalsIgnoreCase("SOUTH")
+                            || facetOrientation.equalsIgnoreCase("EAST") || facetOrientation
+                            .equalsIgnoreCase("WEST"))) {
+                        facetOrientation = "NORTH";
                     }
                 }
             }
 
             // output the facet as specified in facetOrientation
-            if (facetOrientation.equalsIgnoreCase(NORTH)
-                    || facetOrientation.equalsIgnoreCase(EAST)) {
+            if (facetOrientation.equalsIgnoreCase("NORTH")
+                    || facetOrientation.equalsIgnoreCase("EAST")) {
                 facet.encodeBegin(context);
                 if (facet.getRendersChildren()) {
                     facet.encodeChildren(context);
@@ -254,7 +372,7 @@ public class ScrollerComponent extends UICommand {
             }
             // The difference between NORTH and EAST is that NORTH
             // requires a <br>.
-            if (facetOrientation.equalsIgnoreCase(NORTH)) {
+            if (facetOrientation.equalsIgnoreCase("NORTH")) {
                 writer.startElement("br", null); // PENDING(craigmcc)
                 writer.endElement("br");
             }
@@ -263,8 +381,8 @@ public class ScrollerComponent extends UICommand {
         // if we have a facet, only output the link text if
         // navActionType is number
         if (null != facet) {
-            if (navActionType != ACTION_NEXT
-                    && navActionType != ACTION_PREVIOUS) {
+            if (navActionType != 1
+                    && navActionType != 2) {
                 writer.write(linkText);
             }
         } else {
@@ -273,14 +391,14 @@ public class ScrollerComponent extends UICommand {
 
         // output the facet in the EAST and SOUTH cases
         if (null != facet) {
-            if (facetOrientation.equalsIgnoreCase(SOUTH)) {
+            if (facetOrientation.equalsIgnoreCase("SOUTH")) {
                 writer.startElement("br", null); // PENDING(craigmcc)
                 writer.endElement("br");
             }
             // The difference between SOUTH and WEST is that SOUTH
             // requires a <br>.
-            if (facetOrientation.equalsIgnoreCase(SOUTH)
-                    || facetOrientation.equalsIgnoreCase(WEST)) {
+            if (facetOrientation.equalsIgnoreCase("SOUTH")
+                    || facetOrientation.equalsIgnoreCase("WEST")) {
                 facet.encodeBegin(context);
                 if (facet.getRendersChildren()) {
                     facet.encodeChildren(context);
@@ -294,44 +412,6 @@ public class ScrollerComponent extends UICommand {
         }
 
     }//writeNavWidgetMarkup()
-    
-
-    /**
-     * <p>Build and return the string consisting of the attibutes for a
-     * result set navigation link anchor.</p>
-     *
-     * @param context  the FacesContext
-     * @param clientId the clientId of the enclosing UIComponent
-     * @param action   the value for the rhs of the =
-     *
-     * @return a String suitable for setting as the value of a navigation
-     *         href.
-     */
-    private String getAnchorAttrs(FacesContext context, String clientId,
-            int action) {
-        int currentPage = 1;
-        int formNumber = getFormNumber(context);
-        Integer curPage = (Integer) getAttributes().get("currentPage");
-        if (curPage != null) {
-            currentPage = curPage.intValue();
-        }
-        String result = "href=\"#\" " + "onmousedown=\"" + "document.forms["
-                + formNumber + "]['" + clientId + "_action'].value='" + action
-                + "'; " + "document.forms[" + formNumber + "]['" + clientId
-                + "_curPage'].value='" + currentPage + "'; "
-                + "document.forms[" + formNumber + "].submit()\"";
-
-        return result;
-    }
-    
-
-    private String getHiddenFields(String clientId) {
-        String result = "<input type=\"hidden\" name=\"" + clientId
-                + "_action\"/>\n" + "<input type=\"hidden\" name=\"" + clientId
-                + "_curPage\"/>";
-
-        return result;
-    }
     
 
     // PENDING: avoid doing this each time called.  Perhaps
@@ -362,47 +442,5 @@ public class ScrollerComponent extends UICommand {
     }
     
 
-    /**
-     * Returns the total number of pages in the result set based on
-     * <code>rows</code> and <code>rowCount</code> of <code>UIData</code>
-     * component that this scroller is associated with.
-     * For the purposes of this demo, we are assuming the <code>UIData</code> to
-     * be child of <code>UIForm</code> component and not nested inside a custom
-     * NamingContainer.
-     */
-    protected int getTotalPages(FacesContext context) {
-        String forValue = (String) getAttributes().get("for");
-        UIData uiData = (UIData) getForm(context).findComponent(forValue);
-        if (uiData == null) {
-            return 0;
-        }
-        int rowsPerPage = uiData.getRows();
-        int totalRows = 0;
-        int result = 0;
-        totalRows = uiData.getRowCount();
-        result = totalRows / rowsPerPage;
-        if (0 != (totalRows % rowsPerPage)) {
-            result++;
-        }
-        return result;
-    }
-    
-
-    /**
-     * Returns the number of rows to display by looking up the
-     * <code>UIData</code> component that this scroller is associated with.
-     * For the purposes of this demo, we are assuming the <code>UIData</code> to
-     * be child of <code>UIForm</code> component and not nested inside a custom
-     * NamingContainer.
-     */
-    protected int getRowsPerPage(FacesContext context) {
-        String forValue = (String) getAttributes().get("for");
-        UIData uiData = (UIData) getForm(context).findComponent(forValue);
-        if (uiData == null) {
-            return 0;
-        }
-        return uiData.getRows();
-    }
-    
-    
 }
+
