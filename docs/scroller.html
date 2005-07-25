@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>PGIST Tag - scroller</title>
+</head>
+<body>
+<div style="text-align: center;"><big style="font-weight: bold;"><big>PGIST
+Tag - scroller</big></big><br>
+</div>
+Add the following line to the beginning of your jsp file:<br>
+&nbsp;&nbsp;&nbsp; &lt;%@ taglib
+uri="http://www.pgist.org/jsf/components" prefix="pg" %&gt;<br>
+<br>
+<br>
+<span style="color: rgb(153, 0, 0); font-weight: bold;">Backing Bean:</span><br>
+<br>
+&nbsp;&nbsp;&nbsp; public class BackingBean() {<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private PageSetting
+pageSetting;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public PageSetting
+getPageSetting() {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+return pageSetting;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public String
+listUser(ActionEvent event) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+......<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+<br>
+&nbsp;&nbsp;&nbsp; }//class BackingBean()<br>
+<br>
+<br>
+<span style="color: rgb(153, 0, 0); font-weight: bold;">Tag Usage
+Paradigm:</span><br>
+<br>
+&lt;pg:scroller id="scroller" width="80%"<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+actionListener="#{SysAdminBean.listUser}"<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+value="#{SysAdminBean.pageSetting}"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+showPageGo="true"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+showRowsOfPage="true"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+showPageNumber="10"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+infoType="row" /&gt;<br>
+<br>
+<br>
+<span style="color: rgb(153, 0, 0); font-weight: bold;">Options:<br>
+<br>
+&nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">id</span><span
+ style="color: rgb(0, 0, 0);"> : required, a unique name for current
+scroller</span><br>
+</span>&nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">width</span>:
+optional, default is 100%<br>
+&nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">actionListener</span>:
+required, should be a method of the backing bean<br>
+&nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">value</span>:
+required, should be an instance of org.pgist.util.PageSetting<br>
+&nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">showPageGo</span>:
+optional, default is not showing the directly page going component<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+valid value: true<br>
+&nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">showRowsOfPage</span>:
+optional, default is not showing the rows of page component<br>
+&nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">showPageNumber</span>:
+optional, default is showing 10 pages<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+valid value: positive numbers, default is 10<br>
+&nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">infoType</span>:
+optional, default is not showing the information<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+valid value: row, showing current row range and total row bumber<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+page, showing current page and total page number<br>
+<br>
+</body>
+</html>
