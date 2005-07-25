@@ -104,8 +104,19 @@
             </description>
         </attribute>
         <attribute>
+            <name>pageSetting</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Value binding expression pointing at (a) a DataModel instance,
+                (b) an array of objects, (c) a List of objects, (d) a
+                java.sql.ResultSet (or RowSet), (d) a javax.servlet.jsp.jstl.sql.Result
+                object, or (e) a JavaBean (which will be treated as a one-row dataset).
+            </description>
+        </attribute>
+        <attribute>
             <name>actionListener</name>
-            <required>false</required>
+            <required>true</required>
             <rtexprvalue>false</rtexprvalue>
             <description>
                  Optional method binding reference to handle tree expansion and contraction events.
@@ -120,23 +131,28 @@
             </description>
         </attribute>
         <attribute>
-            <name>theme</name>
+            <name>infoType</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
-            <description>
-                Component id of this component.
-            </description>
+            <description></description>
         </attribute>
         <attribute>
-            <name>value</name>
-            <required>true</required>
+            <name>showPageGo</name>
+            <required>false</required>
             <rtexprvalue>false</rtexprvalue>
-            <description>
-                Value binding expression pointing at (a) a DataModel instance,
-                (b) an array of objects, (c) a List of objects, (d) a
-                java.sql.ResultSet (or RowSet), (d) a javax.servlet.jsp.jstl.sql.Result
-                object, or (e) a JavaBean (which will be treated as a one-row dataset).
-            </description>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>showRowsOfPage</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>showPageNumber</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
         </attribute>
     </tag>
 

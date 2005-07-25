@@ -25,7 +25,8 @@ public class PageSetting {
         30,
         50,
         80,
-        100
+        100,
+        200
     };
     
     
@@ -143,6 +144,15 @@ public class PageSetting {
             firstRow = 0;
         }
         return firstRow;
+    }
+    
+    
+    public int getLastRow() {
+        int lastRow = getFirstRow()+rowOfPage-1;
+        if (lastRow>rowSize) {
+            lastRow = rowSize;
+        }
+        return lastRow;
     }
     
     
