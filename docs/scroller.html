@@ -38,7 +38,7 @@ listUser(ActionEvent event) {<br>
 <span style="color: rgb(153, 0, 0); font-weight: bold;">Tag Usage
 Paradigm:</span><br>
 <br>
-&lt;pg:scroller id="scroller" width="80%"<br>
+&lt;pg:scroller id="scroller" width="80%" styleClass="myclass"<br>
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
 actionListener="#{SysAdminBean.listUser}"<br>
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
@@ -60,6 +60,8 @@ infoType="row" /&gt;<br>
 scroller</span><br>
 </span>&nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">width</span>:
 optional, default is 100%<br>
+&nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">styleClass</span>:
+optional, default is no class<br>
 &nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">actionListener</span>:
 required, should be a method of the backing bean<br>
 &nbsp;&nbsp;&nbsp; <span style="color: rgb(51, 0, 153);">value</span>:
@@ -80,6 +82,20 @@ optional, default is not showing the information<br>
 valid value: row, showing current row range and total row bumber<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 page, showing current page and total page number<br>
+<br>
+<br>
+<span style="color: rgb(153, 0, 0);">CSS examples:</span><br>
+<br>
+&nbsp;&nbsp;&nbsp; &lt;STYLE TYPE="text/css" MEDIA="all"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .myclass {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; display: inline;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; list-style: disc inside;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; padding: 0 2px 0 2px;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; margin: 0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; font-size: 10px;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; text-decoration: none;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; &lt;/STYLE&gt;<br>
 <br>
 </body>
 </html>

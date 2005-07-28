@@ -14,8 +14,8 @@ public class PageSetting {
     private int page = 1;
     private int rowSize = 0;
     private int pageSize = 0;
-    private int rowOfPage = 20;
-    private int pageOfScreen = 20;
+    private int rowOfPage = 10;
+    private int pageOfScreen = 10;
     private int head = 1;
     private int tail = 1;
     private Hashtable parameters = new Hashtable();
@@ -125,13 +125,9 @@ public class PageSetting {
         if (pageSize<=pageOfScreen) {//we have only a few pages
             head = 1;
         } else {//too many pages
-            if (page<pageOfScreen/2) {//nearer from left end
-                head = 1;
-            } else if ((pageSize-page)<pageOfScreen/2) {//nearer from right end
-                head = pageSize - pageOfScreen;
-            } else {
-                head = page - pageOfScreen/2;
-            }
+            head = (page / pageOfScreen);
+            if (page % pageOfScreen==0) head--;
+            head = head * pageOfScreen + 1;
         }
         tail = head + pageOfScreen - 1;
         if (tail > pageSize) tail = pageSize;

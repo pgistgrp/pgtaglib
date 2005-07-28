@@ -1,13 +1,8 @@
 package org.pgist.taglib;
 
-import org.pgist.component.ScrollerComponent;
-
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIData;
 import javax.faces.context.FacesContext;
-import javax.faces.el.MethodBinding;
 import javax.faces.el.ValueBinding;
-import javax.faces.event.ActionEvent;
 import javax.faces.webapp.UIComponentTag;
 
 /**
@@ -19,11 +14,9 @@ import javax.faces.webapp.UIComponentTag;
  */
 public class ScrollerTag extends UIComponentTag {
 
-    protected String pageSetting = null;
-
-    protected String actionListener = null;
-
     protected String width = null;
+
+    protected String align = null;
 
     protected String infoType = null;
 
@@ -31,14 +24,9 @@ public class ScrollerTag extends UIComponentTag {
 
     protected String showRowsOfPage = null;
 
-    protected String showPageNumber = null;
+    protected String styleClass = null;
 
     
-    public void setPageSetting(String pageSetting) {
-        this.pageSetting = pageSetting;
-    }
-    
-
     public String getComponentType() {
         return ("Scroller");
     }
@@ -49,18 +37,15 @@ public class ScrollerTag extends UIComponentTag {
     }
     
 
-    /**
-     * method reference to handle an action event generated as a result of
-     * clicking on a link that points a particular page in the result-set.
-     */
-    public void setActionListener(String actionListener) {
-        this.actionListener = actionListener;
-    }
-
     public void setWidth(String width) {
         this.width = width;
     }
     
+
+    public void setAlign(String align) {
+        this.align = align;
+    }
+
 
     public void setInfoType(String infoType) {
         this.infoType = infoType;
@@ -76,57 +61,46 @@ public class ScrollerTag extends UIComponentTag {
     }
     
 
-    public void setShowPageNumber(String showPageNumber) {
-        this.showPageNumber = showPageNumber;
+    public void setStyleClass(String styleClass) {
+        this.styleClass = styleClass;
     }
     
 
     public void release() {
         super.release();
+        showPageGo = "";
+        showRowsOfPage = "";
+        styleClass = "";
     }
 
     
     protected void setProperties(UIComponent component) {
+        System.out.println("!!! @ ScrollerTag.setProperties");
+        
         super.setProperties(component);
         FacesContext context = FacesContext.getCurrentInstance();
 
-        if (pageSetting != null) {
-            if (isValueReference(pageSetting)) {
-                ValueBinding vb = getFacesContext().getApplication()
-                        .createValueBinding(pageSetting);
-                component.setValueBinding("value", vb);
-            } else {
-                ((UIData) component).setValue(pageSetting);
-            }
-        }
-
-        if (actionListener != null) {
-            if (isValueReference(actionListener)) {
-                Class args[] = { ActionEvent.class };
-                MethodBinding mb = FacesContext.getCurrentInstance()
-                        .getApplication().createMethodBinding(actionListener,
-                                args);
-                ((ScrollerComponent) component).setActionListener(mb);
-            } else {
-                Object params[] = { actionListener };
-                throw new javax.faces.FacesException();
-            }
-        }
-
         if (width != null) {
             if (isValueReference(width)) {
-                ValueBinding vb = context.getApplication().createValueBinding(
-                        width);
+                ValueBinding vb = context.getApplication().createValueBinding(width);
                 component.setValueBinding("width", vb);
             } else {
                 component.getAttributes().put("width", width);
             }
         }
 
+        if (align != null) {
+            if (isValueReference(align)) {
+                ValueBinding vb = context.getApplication().createValueBinding(align);
+                component.setValueBinding("align", vb);
+            } else {
+                component.getAttributes().put("align", align);
+            }
+        }
+
         if (infoType != null) {
             if (isValueReference(infoType)) {
-                ValueBinding vb = context.getApplication().createValueBinding(
-                        infoType);
+                ValueBinding vb = context.getApplication().createValueBinding(infoType);
                 component.setValueBinding("infoType", vb);
             } else {
                 component.getAttributes().put("infoType", infoType);
@@ -135,8 +109,7 @@ public class ScrollerTag extends UIComponentTag {
 
         if (showPageGo != null) {
             if (isValueReference(showPageGo)) {
-                ValueBinding vb = context.getApplication().createValueBinding(
-                        showPageGo);
+                ValueBinding vb = context.getApplication().createValueBinding(showPageGo);
                 component.setValueBinding("showPageGo", vb);
             } else {
                 component.getAttributes().put("showPageGo", showPageGo);
@@ -145,21 +118,19 @@ public class ScrollerTag extends UIComponentTag {
 
         if (showRowsOfPage != null) {
             if (isValueReference(showRowsOfPage)) {
-                ValueBinding vb = context.getApplication().createValueBinding(
-                        showRowsOfPage);
+                ValueBinding vb = context.getApplication().createValueBinding(showRowsOfPage);
                 component.setValueBinding("showRowsOfPage", vb);
             } else {
                 component.getAttributes().put("showRowsOfPage", showRowsOfPage);
             }
         }
 
-        if (showPageNumber != null) {
-            if (isValueReference(showPageNumber)) {
-                ValueBinding vb = context.getApplication().createValueBinding(
-                        showPageNumber);
-                component.setValueBinding("showPageNumber", vb);
+        if (styleClass != null) {
+            if (isValueReference(styleClass)) {
+                ValueBinding vb = context.getApplication().createValueBinding(styleClass);
+                component.setValueBinding("styleClass", vb);
             } else {
-                component.getAttributes().put("showPageNumber", showPageNumber);
+                component.getAttributes().put("styleClass", styleClass);
             }
         }
 

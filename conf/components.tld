@@ -25,14 +25,6 @@
             the base class for more specialized markup generation.
         </description>
         <attribute>
-            <name>binding</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description>
-                Value binding expression to bind this component to a backing bean.
-            </description>
-        </attribute>
-        <attribute>
             <name>id</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
@@ -62,6 +54,17 @@
             <description>sadfasd</description>
         </attribute>
         <attribute>
+            <name>actionBinding</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Value binding expression pointing at (a) a DataModel instance,
+                (b) an array of objects, (c) a List of objects, (d) a
+                java.sql.ResultSet (or RowSet), (d) a javax.servlet.jsp.jstl.sql.Result
+                object, or (e) a JavaBean (which will be treated as a one-row dataset).
+            </description>
+        </attribute>
+        <attribute>
             <name>value</name>
             <required>true</required>
             <rtexprvalue>false</rtexprvalue>
@@ -81,7 +84,31 @@
                 will be exposed as a request scope attribute.  If not specified, no
                 such row data object will be exposed.
             </description>
-          </attribute>
+        </attribute>
+        <attribute>
+            <name>rowSize</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                bind this component to a scroller.
+            </description>
+        </attribute>
+        <attribute>
+            <name>pageSize</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                bind this component to a scroller.
+            </description>
+        </attribute>
+        <attribute>
+            <name>pageSetting</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                bind this component to a scroller.
+            </description>
+        </attribute>
     </tag>
 
 
@@ -104,26 +131,21 @@
             </description>
         </attribute>
         <attribute>
-            <name>pageSetting</name>
-            <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description>
-                Value binding expression pointing at (a) a DataModel instance,
-                (b) an array of objects, (c) a List of objects, (d) a
-                java.sql.ResultSet (or RowSet), (d) a javax.servlet.jsp.jstl.sql.Result
-                object, or (e) a JavaBean (which will be treated as a one-row dataset).
-            </description>
-        </attribute>
-        <attribute>
-            <name>actionListener</name>
-            <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description>
-                 Optional method binding reference to handle tree expansion and contraction events.
-            </description>
-        </attribute>
-        <attribute>
             <name>width</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Component id of this component.
+            </description>
+        </attribute>
+        <attribute>
+            <name>align</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <description>
@@ -144,12 +166,6 @@
         </attribute>
         <attribute>
             <name>showRowsOfPage</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description></description>
-        </attribute>
-        <attribute>
-            <name>showPageNumber</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <description></description>

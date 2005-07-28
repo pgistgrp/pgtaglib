@@ -9,7 +9,7 @@
             <property name="bgcolor"     value="#C5C5C3"/>
             <property name="frame"       value="box"/>
             <property name="cellspacing" value="1"/>
-            <property name="cellpadding" value="2"/>
+            <property name="cellpadding" value="1"/>
             <property name="border"      value="1"/>
             <property name="style"       value="border-collapse:collapse; border:solid 2px #8CACBB;"/>
         </table>

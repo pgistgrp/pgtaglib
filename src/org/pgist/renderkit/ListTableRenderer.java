@@ -1,22 +1,24 @@
 package org.pgist.renderkit;
 
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.faces.component.UIColumn;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+import javax.faces.el.MethodBinding;
+import javax.faces.event.ActionEvent;
 
-import org.pgist.conf.Caption;
 import org.pgist.conf.ListTableTag;
 import org.pgist.conf.Row;
 import org.pgist.conf.Table;
 import org.pgist.conf.Theme;
 import org.pgist.conf.ThemeManager;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
+import org.pgist.util.PageSetting;
 
 /**
  * <p><code>Renderer</code> that supports generating markup for the per-row data
@@ -34,11 +36,37 @@ public class ListTableRenderer extends BaseRenderer {
 
     
     private static ThreadLocal themeVar = new ThreadLocal();
+    public static final String FORM_NUMBER_ATTR = "com.sun.faces.FormNumber";
     
     
     public Theme getTheme() {
         return (Theme) themeVar.get();
     }
+
+    
+    public void decode(FacesContext context, UIComponent component) throws NullPointerException {
+        System.out.println("!!! @ ListTableRenderer.decode");
+
+        PageSetting setting = (PageSetting) component.getValueBinding("pageSetting").getValue(context);
+        String clientId = component.getClientId(context);
+
+        Map requestParameterMap = (Map) context.getExternalContext().getRequestParameterMap();
+        String curPage = (String) requestParameterMap.get(clientId + "_page");
+        System.out.println("++++++++++++++  "+clientId + "_page  -- "+curPage);
+        try {
+            int currentPage = Integer.valueOf(curPage).intValue();
+            setting.setPage(currentPage);
+        } catch(Exception e) {
+            setting.setPage(1);
+        }
+
+        String rowOfPageStr = (String) requestParameterMap.get(clientId + "_rowOfPage");
+        try {
+            int rowOfPage = Integer.valueOf(rowOfPageStr).intValue();
+            setting.setRowOfPage(rowOfPage);
+        } catch(Exception e) {
+        }
+    }//decode()
     
     
     // -------------------------------------------------------- Renderer Methods
@@ -52,13 +80,17 @@ public class ListTableRenderer extends BaseRenderer {
      *
      * @throws IOException if an input/output error occurs
      */
-    public void encodeBegin(FacesContext context, UIComponent component)
-        throws IOException {
+    public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
+        System.out.println("!!! @ ListTableRenderer.encodeBegin");
         
         super.encodeBegin(context, component);
         
         ResponseWriter writer = context.getResponseWriter();
         UIData data = (UIData) component;
+
+        String binding = (String) data.getAttributes().get("actionBinding");
+        MethodBinding mb = context.getApplication().createMethodBinding(binding, new Class[] { ActionEvent.class });
+        mb.invoke(context, new Object[] { new ActionEvent(component) });
         
         //Get theme definition
         String theme = (String) data.getAttributes().get("theme");
@@ -67,10 +99,171 @@ public class ListTableRenderer extends BaseRenderer {
         if (theTheme==null) theTheme = ThemeManager.getTheme("default");
         themeVar.set(theTheme);
         
-        // Render the beginning of this table
+        //java script
+        String clientId = component.getClientId(context);
+        String tagId = (String) data.getAttributes().get("id");
+        int formNumber = getFormNumber(context);
+        writer.startElement("script", null);
+        writer.writeAttribute("type", "text/javascript", null);
+        writer.writeText("<!--", null);
+        writer.writeText("\n", null);
+        writer.writeText("function "+tagId+"_scroll(page) {", null);
+        writer.writeText("document.forms[" + formNumber + "]['" + clientId + "_page'].value=page;", null);
+        writer.writeText("document.forms[" + formNumber + "].submit();", null);
+        writer.writeText("}", null);
+        writer.writeText("//-->", null);
+        writer.endElement("script");
+        writer.writeText("\n", null);
+
+        PageSetting setting = (PageSetting) component.getValueBinding("pageSetting").getValue(context);
+        //page
+        writer.startElement("input", null);
+        writer.writeAttribute("type", "hidden", null);
+        writer.writeAttribute("name", clientId+"_page", null);
+        writer.writeAttribute("value", ""+setting.getPage(), null);
+        writer.endElement("input");
+        //rowOfPage
+        writer.startElement("input", null);
+        writer.writeAttribute("type", "hidden", null);
+        writer.writeAttribute("name", clientId+"_rowOfPage", null);
+        writer.writeAttribute("value", ""+setting.getRowOfPage(), null);
+        writer.endElement("input");
+        
+        //Render the outmost table
+        writer.startElement("table", data);
+        writer.writeAttribute("cell-padding", "0", null);
+        writer.writeAttribute("cell-spacing", "0", null);
+        writer.writeAttribute("border", "0", null);
+        String width = (String) data.getAttributes().get("width");
+        if (width!=null && !"".equals(width)) {
+            writer.writeAttribute("width", width, null);
+        } else {
+            writer.writeAttribute("width", "100%", null);
+        }
+        writer.writeText("\n", null);
+        
+        //Render topScroller
+        writer.startElement("tr", data);
+        renderTopScroller(context, data, writer);
+        writer.writeText("\n", null);
+        
+        //Render filter
+        renderFilter(context, data, writer);
+        writer.endElement("tr");
+        writer.writeText("\n", null);
+        
+        //Render title
+        writer.startElement("tr", data);
+        writer.startElement("td", data);
+        writer.startElement("table", data);
+        writer.writeAttribute("cell-padding", "0", null);
+        writer.writeAttribute("cell-spacing", "0", null);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("width", "100%", null);
+        writer.writeText("\n", null);
+        writer.startElement("tr", data);
+        renderTitle(context, data, writer);
+        
+        //Render toolbar
+        renderToolbar(context, data, writer);
+        writer.endElement("tr");
+        writer.endElement("table");
+        writer.endElement("td");
+        writer.endElement("tr");
+        writer.writeText("\n", null);
+        
+        //Render the content table
+        writer.startElement("tr", data);
+        writer.startElement("td", data);
         data.setRowIndex(-1);
         tableBegin(context, data, writer);
+    }
 
+
+    protected int getFormNumber(FacesContext context) {
+        Map requestMap = context.getExternalContext().getRequestMap();
+        int numForms = 0;
+        Integer formsInt = null;
+        // find out the current number of forms in the page.
+        if (null != (formsInt = (Integer) requestMap.get(FORM_NUMBER_ATTR))) {
+            numForms = formsInt.intValue();
+            //     since the form index in the document starts from 0.
+            numForms--;
+        }
+        return numForms;
+    }//getFormNumber()
+    
+
+    /**
+     * render the top scroller component
+     * @param context
+     * @param data
+     * @param writer
+     */
+    private void renderTopScroller(FacesContext context, UIData data, ResponseWriter writer) throws IOException {
+        UIComponent topScroller = data.getFacet("topScroller");
+        if (topScroller != null) {
+            writer.startElement("td", topScroller);
+            writer.writeAttribute("align", "left", null);
+            encodeRecursive(context, topScroller);
+            writer.endElement("td");
+        }
+    }//renderTopScroller()
+
+
+    /**
+     * render the top scroller component
+     * @param context
+     * @param data
+     * @param writer
+     */
+    private void renderBottomScroller(FacesContext context, UIData data, ResponseWriter writer) throws IOException {
+        UIComponent buttomScroller = data.getFacet("bottomScroller");
+        if (buttomScroller != null) {
+            writer.startElement("td", buttomScroller);
+            writer.writeAttribute("align", "left", null);
+            encodeRecursive(context, buttomScroller);
+            writer.endElement("td");
+        }
+    }//renderBottomScroller()
+
+
+    /**
+     * 
+     * @param context
+     * @param data
+     * @param writer
+     */
+    private void renderFilter(FacesContext context, UIData data, ResponseWriter writer) throws IOException {
+        UIComponent filter = data.getFacet("filter");
+        if (filter != null) {
+            writer.startElement("td", filter);
+            writer.writeAttribute("align", "right", null);
+            encodeRecursive(context, filter);
+            writer.endElement("td");
+        }
+    }
+
+
+    private void renderTitle(FacesContext context, UIData data, ResponseWriter writer) throws IOException {
+        UIComponent title = data.getFacet("title");
+        if (title != null) {
+            writer.startElement("td", title);
+            writer.writeAttribute("align", "left", null);
+            encodeRecursive(context, title);
+            writer.endElement("td");
+        }
+    }
+
+
+    private void renderToolbar(FacesContext context, UIData data, ResponseWriter writer) throws IOException {
+        UIComponent toolbar = data.getFacet("toolbar");
+        if (toolbar != null) {
+            writer.startElement("td", toolbar);
+            writer.writeAttribute("align", "right", null);
+            encodeRecursive(context, toolbar);
+            writer.endElement("td");
+        }
     }
 
 
@@ -101,7 +294,7 @@ public class ListTableRenderer extends BaseRenderer {
                 break;
             }
 
-            // Select the next row (if there is one)
+            // Select the next row (if there is scroller2one)
             data.setRowIndex(++rowIndex);
             if (!data.isRowAvailable()) {
                 break;
@@ -132,10 +325,19 @@ public class ListTableRenderer extends BaseRenderer {
         ResponseWriter writer = context.getResponseWriter();
         UIData data = (UIData) component;
 
-        // Render the ending of this table
         data.setRowIndex(-1);
         tableEnd(context, data, writer);
+        writer.endElement("td");
+        writer.endElement("tr");
 
+        //Render bottomScroller
+        writer.startElement("tr", data);
+        writer.writeText("\n", null);
+        renderBottomScroller(context, data, writer);
+        writer.endElement("tr");
+
+        //end the outmost table
+        writer.endElement("table");
     }
 
 
@@ -334,32 +536,16 @@ public class ListTableRenderer extends BaseRenderer {
         ListTableTag listTableTag = (ListTableTag) theme.getTag("listTable");
         Table table = listTableTag.getTable();
         
-        String width = (String) data.getAttributes().get("width");
-        boolean hasWidth = false;
-        if (width!=null && !"".equals(width)) hasWidth = true;
         for (Iterator iter=table.getProperties().entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
             String name = (String) entry.getKey();
             String value = (String) entry.getValue();
-            if (hasWidth && "width".equals(name)) {
-                writer.writeAttribute(name, width, null);
-            } else {
-                writer.writeAttribute(name, value, null);
-            }
+            writer.writeAttribute(name, value, null);
         }//for iter
         
+        writer.writeAttribute("width", "100%", null);
         writer.writeText("\n", null);
 
-        //caption
-        UIComponent theCaption = data.getFacet("caption");
-        if (theCaption != null) {
-            Caption captionTag = (Caption) listTableTag.getCaption();
-            writer.startElement(captionTag.compose(), theCaption);
-            encodeRecursive(context, theCaption);
-            writer.endElement("caption");
-            writer.writeText("\n", null);
-        }
-        
         // Render the table and column headers (if any)
         UIComponent theHeader = data.getFacet("header");
         int n = getColumnHeaderCount(data);
