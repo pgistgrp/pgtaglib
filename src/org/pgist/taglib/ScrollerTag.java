@@ -75,7 +75,6 @@ public class ScrollerTag extends UIComponentTag {
 
     
     protected void setProperties(UIComponent component) {
-        System.out.println("!!! @ ScrollerTag.setProperties");
         
         super.setProperties(component);
         FacesContext context = FacesContext.getCurrentInstance();

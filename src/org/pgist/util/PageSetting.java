@@ -21,7 +21,9 @@ public class PageSetting {
     private Hashtable parameters = new Hashtable();
     private int[] options = {
         10,
+        15,
         20,
+        25,
         30,
         50,
         80,

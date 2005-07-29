@@ -89,7 +89,6 @@ public class ListTableTag extends UIComponentTag {
 
 
     protected void setProperties(UIComponent component) {
-        System.out.println("!!! @ ListTableTag.setProperties");
         
         super.setProperties(component);
         FacesContext context = FacesContext.getCurrentInstance();
@@ -147,7 +146,6 @@ public class ListTableTag extends UIComponentTag {
         }
 
         if (pageSetting != null) {
-            System.out.println("---> @ ListTableTag.setProperties()");
             if (isValueReference(pageSetting)) {
                 ValueBinding vb = getFacesContext().getApplication().createValueBinding(pageSetting);
                 component.setValueBinding("pageSetting", vb);
@@ -169,8 +167,6 @@ public class ListTableTag extends UIComponentTag {
                 m = Integer.parseInt(pageSize);
                 if (m<1) m = 10;
                 setting.setPageOfScreen(m);
-                
-                System.out.println("--> "+setting.getRowOfPage()+"  "+setting.getPageOfScreen());
             } else {
                 component.getAttributes().put("pageSetting", pageSetting);
             }

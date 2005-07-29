@@ -5,13 +5,9 @@ import java.util.Map;
 
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
-import javax.faces.el.MethodBinding;
-import javax.faces.event.ActionEvent;
 
-import org.pgist.renderkit.Util;
 import org.pgist.util.PageSetting;
 
 
@@ -57,7 +53,6 @@ public class ScrollerComponent extends UICommand {
             String rendererType = parent.getRendererType();
             if ("ListTable".equals(rendererType)) {
                 PageSetting setting = (PageSetting) parent.getValueBinding("pageSetting").getValue(context);
-                System.out.println("============  "+setting);
                 return setting;
             }
             parent = parent.getParent();
@@ -106,23 +101,20 @@ public class ScrollerComponent extends UICommand {
     
 
     public void encodeBegin(FacesContext context) throws IOException {
-        System.out.println("!!! @ ScrollerComponent.encodeBegin");
         return;
     }
     
 
     public void encodeEnd(FacesContext context) throws IOException {
-        System.out.println("@ ScrollerComponent - encodeEnd !");
 
         ResponseWriter writer = context.getResponseWriter();
 
         String parentId = getParentId(context);
         String clientId = getClientId(context);
-        int formNumber = getFormNumber(context);
         
         writer.startElement("table", null);
-        writer.writeAttribute("cell-padding", "0", null);
-        writer.writeAttribute("cell-spacing", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
         writer.writeText("\n", null);
         writer.startElement("tr", null);
         String styleClass = (String) getAttributes().get("styleClass");
@@ -162,11 +154,12 @@ public class ScrollerComponent extends UICommand {
         writer.endElement("td");
         
         writer.startElement("td nowrap", null);
-        writer.writeAttribute("align", "center", null);
-        writer.writeAttribute("valign", "middle", null);
+        writer.writeAttribute("style", "vertical-align: middle;", null);
         writer.writeText("\n", null);
         
         writer.startElement("table", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
         writer.writeText("\n", null);
         writer.startElement("tr", null);
         if (styleClass!=null && !"".equals(styleClass)) {
@@ -176,8 +169,7 @@ public class ScrollerComponent extends UICommand {
 
         //prev screen
         writer.startElement("td nowrap", null);
-        writer.writeAttribute("align", "right", null);
-        writer.writeAttribute("valign", "middle", null);
+        writer.writeAttribute("style", "vertical-align:middle; padding-right:2px;", null);
         writer.writeText("\n", null);
         if (page!=1) {
             writer.startElement("a", null);
@@ -195,8 +187,7 @@ public class ScrollerComponent extends UICommand {
         
         //prev page
         writer.startElement("td nowrap", null);
-        writer.writeAttribute("align", "right", null);
-        writer.writeAttribute("valign", "middle", null);
+        writer.writeAttribute("style", "vertical-align:middle; padding-right:2px;", null);
         if (page!=1) {
             writer.startElement("a", null);
             writer.writeAttribute("href", "#", null);
@@ -212,10 +203,7 @@ public class ScrollerComponent extends UICommand {
         //internal numbers
         for (int i=setting.getHead(), size=setting.getTail(); i<=size; i++) {
             writer.startElement("td nowrap", null);
-            if (i!=setting.getHead()) {
-                writer.writeAttribute("style", "border-left:1px solid #9999ff;", null);
-            }
-            writer.writeAttribute("align", "center", null);
+            writer.writeAttribute("style", "vertical-align:middle; padding-right:2px;", null);
             if (i==page) {
                 writer.startElement("span", null);
                 writer.writeAttribute("style", "color:red;", null);
@@ -236,7 +224,7 @@ public class ScrollerComponent extends UICommand {
         
         //next page
         writer.startElement("td nowrap", null);
-        writer.writeAttribute("align", "left", null);
+        writer.writeAttribute("style", "vertical-align:middle; padding-right:2px;", null);
         if (page!=setting.getPageSize()) {
             writer.startElement("a", null);
             writer.writeAttribute("href", "#", null);
@@ -251,7 +239,7 @@ public class ScrollerComponent extends UICommand {
 
         //next screen
         writer.startElement("td nowrap", null);
-        writer.writeAttribute("align", "left", null);
+        writer.writeAttribute("style", "vertical-align:middle;", null);
         if (page!=setting.getPageSize()) {
             writer.startElement("a", null);
             writer.writeAttribute("href", "#", null);
@@ -274,13 +262,12 @@ public class ScrollerComponent extends UICommand {
         String showPageGo = (String) getAttributes().get("showPageGo");
         if ("true".equalsIgnoreCase(showPageGo)) {
             writer.startElement("td nowrap", null);
-            writer.writeAttribute("align", "center", null);
-            writer.writeAttribute("style", "padding-left:10px;", null);
+            writer.writeAttribute("style", "text-align:center; vertical-align:middle; padding-left:10px;", null);
             writer.writeText("Page:", null);
             writer.startElement("input", null);
             writer.writeAttribute("name", clientId+"_go", null);
             writer.writeAttribute("type", "text", null);
-            writer.writeAttribute("style", "border:thin dotted #800080;width:25px;", null);
+            writer.writeAttribute("style", "border:thin dotted #800080;width:40px;", null);
             writer.writeAttribute("onKeyDown", "if (event.which!=13) return false;"+parentId+"_scroll(document.forms["+getFormNumber(context)+"]['"+clientId+"_go'].value);", null);
             writer.writeAttribute("value", ""+setting.getPage(), null);
             writer.startElement("input", null);
@@ -296,11 +283,10 @@ public class ScrollerComponent extends UICommand {
         String showRowsOfPage = (String) getAttributes().get("showRowsOfPage");
         if ("true".equalsIgnoreCase(showRowsOfPage)) {
             writer.startElement("td nowrap", null);
-            writer.writeAttribute("align", "center", null);
-            writer.writeAttribute("style", "padding-left:10px;", null);
+            writer.writeAttribute("style", "text-align:center; vertical-align:middle; padding-left:10px;", null);
             writer.writeText("Rows Per Page:", null);
             writer.startElement("select", null);
-            //writer.writeAttribute("onChange", getScrollPage(clientId, formNumber, page+1, ACTION_ROWOFPAGE), null);
+            writer.writeAttribute("onChange", parentId+"_changeRowOfPage(this.value);", null);
             int[] options = setting.getOptions();
             for (int i=0; i<options.length; i++) {
                 if (options[i]==setting.getRowOfPage()) {

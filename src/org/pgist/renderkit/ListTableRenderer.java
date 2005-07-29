@@ -45,14 +45,12 @@ public class ListTableRenderer extends BaseRenderer {
 
     
     public void decode(FacesContext context, UIComponent component) throws NullPointerException {
-        System.out.println("!!! @ ListTableRenderer.decode");
 
         PageSetting setting = (PageSetting) component.getValueBinding("pageSetting").getValue(context);
         String clientId = component.getClientId(context);
 
         Map requestParameterMap = (Map) context.getExternalContext().getRequestParameterMap();
         String curPage = (String) requestParameterMap.get(clientId + "_page");
-        System.out.println("++++++++++++++  "+clientId + "_page  -- "+curPage);
         try {
             int currentPage = Integer.valueOf(curPage).intValue();
             setting.setPage(currentPage);
@@ -81,7 +79,6 @@ public class ListTableRenderer extends BaseRenderer {
      * @throws IOException if an input/output error occurs
      */
     public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
-        System.out.println("!!! @ ListTableRenderer.encodeBegin");
         
         super.encodeBegin(context, component);
         
@@ -111,6 +108,11 @@ public class ListTableRenderer extends BaseRenderer {
         writer.writeText("document.forms[" + formNumber + "]['" + clientId + "_page'].value=page;", null);
         writer.writeText("document.forms[" + formNumber + "].submit();", null);
         writer.writeText("}", null);
+        writer.writeText("function "+tagId+"_changeRowOfPage(n) {", null);
+        writer.writeText("document.forms[" + formNumber + "]['" + clientId + "_page'].value=1;", null);
+        writer.writeText("document.forms[" + formNumber + "]['" + clientId + "_rowOfPage'].value=n;", null);
+        writer.writeText("document.forms[" + formNumber + "].submit();", null);
+        writer.writeText("}", null);
         writer.writeText("//-->", null);
         writer.endElement("script");
         writer.writeText("\n", null);
@@ -131,8 +133,8 @@ public class ListTableRenderer extends BaseRenderer {
         
         //Render the outmost table
         writer.startElement("table", data);
-        writer.writeAttribute("cell-padding", "0", null);
-        writer.writeAttribute("cell-spacing", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
         writer.writeAttribute("border", "0", null);
         String width = (String) data.getAttributes().get("width");
         if (width!=null && !"".equals(width)) {
@@ -156,8 +158,8 @@ public class ListTableRenderer extends BaseRenderer {
         writer.startElement("tr", data);
         writer.startElement("td", data);
         writer.startElement("table", data);
-        writer.writeAttribute("cell-padding", "0", null);
-        writer.writeAttribute("cell-spacing", "0", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
         writer.writeAttribute("border", "0", null);
         writer.writeAttribute("width", "100%", null);
         writer.writeText("\n", null);
