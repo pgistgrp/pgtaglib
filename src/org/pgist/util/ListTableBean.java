@@ -9,17 +9,17 @@ public class ListTableBean {
     
     protected PageSetting pageSetting = new PageSetting();
     protected UIData data = null;
-    protected UIInput accountId = null;
+    protected UIInput objectId = null;
     protected UISelectBoolean checked = null;
     
     
-    public UIInput getAccountId() {
-        return accountId;
+    public UIInput getObjectId() {
+        return objectId;
     }
     
     
-    public void setAccountId(UIInput accountId) {
-        this.accountId = accountId;
+    public void setObjectId(UIInput objectId) {
+        this.objectId = objectId;
     }
     
     
