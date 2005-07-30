@@ -33,13 +33,12 @@
             </description>
         </attribute>
         <attribute>
-            <name>rendered</name>
-            <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description>
-                Flag indicating whether or not this component should be rendered.
-                If not specified, the default value is "true".
-            </description>
+          <name>binding</name>
+          <required>false</required>
+          <rtexprvalue>false</rtexprvalue>
+          <description>
+            Value binding expression to bind this component to a backing bean.
+          </description>
         </attribute>
         <attribute>
             <name>theme</name>
