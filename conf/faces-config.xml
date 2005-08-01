@@ -16,6 +16,14 @@
         </component-extension>
     </component>
 
+    <component>
+        <component-type>org.pgist.faces.Toolbar</component-type>
+        <component-class>org.pgist.component.ToolbarComponent</component-class>
+        <component-extension>
+            <component-family>org.pgist.faces.Toolbar</component-family>
+            <renderer-type>org.pgist.faces.Toolbar</renderer-type>
+        </component-extension>
+    </component>
 
     <!-- Custom Renderers -->
     <render-kit>
@@ -30,6 +38,16 @@
             <component-family>javax.faces.Data</component-family>
             <renderer-type>ListTable</renderer-type>
             <renderer-class>org.pgist.renderkit.ListTableRenderer</renderer-class>
+        </renderer>
+
+
+        <renderer>
+            <description>
+                Renderer for a toolbar component.
+            </description>
+            <component-family>org.pgist.faces.Toolbar</component-family>
+            <renderer-type>org.pgist.faces.Toolbar</renderer-type>
+            <renderer-class>org.pgist.renderkit.ToolbarRenderer</renderer-class>
         </renderer>
 
 
