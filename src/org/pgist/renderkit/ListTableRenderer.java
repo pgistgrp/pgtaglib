@@ -251,8 +251,10 @@ public class ListTableRenderer extends BaseRenderer {
         UIComponent title = data.getFacet("title");
         if (title != null) {
             writer.startElement("td", title);
+            writer.startElement("b", title);
             writer.writeAttribute("align", "left", null);
             encodeRecursive(context, title);
+            writer.endElement("b");
             writer.endElement("td");
         }
     }
