@@ -51,6 +51,16 @@
         </renderer>
 
 
+        <renderer>
+            <description>
+                Renderer for a toolbutton component.
+            </description>
+            <component-family>javax.faces.Command</component-family>
+            <renderer-type>org.pgist.faces.ToolButton</renderer-type>
+            <renderer-class>org.pgist.renderkit.ToolButtonRenderer</renderer-class>
+        </renderer>
+
+
     </render-kit>
 
 

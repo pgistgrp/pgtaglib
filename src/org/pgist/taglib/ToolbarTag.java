@@ -1,14 +1,10 @@
 package org.pgist.taglib;
 
 
-import com.sun.faces.util.Util;
-import java.util.Map;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIPanel;
 import javax.faces.webapp.UIComponentTag;
-import javax.servlet.jsp.JspException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import com.sun.faces.util.Util;
 
 
 public class ToolbarTag extends UIComponentTag {
@@ -50,4 +46,3 @@ public class ToolbarTag extends UIComponentTag {
 
 
 }//class ToolbarTag
-
