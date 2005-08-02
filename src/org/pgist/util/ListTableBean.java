@@ -68,13 +68,13 @@ public class ListTableBean {
         try {
             StringBuffer methodName = new StringBuffer("get");
             methodName.append(property.toUpperCase().charAt(0)).append(property.substring(1));
-            Method method = rowClass.getMethod(methodName.toString());
+            Method method = rowClass.getMethod(methodName.toString(), null);
             
             int n = data.getRowCount();
             for (int i = 0; i < n; i++) {
                 data.setRowIndex(i);
                 if (checked.isSelected()) {
-                    idList.add(method.invoke(data.getRowData()));
+                    idList.add(method.invoke(data.getRowData(), null));
                 }
             }//for i
         } catch(Exception e) {
