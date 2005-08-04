@@ -84,7 +84,11 @@ public class ListTableRenderer extends BaseRenderer {
         
         ResponseWriter writer = context.getResponseWriter();
         UIData data = (UIData) component;
-
+        
+        /*
+         * The actionBinding is used by the component to grab data instead of using prepared data by
+         * other program such as backing bean. With this binding the page itself can grab data directly. 
+         */
         String binding = (String) data.getAttributes().get("actionBinding");
         MethodBinding mb = context.getApplication().createMethodBinding(binding, new Class[] { ActionEvent.class });
         mb.invoke(context, new Object[] { new ActionEvent(component) });
