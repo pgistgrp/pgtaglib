@@ -195,11 +195,12 @@ public class MultiCheckboxRenderer extends HtmlBasicRenderer {
         } while (true);
         
         if(open) {
-            for (int i=rowCount; i<columns; i++) {
-                writer.startElement("td", null);
-                writer.writeText("&nbsp;", null);
-                writer.endElement("td");
-            }//for i
+            if (rowCount % columns != 0) {
+                for (int i=rowCount % columns; i<columns; i++) {
+                    writer.startElement("td", null);
+                    writer.endElement("td");
+                }//for i
+            }
             writer.endElement("tr");
             writer.writeText("\n", null);
         }
