@@ -58,11 +58,16 @@ public class ListTableBean {
     
     
     public Long selectedId() {
-        return (Long) objectId.getValue();
+        return selectedId(objectId);
     }//getSelectedId()
     
     
-    public List selectedIds(Class rowClass, String property) {
+    public Long selectedId(UIInput uiInput) {
+        return (Long) uiInput.getValue();
+    }//getSelectedId()
+    
+    
+    public List selectedIds(UIData uiData, UISelectBoolean uiSelect, Class rowClass, String property) {
         List idList = new ArrayList();
         
         try {
@@ -70,11 +75,11 @@ public class ListTableBean {
             methodName.append(property.toUpperCase().charAt(0)).append(property.substring(1));
             Method method = rowClass.getMethod(methodName.toString(), null);
             
-            int n = data.getRowCount();
+            int n = uiData.getRowCount();
             for (int i = 0; i < n; i++) {
-                data.setRowIndex(i);
-                if (checked.isSelected()) {
-                    idList.add(method.invoke(data.getRowData(), null));
+                uiData.setRowIndex(i);
+                if (uiSelect.isSelected()) {
+                    idList.add(method.invoke(uiData.getRowData(), null));
                 }
             }//for i
         } catch(Exception e) {
@@ -83,7 +88,11 @@ public class ListTableBean {
         
         return idList;
     }//selectedIds()
+
+    
+    public List selectedIds(Class rowClass, String property) {
+        return selectedIds(data, checked, rowClass, property);
+    }//selectedIds()
     
     
 }//class ListTableBean
-
