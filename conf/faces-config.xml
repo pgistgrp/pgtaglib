@@ -25,6 +25,15 @@
         </component-extension>
     </component>
 
+    <component>
+        <component-type>org.pgist.faces.TreeMap</component-type>
+        <component-class>org.pgist.component.TreeMapComponent</component-class>
+        <component-extension>
+            <component-family>org.pgist.faces.TreeMap</component-family>
+        </component-extension>
+    </component>
+
+    
     <!-- Custom Renderers -->
     <render-kit>
 
