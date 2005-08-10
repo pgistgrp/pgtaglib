@@ -17,6 +17,11 @@ public class TreeMapTag extends UIComponentTag {
     protected String styleClass = null;
     protected String depth = null;
     protected String actionBinding = null;
+    protected String title = null;
+    protected String content = null;
+    protected String conbar = null;
+    protected String focus = null;
+    protected String username = null;
 
     
     public String getComponentType() {
@@ -44,11 +49,41 @@ public class TreeMapTag extends UIComponentTag {
     }
 
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
+    public void setConbar(String conbar) {
+        this.conbar = conbar;
+    }
+
+
+    public void setFocus(String focus) {
+        this.focus = focus;
+    }
+
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+
     public void release() {
         super.release();
         styleClass = "";
         depth = "";
         actionBinding = "";
+        title = "";
+        content = "";
+        conbar = "";
+        focus = "";
+        username = "";
     }
 
     
@@ -75,18 +110,55 @@ public class TreeMapTag extends UIComponentTag {
             }
         }
 
+        if (title != null) {
+            if (isValueReference(title)) {
+                ValueBinding vb = context.getApplication().createValueBinding(title);
+                component.setValueBinding("title", vb);
+            } else {
+                component.getAttributes().put("title", title);
+            }
+        }
+
+        if (content != null) {
+            if (isValueReference(content)) {
+                ValueBinding vb = context.getApplication().createValueBinding(content);
+                component.setValueBinding("content", vb);
+            } else {
+                component.getAttributes().put("content", content);
+            }
+        }
+
+        if (conbar != null) {
+            if (isValueReference(conbar)) {
+                ValueBinding vb = context.getApplication().createValueBinding(conbar);
+                component.setValueBinding("conbar", vb);
+            } else {
+                component.getAttributes().put("conbar", conbar);
+            }
+        }
+
+        if (focus != null) {
+            if (isValueReference(focus)) {
+                ValueBinding vb = context.getApplication().createValueBinding(focus);
+                component.setValueBinding("focus", vb);
+            } else {
+                component.getAttributes().put("focus", focus);
+            }
+        }
+
+        if (username != null) {
+            if (isValueReference(username)) {
+                ValueBinding vb = context.getApplication().createValueBinding(username);
+                component.setValueBinding("username", vb);
+            } else {
+                component.getAttributes().put("username", username);
+            }
+        }
+
         if (actionBinding != null) {
             if (actionBinding != null) {
                 component.getAttributes().put("actionBinding", actionBinding);
             }
-            /*
-            if (isValueReference(actionBinding)) {
-                ValueBinding vb = context.getApplication().createValueBinding(actionBinding);
-                component.setValueBinding("actionBinding", vb);
-            } else {
-                component.getAttributes().put("actionBinding", actionBinding);
-            }
-            */
         }
     }//setProperties()
     
