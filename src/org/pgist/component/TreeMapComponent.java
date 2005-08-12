@@ -145,14 +145,15 @@ public class TreeMapComponent extends UIComponentBase {
             }
             
             //tree map
+            /*
             Stack stack = new Stack();
             stack.push(currentNode);
             while (!stack.empty()) {
                 Node node = (Node) stack.pop();
                 if (node.getDepth()-currentNode.getDepth()>depth) {
-                    encodeTreeMapNode(writer, node, true);
+                    encodeTreeMapNode(writer, node, node==currentNode, true);
                 } else {
-                    encodeTreeMapNode(writer, node, false);
+                    encodeTreeMapNode(writer, node, node==currentNode, false);
                 }
                 
                 Set kids = node.getChildren();
@@ -160,6 +161,8 @@ public class TreeMapComponent extends UIComponentBase {
                     stack.push(iter.next());
                 }//for iter
             }//while
+            */
+            encodeNode(writer, currentNode, true, false);
 
             //hidden field
             writer.startElement("input", null);
@@ -183,16 +186,38 @@ public class TreeMapComponent extends UIComponentBase {
     }//encodeEnd()
     
     
-    private void encodeTreeMapNode(ResponseWriter writer, Node node, boolean empty) throws Exception {
-        writer.startElement("table", null);
-        writer.writeAttribute("frame", "box", null);
-        writer.writeAttribute("cellpadding", "1", null);
-        writer.writeAttribute("rules", "all", null);
-        writer.writeAttribute("style", "border-collapse:collapse; border:solid 1px #8CACBB;", null);
-        writer.writeAttribute("border", "1", null);
-        writer.writeAttribute("cellspacing", "0", null);
-        writer.startElement("tr", null);
-        writer.startElement("td", null);
+    /**
+     * Recursively encode a node
+     * @param writer
+     * @param node
+     * @param isTreeMapRoot
+     * @param empty
+     */
+    private void encodeNode(ResponseWriter writer, Node node, boolean isTreeMapRoot, boolean empty) throws Exception {
+        Set children = node.getChildren();
+
+        if (children.size()>0) {
+            writer.startElement("table", null);
+            if (isTreeMapRoot) {
+                //writer.writeAttribute("frame", "box", null);
+                writer.writeAttribute("cellpadding", "2", null);
+                //writer.writeAttribute("rules", "rows", null);
+                //writer.writeAttribute("style", "border-collapse:collapse; border:solid 1px #8CACBB;", null);
+                //writer.writeAttribute("border", "1", null);
+                writer.writeAttribute("cellspacing", "0", null);
+                writer.writeAttribute("width", "100%", null);
+            } else {
+                //writer.writeAttribute("frame", "box", null);
+                //writer.writeAttribute("rules", "groups", null);
+            }
+            writer.startElement("tr", null);
+            writer.startElement("td", null);
+            if (children.size()>1) {
+                writer.writeAttribute("colspan", ""+children.size(), null);
+            }
+            writer.writeAttribute("style", "border-bottom:solid 1px #8CACBB;", null);
+        }
+        writer.startElement("span", null);
         writer.startElement("a", null);
         writer.writeAttribute("href", "#", null);
         if (empty) {
@@ -201,18 +226,70 @@ public class TreeMapComponent extends UIComponentBase {
             writer.writeText(BeanUtils.getNestedProperty(node, content), null);
         }
         writer.endElement("a");
-        writer.endElement("td");
-        writer.endElement("tr");
-        writer.startElement("tr", null);
-        writer.startElement("td", null);
-        writer.writeAttribute("align", "right", null);
+        writer.endElement("span");
+        writer.startElement("span", null);
+        writer.writeAttribute("class", "author", null);
         writer.writeText(" —", null);
         writer.writeText(BeanUtils.getNestedProperty(node, username), null);
+        writer.endElement("span");
+        if (children.size()>0) {
+            writer.endElement("td");
+            writer.endElement("tr");
+        }
+
+        if (children.size()>0) {
+            writer.startElement("tr", null);
+
+            for (Iterator iter = children.iterator(); iter.hasNext(); ) {
+                Node one = (Node) iter.next();
+
+                writer.startElement("td", null);
+                if (iter.hasNext()) {
+                    writer.writeAttribute("style", "border-right:solid 1px #8CACBB;", null);
+                }
+
+                encodeNode(writer, one, false, false);
+
+                writer.endElement("td");
+            }//for iter
+
+            writer.endElement("tr");
+        }
+        
+        if (children.size()>0) {
+            writer.endElement("table");
+        }
+    }//encodeNode()
+    
+    private void encodeTreeMapNode(ResponseWriter writer, Node node, boolean isTreeMapRoot, boolean empty) throws Exception {
+        writer.startElement("table", null);
+        writer.writeAttribute("frame", "box", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("rules", "all", null);
+        writer.writeAttribute("style", "border-collapse:collapse; border:solid 1px #8CACBB;", null);
+        writer.writeAttribute("border", "1", null);
+        writer.writeAttribute("cellspacing", "0", null);
+        writer.writeAttribute("width", "100%", null);
+        writer.startElement("tr", null);
+        writer.startElement("td", null);
+        writer.startElement("span", null);
+        writer.startElement("a", null);
+        writer.writeAttribute("href", "#", null);
+        if (empty) {
+            writer.writeText(" ", null);
+        } else {
+            writer.writeText(BeanUtils.getNestedProperty(node, content), null);
+        }
+        writer.endElement("a");
+        writer.endElement("span");
+        writer.startElement("span", null);
+        writer.writeAttribute("class", "author", null);
+        writer.writeText(" —", null);
+        writer.writeText(BeanUtils.getNestedProperty(node, username), null);
+        writer.endElement("span");
         writer.endElement("td");
         writer.endElement("tr");
         writer.startElement("tr", null);
-        writer.startElement("td", null);
-        writer.endElement("td");
         writer.startElement("td", null);
     }
 
