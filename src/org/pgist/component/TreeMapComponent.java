@@ -35,6 +35,9 @@ public class TreeMapComponent extends UIComponentBase {
     protected String content;
     protected String username;
     protected int depth;
+    protected String clientId;
+    protected String formClientId;
+    protected Tree tree;
 
     
     public TreeMapComponent() {
@@ -57,15 +60,14 @@ public class TreeMapComponent extends UIComponentBase {
         content = (String) getAttributes().get("content");
         username = (String) getAttributes().get("username");
         depth = Integer.parseInt((String) getAttributes().get("depth"));
+        clientId = getClientId(context);
+        formClientId = getFormClientId(context);
         
         return;
     }//encodeBegin()
     
     
     public void encodeEnd(FacesContext context) throws IOException {
-        String clientId = getClientId(context);
-        String formClientId = getFormClientId(context);
-        
         Map requestParameterMap = (Map) context.getExternalContext().getRequestParameterMap();
         String treeId = (String) requestParameterMap.get(clientId + "_treeId");
         if (treeId==null || "".equals(treeId)) {
@@ -73,6 +75,7 @@ public class TreeMapComponent extends UIComponentBase {
             treeId = request.getParameter("treeId");
         }
         Long id = new Long(treeId);
+        System.out.println("---> treeId: "+id);
         
         if (title==null || content==null || "".equals(title) || "".equals(content)) {
             throw new IOException("property 'title' and 'contnet' must be specified.");
@@ -80,7 +83,7 @@ public class TreeMapComponent extends UIComponentBase {
 
         String binding = (String) getAttributes().get("actionBinding");
         MethodBinding mb = context.getApplication().createMethodBinding(binding, new Class[] { ActionEvent.class, Long.class });
-        Tree tree = (Tree) mb.invoke(context, new Object[] { new ActionEvent(this), id });
+        tree = (Tree) mb.invoke(context, new Object[] { new ActionEvent(this), id });
         
         ResponseWriter writer = context.getResponseWriter();
         
@@ -93,6 +96,7 @@ public class TreeMapComponent extends UIComponentBase {
             String nodeIdStr = (String) requestParameterMap.get(clientId + "_nodeId");
             if (nodeIdStr==null || "".equals(nodeIdStr)) nodeIdStr = ""+tree.getRoot().getId();
             Long nodeId = new Long(nodeIdStr);
+            System.out.println("---> nodeId: "+nodeId);
 
             //tree's title
             String s = BeanUtils.getProperty(tree, title);
@@ -113,7 +117,7 @@ public class TreeMapComponent extends UIComponentBase {
             sb.append("]['");
             sb.append(clientId).append("_nodeId");
             sb.append("'].value='';");
-            sb.append(" document.forms[");
+            sb.append("document.forms[");
             sb.append("'");
             sb.append(formClientId);
             sb.append("'");
@@ -138,7 +142,7 @@ public class TreeMapComponent extends UIComponentBase {
                     folding.add(temp);
                 }//while
                 
-                for (int i=folding.size()-1; i>=0; i++) {
+                for (int i=folding.size()-1; i>=0; i--) {
                     temp = (Node) folding.get(i);
                     encodeFoldingNode(writer, temp, tree.getRoot()==temp);
                 }//for
@@ -218,8 +222,31 @@ public class TreeMapComponent extends UIComponentBase {
             writer.writeAttribute("style", "border-bottom:solid 1px #8CACBB;", null);
         }
         writer.startElement("span", null);
+        
         writer.startElement("a", null);
         writer.writeAttribute("href", "#", null);
+        StringBuffer sb = new StringBuffer();
+        sb.append("document.forms[");
+        sb.append("'").append(formClientId).append("'");
+        sb.append("]['");
+        sb.append(clientId).append("_treeId");
+        sb.append("'].value='");
+        sb.append(tree.getId());
+        sb.append("';");
+        sb.append("document.forms[");
+        sb.append("'").append(formClientId).append("'");
+        sb.append("]['");
+        sb.append(clientId).append("_nodeId");
+        sb.append("'].value='");
+        sb.append(node.getId());
+        sb.append("';");
+        sb.append("document.forms[");
+        sb.append("'");
+        sb.append(formClientId);
+        sb.append("'");
+        sb.append("].submit()");
+        writer.writeAttribute("onClick", sb.toString(), null);
+        
         if (empty) {
             writer.writeText(" ", null);
         } else {
@@ -227,6 +254,7 @@ public class TreeMapComponent extends UIComponentBase {
         }
         writer.endElement("a");
         writer.endElement("span");
+        
         writer.startElement("span", null);
         writer.writeAttribute("class", "author", null);
         writer.writeText(" —", null);
@@ -236,10 +264,10 @@ public class TreeMapComponent extends UIComponentBase {
             writer.endElement("td");
             writer.endElement("tr");
         }
-
+        
         if (children.size()>0) {
             writer.startElement("tr", null);
-
+            
             for (Iterator iter = children.iterator(); iter.hasNext(); ) {
                 Node one = (Node) iter.next();
 
