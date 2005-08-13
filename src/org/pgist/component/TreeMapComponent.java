@@ -1,9 +1,7 @@
 package org.pgist.component;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -143,7 +141,7 @@ public class TreeMapComponent extends UIComponentBase {
             writer.writeText("\n", null);
             
             encodeFoldingNodeStart(writer, currentNode);
-            encodeNodeEnd(writer, currentNode);
+            encodeFoldingNodeEnd(writer, currentNode);
             
             //hidden field
             writer.startElement("input", null);
@@ -388,10 +386,10 @@ public class TreeMapComponent extends UIComponentBase {
     }//encodeFoldingNodeStart()
     
     
-    private void encodeNodeEnd(ResponseWriter writer, Node node) throws Exception {
+    private void encodeFoldingNodeEnd(ResponseWriter writer, Node node) throws Exception {
         Node parent = node.getParent();
         if (parent!=null) {
-            encodeNodeEnd(writer, parent);
+            encodeFoldingNodeEnd(writer, parent);
         }
         
         writer.endElement("td");
