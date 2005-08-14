@@ -651,7 +651,13 @@
             <description></description>
         </attribute>
         <attribute>
-            <name>actionBinding</name>
+            <name>readBinding</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>writeBinding</name>
             <required>true</required>
             <rtexprvalue>false</rtexprvalue>
             <description></description>
@@ -669,13 +675,7 @@
             <description></description>
         </attribute>
         <attribute>
-            <name>conbar</name>
-            <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
-            <description></description>
-        </attribute>
-        <attribute>
-            <name>focus</name>
+            <name>tone</name>
             <required>true</required>
             <rtexprvalue>false</rtexprvalue>
             <description></description>

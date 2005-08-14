@@ -16,12 +16,12 @@ public class TreeMapTag extends UIComponentTag {
     
     protected String styleClass = null;
     protected String depth = null;
-    protected String actionBinding = null;
+    protected String readBinding = null;
+    protected String writeBinding = null;
     protected String title = null;
     protected String content = null;
-    protected String conbar = null;
-    protected String focus = null;
     protected String username = null;
+    protected String tone = null;
 
     
     public String getComponentType() {
@@ -44,8 +44,13 @@ public class TreeMapTag extends UIComponentTag {
     }
     
 
-    public void setactionBinding(String actionBinding) {
-        this.actionBinding = actionBinding;
+    public void setReadBinding(String readBinding) {
+        this.readBinding = readBinding;
+    }
+
+
+    public void setWriteBinding(String writeBinding) {
+        this.writeBinding = writeBinding;
     }
 
 
@@ -59,13 +64,8 @@ public class TreeMapTag extends UIComponentTag {
     }
 
 
-    public void setConbar(String conbar) {
-        this.conbar = conbar;
-    }
-
-
-    public void setFocus(String focus) {
-        this.focus = focus;
+    public void setTone(String tone) {
+        this.tone = tone;
     }
 
 
@@ -78,11 +78,10 @@ public class TreeMapTag extends UIComponentTag {
         super.release();
         styleClass = "";
         depth = "";
-        actionBinding = "";
+        readBinding = "";
         title = "";
         content = "";
-        conbar = "";
-        focus = "";
+        tone = "";
         username = "";
     }
 
@@ -128,21 +127,12 @@ public class TreeMapTag extends UIComponentTag {
             }
         }
 
-        if (conbar != null) {
-            if (isValueReference(conbar)) {
-                ValueBinding vb = context.getApplication().createValueBinding(conbar);
-                component.setValueBinding("conbar", vb);
+        if (tone != null) {
+            if (isValueReference(tone)) {
+                ValueBinding vb = context.getApplication().createValueBinding(tone);
+                component.setValueBinding("tone", vb);
             } else {
-                component.getAttributes().put("conbar", conbar);
-            }
-        }
-
-        if (focus != null) {
-            if (isValueReference(focus)) {
-                ValueBinding vb = context.getApplication().createValueBinding(focus);
-                component.setValueBinding("focus", vb);
-            } else {
-                component.getAttributes().put("focus", focus);
+                component.getAttributes().put("tone", tone);
             }
         }
 
@@ -155,9 +145,15 @@ public class TreeMapTag extends UIComponentTag {
             }
         }
 
-        if (actionBinding != null) {
-            if (actionBinding != null) {
-                component.getAttributes().put("actionBinding", actionBinding);
+        if (readBinding != null) {
+            if (readBinding != null) {
+                component.getAttributes().put("readBinding", readBinding);
+            }
+        }
+        
+        if (writeBinding != null) {
+            if (writeBinding != null) {
+                component.getAttributes().put("writeBinding", writeBinding);
             }
         }
     }//setProperties()

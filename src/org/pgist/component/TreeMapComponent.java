@@ -31,9 +31,11 @@ public class TreeMapComponent extends UIComponentBase {
     protected String title;
     protected String content;
     protected String username;
+    protected String tone;
     protected int depth;
     protected String clientId;
     protected String formClientId;
+    protected int toneId;
     protected Tree tree;
     protected String[] colors = {
         "#FFD8E8",
@@ -69,6 +71,7 @@ public class TreeMapComponent extends UIComponentBase {
         title = (String) getAttributes().get("title");
         content = (String) getAttributes().get("content");
         username = (String) getAttributes().get("username");
+        tone = (String) getAttributes().get("tone");
         depth = Integer.parseInt((String) getAttributes().get("depth"));
         clientId = getClientId(context);
         formClientId = getFormClientId(context);
@@ -77,20 +80,31 @@ public class TreeMapComponent extends UIComponentBase {
         String treeId = (String) requestParameterMap.get(clientId + "_treeId");
         if (treeId==null || "".equals(treeId)) {
             HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-            treeId = request.getParameter("treeId");
+            tree = (Tree) request.getAttribute("thread");
+        } else {
+            Long id = new Long(treeId);
+            String binding = (String) getAttributes().get("readBinding");
+            MethodBinding mb = context.getApplication().createMethodBinding(binding, new Class[] { ActionEvent.class, Long.class });
+            tree = (Tree) mb.invoke(context, new Object[] { new ActionEvent(this), id });
         }
-        Long id = new Long(treeId);
-
-        String binding = (String) getAttributes().get("actionBinding");
-        MethodBinding mb = context.getApplication().createMethodBinding(binding, new Class[] { ActionEvent.class, Long.class });
-        tree = (Tree) mb.invoke(context, new Object[] { new ActionEvent(this), id });
-        
-        if (tree==null) throw new IOException("Can't find conversation thread "+id);
+        if (tree==null) throw new IOException("Can't find conversation thread!");
         
         String nodeIdStr = (String) requestParameterMap.get(clientId + "_nodeId");
         if (nodeIdStr==null || "".equals(nodeIdStr)) nodeIdStr = ""+tree.getRoot().getId();
         Long nodeId = new Long(nodeIdStr);
         currentNode = tree.findNode(nodeId);
+        
+        String toneStr = (String) requestParameterMap.get(clientId + "_toneId");
+        if (toneStr==null || "".equals(toneStr)) toneStr = "0";
+        toneId = Integer.parseInt(toneStr);
+        
+        String replyStr = (String) requestParameterMap.get(clientId + "_reply");
+        if ( (toneId==1 || toneId==2 || toneId==3) && replyStr!=null && !"".equals(replyStr) ) {
+            String binding = (String) getAttributes().get("writeBinding");
+            MethodBinding mb = context.getApplication().createMethodBinding(binding, new Class[] { ActionEvent.class, Long.class, Integer.class, String.class });
+            currentNode = (Node) mb.invoke(context, new Object[] { new ActionEvent(this), nodeId, new Integer(toneId), replyStr });
+            toneId = 0;
+        }
         
         return;
     }//encodeBegin()
@@ -105,34 +119,22 @@ public class TreeMapComponent extends UIComponentBase {
         ResponseWriter writer = context.getResponseWriter();
         
         try {
-
+            writer.startElement("table", null);
+            writer.writeAttribute("cellpadding", "0", null);
+            writer.writeAttribute("cellspacing", "0", null);
+            writer.writeAttribute("width", "100%", null);
+            writer.startElement("tr", null);
+            writer.startElement("td", null);
+            writer.writeAttribute("width", "70%", null);
+            
             //tree's title
-            String s = BeanUtils.getProperty(tree, title);
             writer.startElement("span", null);
             writer.writeAttribute("style", "", null);
             writer.startElement("a", null);
             writer.writeAttribute("href", "#", null);
-            StringBuffer sb = new StringBuffer();
-            sb.append("document.forms[");
-            sb.append("'").append(formClientId).append("'");
-            sb.append("]['");
-            sb.append(clientId).append("_treeId");
-            sb.append("'].value='");
-            sb.append(tree.getId());
-            sb.append("';");
-            sb.append("document.forms[");
-            sb.append("'").append(formClientId).append("'");
-            sb.append("]['");
-            sb.append(clientId).append("_nodeId");
-            sb.append("'].value='';");
-            sb.append("document.forms[");
-            sb.append("'");
-            sb.append(formClientId);
-            sb.append("'");
-            sb.append("].submit()");
             
-            writer.writeAttribute("onClick", sb.toString(), null);
-            writer.writeText(s, null);
+            writer.writeAttribute("onClick", getOnClick(tree.getId(), null, 0), null);
+            writer.writeText(BeanUtils.getProperty(tree, title), null);
             writer.endElement("a");
             writer.writeText(" —", null);
             writer.writeText(BeanUtils.getNestedProperty(tree.getRoot(), username), null);
@@ -143,6 +145,47 @@ public class TreeMapComponent extends UIComponentBase {
             encodeFoldingNodeStart(writer, currentNode);
             encodeFoldingNodeEnd(writer, currentNode);
             
+            writer.endElement("td");
+            writer.startElement("td", null);
+            writer.writeAttribute("height", "100%", null);
+
+            writer.startElement("table", null);
+            writer.writeAttribute("cellpadding", "5", null);
+            writer.writeAttribute("cellspacing", "0", null);
+            writer.writeAttribute("width", "100%", null);
+            writer.startElement("tr", null);
+            writer.startElement("td", null);
+            writer.writeAttribute("height", "60%", null);
+
+            //encode Conbar
+            writer.startElement("table", null);
+            writer.writeAttribute("cellpadding", "2", null);
+            writer.writeAttribute("cellspacing", "0", null);
+            writer.writeAttribute("width", "100%", null);
+            encodeConbar(writer, currentNode);
+            writer.endElement("table");
+            
+            writer.endElement("td");
+            writer.endElement("tr");
+            writer.startElement("tr", null);
+            writer.startElement("td", null);
+
+            //encode Focus
+            writer.startElement("table", null);
+            writer.writeAttribute("cellpadding", "5", null);
+            writer.writeAttribute("cellspacing", "0", null);
+            writer.writeAttribute("width", "100%", null);
+            encodeFocus(writer, currentNode);
+            writer.endElement("table");
+
+            writer.endElement("td");
+            writer.endElement("tr");
+            writer.endElement("table");
+
+            writer.endElement("td");
+            writer.endElement("tr");
+            writer.endElement("table");
+
             //hidden field
             writer.startElement("input", null);
             writer.writeAttribute("type", "hidden", null);
@@ -157,6 +200,13 @@ public class TreeMapComponent extends UIComponentBase {
             writer.writeAttribute("value", currentNode.getId(), null);
             writer.endElement("input");
             writer.writeText("\n", null);
+            //----------
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "hidden", null);
+            writer.writeAttribute("name", clientId+"_toneId", null);
+            writer.writeAttribute("value", ""+toneId, null);
+            writer.endElement("input");
+            writer.writeText("\n", null);
             
         } catch(Exception e) {
             e.printStackTrace();
@@ -164,7 +214,141 @@ public class TreeMapComponent extends UIComponentBase {
         
     }//encodeEnd()
     
-    
+
+    private void encodeFocus(ResponseWriter writer, Node node) throws Exception {
+        writer.startElement("tr", null);
+        writer.startElement("td", null);
+        writer.writeAttribute("class", "focus", null);
+        writer.startElement("div", null);
+        writer.writeText(BeanUtils.getNestedProperty(node, username), null);
+        writer.writeText(":", null);
+        writer.startElement("br", null);
+        writer.endElement("br");
+        writer.writeText(BeanUtils.getNestedProperty(node, content), null);
+        writer.endElement("div");
+        writer.endElement("td");
+        writer.endElement("tr");
+
+        if (toneId==0) {
+            writer.startElement("tr", null);
+            writer.startElement("td", null);
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "submit", null);
+            writer.writeAttribute("onClick", getOnClick(tree.getId(), node.getId(), 1), null);
+            writer.writeAttribute("value", ".", null);
+            writer.endElement("input");
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "submit", null);
+            writer.writeAttribute("onClick", getOnClick(tree.getId(), node.getId(), 2), null);
+            writer.writeAttribute("value", "?", null);
+            writer.endElement("input");
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "submit", null);
+            writer.writeAttribute("onClick", getOnClick(tree.getId(), node.getId(), 3), null);
+            writer.writeAttribute("value", "!", null);
+            writer.endElement("input");
+            writer.endElement("td");
+            writer.endElement("tr");
+        } else if (toneId==1) {
+            writer.startElement("tr", null);
+            writer.startElement("td", null);
+            writer.writeAttribute("class", "focus", null);
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "button", null);
+            writer.writeAttribute("value", ".", null);
+            writer.endElement("input");
+            writer.startElement("br", null);
+            writer.endElement("br");
+            writer.startElement("textarea", null);
+            writer.writeAttribute("name", clientId+"_reply", null);
+            writer.endElement("textarea");
+            writer.startElement("br", null);
+            writer.endElement("br");
+            writer.startElement("span", null);
+            writer.writeAttribute("style", "float: right;", null);
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "submit", null);
+            writer.writeAttribute("value", "Submit", null);
+            writer.writeAttribute("onClick", getOnClick(tree.getId(), node.getId(), 1), null);
+            writer.endElement("input");
+            writer.endElement("span");
+            writer.endElement("td");
+            writer.endElement("tr");
+        } else if (toneId==2) {
+            writer.startElement("tr", null);
+            writer.startElement("td", null);
+            writer.writeAttribute("class", "focus", null);
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "button", null);
+            writer.writeAttribute("value", "?", null);
+            writer.endElement("input");
+            writer.startElement("br", null);
+            writer.endElement("br");
+            writer.startElement("textarea", null);
+            writer.writeAttribute("name", clientId+"_reply", null);
+            writer.endElement("textarea");
+            writer.startElement("br", null);
+            writer.endElement("br");
+            writer.startElement("span", null);
+            writer.writeAttribute("style", "float: right;", null);
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "submit", null);
+            writer.writeAttribute("value", "Submit", null);
+            writer.writeAttribute("onClick", getOnClick(tree.getId(), node.getId(), 2), null);
+            writer.endElement("input");
+            writer.endElement("span");
+            writer.endElement("td");
+            writer.endElement("tr");
+        } else if (toneId==3) {
+            writer.startElement("tr", null);
+            writer.startElement("td", null);
+            writer.writeAttribute("class", "focus", null);
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "button", null);
+            writer.writeAttribute("value", "!", null);
+            writer.endElement("input");
+            writer.startElement("br", null);
+            writer.endElement("br");
+            writer.startElement("textarea", null);
+            writer.writeAttribute("name", clientId+"_reply", null);
+            writer.endElement("textarea");
+            writer.startElement("br", null);
+            writer.endElement("br");
+            writer.startElement("span", null);
+            writer.writeAttribute("style", "float: right;", null);
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "submit", null);
+            writer.writeAttribute("value", "Submit", null);
+            writer.writeAttribute("onClick", getOnClick(tree.getId(), node.getId(), 3), null);
+            writer.endElement("input");
+            writer.endElement("span");
+            writer.endElement("td");
+            writer.endElement("tr");
+        }
+    }//encodeFocus()
+
+
+    private void encodeConbar(ResponseWriter writer, Node node) throws Exception {
+        Node parent = node.getParent();
+        if (parent!=null) {
+            encodeConbar(writer, parent);
+        }
+        
+        writer.startElement("tr", null);
+        writer.startElement("td", null);
+        if (node==currentNode) {
+            writer.writeAttribute("class", "conbar1", null);
+        } else {
+            writer.writeAttribute("class", "conbar", null);
+        }
+        writer.writeText("▉ ", null);
+        writer.startElement("a", null);
+        writer.writeAttribute("onClick", getOnClick(tree.getId(), node.getId(), 0), null);
+        writer.writeText(getShortContent(node), null);
+        writer.endElement("a");
+        writer.endElement("td");
+        writer.endElement("tr");
+    }//encodeConbar()
 
 
     /**
@@ -204,31 +388,10 @@ public class TreeMapComponent extends UIComponentBase {
             }
         }
         
-        StringBuffer sb = new StringBuffer();
-        sb.append("document.forms[");
-        sb.append("'").append(formClientId).append("'");
-        sb.append("]['");
-        sb.append(clientId).append("_treeId");
-        sb.append("'].value='");
-        sb.append(tree.getId());
-        sb.append("';");
-        sb.append("document.forms[");
-        sb.append("'").append(formClientId).append("'");
-        sb.append("]['");
-        sb.append(clientId).append("_nodeId");
-        sb.append("'].value='");
-        sb.append(node.getId());
-        sb.append("';");
-        sb.append("document.forms[");
-        sb.append("'");
-        sb.append(formClientId);
-        sb.append("'");
-        sb.append("].submit()");
-
         if (currentDepth>depth) {
             writer.startElement("a", null);
             writer.writeAttribute("class", "clickable empty", null);
-            writer.writeAttribute("onClick", sb.toString(), null);
+            writer.writeAttribute("onClick", getOnClick(tree.getId(), node.getId(), 0), null);
             writer.startElement("span", null);
             writer.write("&nbsp;");
             writer.endElement("span");
@@ -239,7 +402,7 @@ public class TreeMapComponent extends UIComponentBase {
             }
             writer.startElement("span", null);
             writer.writeAttribute("class", "clickable", null);
-            writer.writeAttribute("onClick", sb.toString(), null);
+            writer.writeAttribute("onClick", getOnClick(tree.getId(), node.getId(), 0), null);
             
             writer.writeText(BeanUtils.getNestedProperty(node, content), null);
             writer.startElement("span", null);
@@ -340,29 +503,8 @@ public class TreeMapComponent extends UIComponentBase {
             writer.writeAttribute("width", "100%", null);
             writer.writeAttribute("class", "context", null);
             
-            StringBuffer sb = new StringBuffer();
-            sb.append("document.forms[");
-            sb.append("'").append(formClientId).append("'");
-            sb.append("]['");
-            sb.append(clientId).append("_treeId");
-            sb.append("'].value='");
-            sb.append(tree.getId());
-            sb.append("';");
-            sb.append("document.forms[");
-            sb.append("'").append(formClientId).append("'");
-            sb.append("]['");
-            sb.append(clientId).append("_nodeId");
-            sb.append("'].value='");
-            sb.append(node.getId());
-            sb.append("';");
-            sb.append("document.forms[");
-            sb.append("'");
-            sb.append(formClientId);
-            sb.append("'");
-            sb.append("].submit()");
-
             writer.startElement("a", null);
-            writer.writeAttribute("onClick", sb.toString(), null);
+            writer.writeAttribute("onClick", getOnClick(tree.getId(), node.getId(), 0), null);
             writer.writeText(getShortContent(node), null);
             writer.endElement("a");
             writer.startElement("span", null);
@@ -398,6 +540,44 @@ public class TreeMapComponent extends UIComponentBase {
     }//encodeFoldingNodeEnd()
 
 
+    public String getOnClick(Long treeId, Long nodeId, int toneId) {
+        String theTreeId = "";
+        if (treeId!=null) theTreeId = treeId.toString();
+        String theNodeId = "";
+        if (nodeId!=null) theNodeId = nodeId.toString();
+
+        StringBuffer sb = new StringBuffer();
+        sb.append("document.forms[");
+        sb.append("'").append(formClientId).append("'");
+        sb.append("]['");
+        sb.append(clientId).append("_treeId");
+        sb.append("'].value='");
+        sb.append(theTreeId);
+        sb.append("';");
+        sb.append("document.forms[");
+        sb.append("'").append(formClientId).append("'");
+        sb.append("]['");
+        sb.append(clientId).append("_nodeId");
+        sb.append("'].value='");
+        sb.append(theNodeId);
+        sb.append("';");
+        sb.append("document.forms[");
+        sb.append("'").append(formClientId).append("'");
+        sb.append("]['");
+        sb.append(clientId).append("_toneId");
+        sb.append("'].value='");
+        sb.append(toneId);
+        sb.append("';");
+        sb.append("document.forms[");
+        sb.append("'");
+        sb.append(formClientId);
+        sb.append("'");
+        sb.append("].submit()");
+        
+        return sb.toString();
+    }//getOnClick()
+    
+    
     public String getShortContent(Node node) throws Exception {
         String s = BeanUtils.getNestedProperty(node, content);
         if (s.length()>40) {
