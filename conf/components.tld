@@ -409,8 +409,8 @@
     
     
     <tag>
-        <name>multiCheckbox</name>
-        <tag-class>org.pgist.taglib.MultiCheckboxTag</tag-class>
+        <name>multiCheckboxGroup</name>
+        <tag-class>org.pgist.taglib.MultiCheckboxGroupTag</tag-class>
         <tei-class>com.sun.faces.taglib.FacesTagExtraInfo</tei-class>
         <body-content>JSP</body-content>
         <description></description>

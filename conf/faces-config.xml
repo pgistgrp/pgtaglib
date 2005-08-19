@@ -72,11 +72,11 @@
 
         <renderer>
             <description>
-                Renderer for a multiCheckbox component.
+                Renderer for a multiCheckboxGroup component.
             </description>
             <component-family>javax.faces.Data</component-family>
-            <renderer-type>org.pgist.faces.MultiCheckbox</renderer-type>
-            <renderer-class>org.pgist.renderkit.MultiCheckboxRenderer</renderer-class>
+            <renderer-type>org.pgist.faces.MultiCheckboxGroup</renderer-type>
+            <renderer-class>org.pgist.renderkit.MultiCheckboxGroupRenderer</renderer-class>
         </renderer>
 
 
