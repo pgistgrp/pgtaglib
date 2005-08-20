@@ -30,7 +30,7 @@ public class TreeMapTag extends UIComponentTag {
 
 
     public String getRendererType() {
-        return (null);
+        return null;
     }
 
 
