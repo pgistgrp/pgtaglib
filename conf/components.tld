@@ -628,6 +628,62 @@
     
     
     <tag>
+        <name>multiSelect</name>
+        <tag-class>org.pgist.taglib.MultiSelectTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>multiSelect tag</description>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>columns</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>key</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>label</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>universalSet</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>subSet</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+    </tag>
+
+
+    <tag>
         <name>treemap</name>
         <tag-class>org.pgist.taglib.TreeMapTag</tag-class>
         <body-content>JSP</body-content>

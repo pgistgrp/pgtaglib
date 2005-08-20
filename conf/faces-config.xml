@@ -26,6 +26,15 @@
     </component>
 
     <component>
+        <component-type>org.pgist.faces.MultiSelect</component-type>
+        <component-class>org.pgist.component.MultiSelectComponent</component-class>
+        <component-extension>
+            <component-family>org.pgist.faces.MultiSelect</component-family>
+        </component-extension>
+    </component>
+
+    
+    <component>
         <component-type>org.pgist.faces.TreeMap</component-type>
         <component-class>org.pgist.component.TreeMapComponent</component-class>
         <component-extension>
@@ -67,16 +76,6 @@
             <component-family>javax.faces.Command</component-family>
             <renderer-type>org.pgist.faces.ToolButton</renderer-type>
             <renderer-class>org.pgist.renderkit.ToolButtonRenderer</renderer-class>
-        </renderer>
-
-
-        <renderer>
-            <description>
-                Renderer for a multiCheckboxGroup component.
-            </description>
-            <component-family>javax.faces.Data</component-family>
-            <renderer-type>org.pgist.faces.MultiCheckboxGroup</renderer-type>
-            <renderer-class>org.pgist.renderkit.MultiCheckboxGroupRenderer</renderer-class>
         </renderer>
 
 
