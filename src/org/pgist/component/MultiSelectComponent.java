@@ -4,25 +4,20 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
-import javax.faces.el.MethodBinding;
 import javax.faces.el.ValueBinding;
-import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.pgist.model.Node;
-import org.pgist.model.Tree;
 
 
 /**
- * TreeMap Component
+ * MultiSelect Component
  * @author kenny
  *
  */
@@ -112,11 +107,11 @@ public class MultiSelectComponent extends UIComponentBase {
                 writer.writeAttribute("type", "checkbox", null);
                 writer.writeAttribute("name", clientId+"_multiSelect", null);
                 writer.writeAttribute("value", BeanUtils.getNestedProperty(one, key), null);
-                System.out.println("---> sSet : "+sSet);
-                System.out.println("---> one : "+one);
+                if (styleClass!=null && styleClass.length()>0) {
+                    writer.writeAttribute("class", styleClass, null);
+                }
                 if (sSet.contains(one)) {
                     writer.writeAttribute("checked", Boolean.TRUE, "value");
-                    //writer.write(" checked ");
                 }
                 writer.endElement("input");
                 writer.writeText(BeanUtils.getNestedProperty(one, label), null);
