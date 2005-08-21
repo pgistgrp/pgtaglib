@@ -77,9 +77,7 @@ public class ToolButtonRenderer extends HtmlBasicRenderer {
     public void encodeBegin(FacesContext context, UIComponent component)
             throws IOException {
         if (context == null || component == null)
-            throw new NullPointerException(
-                    Util
-                            .getExceptionMessageString("com.sun.faces.NULL_PARAMETERS_ERROR"));
+            throw new NullPointerException(Util.getExceptionMessageString("com.sun.faces.NULL_PARAMETERS_ERROR"));
         UICommand command = (UICommand) component;
         if (!command.isRendered()) return;
             

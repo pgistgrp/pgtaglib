@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.faces.component.UIColumn;
+import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;
+import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.el.MethodBinding;
@@ -110,11 +112,13 @@ public class ListTableRenderer extends BaseRenderer {
         writer.writeText("\n", null);
         writer.writeText("function "+tagId+"_scroll(page) {", null);
         writer.writeText("document.forms[" + formNumber + "]['" + clientId + "_page'].value=page;", null);
+        writer.writeText("document.forms[" + formNumber + "]['" + getMyForm(context, component).getClientId(context) + ":_idcl'].value='';", null);
         writer.writeText("document.forms[" + formNumber + "].submit();", null);
         writer.writeText("}", null);
         writer.writeText("function "+tagId+"_changeRowOfPage(n) {", null);
         writer.writeText("document.forms[" + formNumber + "]['" + clientId + "_page'].value=1;", null);
         writer.writeText("document.forms[" + formNumber + "]['" + clientId + "_rowOfPage'].value=n;", null);
+        writer.writeText("document.forms[" + formNumber + "]['" + getMyForm(context, component).getClientId(context) + ":_idcl'].value='';", null);
         writer.writeText("document.forms[" + formNumber + "].submit();", null);
         writer.writeText("}", null);
         writer.writeText("//-->", null);
@@ -200,6 +204,16 @@ public class ListTableRenderer extends BaseRenderer {
     }//getFormNumber()
     
 
+    protected UIForm getMyForm(FacesContext context, UIComponent component) {
+        UIComponent parent;
+        for(parent = component.getParent(); parent != null; parent = parent.getParent()) {
+            if(parent instanceof UIForm) break;
+        }
+
+        return (UIForm)parent;
+    }
+
+    
     /**
      * render the top scroller component
      * @param context
