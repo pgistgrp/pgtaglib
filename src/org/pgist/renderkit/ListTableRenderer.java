@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.faces.component.UIColumn;
-import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;
 import javax.faces.component.UIForm;

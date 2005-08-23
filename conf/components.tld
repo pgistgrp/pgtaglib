@@ -15,6 +15,50 @@
 
 
     <tag>
+        <name>show</name>
+        <tag-class>org.pgist.taglib.ShowTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>show tag</description>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Component identifier of this component.
+            </description>
+        </attribute>
+        <attribute>
+            <name>forRole</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+    </tag>
+
+
+    <tag>
+        <name>hide</name>
+        <tag-class>org.pgist.taglib.HideTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>hide tag</description>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Component identifier of this component.
+            </description>
+        </attribute>
+        <attribute>
+            <name>forRole</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+    </tag>
+
+
+    <tag>
         <name>listTable</name>
         <tag-class>org.pgist.taglib.ListTableTag</tag-class>
         <body-content>JSP</body-content>
