@@ -34,6 +34,7 @@ public class MultiSelectComponent extends UIComponentBase {
     private ValueBinding value;
     private ValueBinding universalSet;
     private ValueBinding subSet;
+    private String[] values = null;
 
     
     public MultiSelectComponent() {
@@ -57,7 +58,7 @@ public class MultiSelectComponent extends UIComponentBase {
         value = getValueBinding("value");
         
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        String[] values = (String[]) request.getParameterValues(getClientId(context)+"_multiSelect");
+        values = (String[]) request.getParameterValues(getClientId(context)+"_multiSelect");
         
         value.setValue(context, values);
     }
@@ -110,8 +111,17 @@ public class MultiSelectComponent extends UIComponentBase {
                 if (styleClass!=null && styleClass.length()>0) {
                     writer.writeAttribute("class", styleClass, null);
                 }
-                if (sSet.contains(one)) {
-                    writer.writeAttribute("checked", Boolean.TRUE, "value");
+                if (values==null) {
+                    if (sSet.contains(one)) {
+                        writer.writeAttribute("checked", Boolean.TRUE, "value");
+                    }
+                } else {
+                    for (int i=0; i<values.length; i++) {
+                        if (BeanUtils.getNestedProperty(one, key).equals(values[i])) {
+                            writer.writeAttribute("checked", Boolean.TRUE, "value");
+                            break;
+                        }
+                    }//for i
                 }
                 writer.endElement("input");
                 writer.writeText(BeanUtils.getNestedProperty(one, label), null);
