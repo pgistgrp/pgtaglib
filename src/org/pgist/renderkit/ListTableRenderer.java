@@ -21,6 +21,8 @@ import org.pgist.conf.Theme;
 import org.pgist.conf.ThemeManager;
 import org.pgist.util.PageSetting;
 
+import com.sun.faces.renderkit.html_basic.FormRenderer;
+
 /**
  * <p><code>Renderer</code> that supports generating markup for the per-row data
  * associated with a <code>UIData</code> component.  You can easily specialize
@@ -213,6 +215,13 @@ public class ListTableRenderer extends BaseRenderer {
     }
 
     
+    protected String getHiddenFieldName(FacesContext context, UIComponent component) {
+        UIForm uiform = getMyForm(context, component);
+        String formClientId = uiform.getClientId(context);
+        return formClientId + ':' + "_id" + "cl";
+    }
+
+
     /**
      * render the top scroller component
      * @param context
@@ -359,6 +368,7 @@ public class ListTableRenderer extends BaseRenderer {
 
         //end the outmost table
         writer.endElement("table");
+        FormRenderer.addNeededHiddenField(context, getHiddenFieldName(context, component));
     }
 
 
