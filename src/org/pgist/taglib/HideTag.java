@@ -12,12 +12,17 @@ import javax.servlet.jsp.JspException;
 public class HideTag extends UIComponentTag {
 
     private String forRole;
+    private String forId;
 
     public HideTag() {
     }
 
     public void setForRole(String forRole) {
         this.forRole = forRole;
+    }
+
+    public void setFor(String forId) {
+        this.forId = forId;
     }
 
     public String getRendererType() {
@@ -32,6 +37,9 @@ public class HideTag extends UIComponentTag {
         super.setProperties(component);
         if (forRole != null) {
             component.getAttributes().put("forRole", forRole);
+        }
+        if (forId != null) {
+            component.getAttributes().put("forId", forId);
         }
     }//setProperties()
 

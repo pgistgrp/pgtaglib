@@ -56,11 +56,9 @@ public class ToolbarRenderer extends BaseRenderer {
             if(kid.isRendered()) {
                 writer.startElement("td", component);
                 writer.writeAttribute("style", "padding-left:5px;", null);
-                writer.writeText("[", null);
-                writer.startElement("b", null);
+                
                 encodeRecursive(context, kid);
-                writer.endElement("b");
-                writer.writeText("]", null);
+                
                 writer.endElement("td");
                 writer.writeText("\n", null);
             }

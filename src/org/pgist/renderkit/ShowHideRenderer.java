@@ -6,7 +6,7 @@ import java.util.Iterator;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
-import org.pgist.util.RbacProxy;
+import org.pgist.util.RbacManager;
 
 import com.sun.faces.util.Util;
 
@@ -14,8 +14,6 @@ import com.sun.faces.util.Util;
 public abstract class ShowHideRenderer extends BaseRenderer {
 
     
-    public static final String roleProxy = "org.pgist.RBAC_PROXY";
-    private static RbacProxy rbacProxy = null;
     private boolean showType = true;
 
     
@@ -27,15 +25,6 @@ public abstract class ShowHideRenderer extends BaseRenderer {
     public void encodeChildren(FacesContext context, UIComponent component) throws IOException {
         boolean show = false;
 
-        if (rbacProxy==null) {
-            String roleProxyClass = (String) context.getExternalContext().getInitParameter(roleProxy);
-            try {
-                rbacProxy = (RbacProxy) Class.forName(roleProxyClass).newInstance();
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-        
         String forRole = (String) component.getAttributes().get("forRole");
         if (forRole==null || "".equals(forRole)) {
             if (showType) show = true;
@@ -44,11 +33,11 @@ public abstract class ShowHideRenderer extends BaseRenderer {
         String[] roles = forRole.split(",");
         
         if (showType) {//show
-            if (rbacProxy.checkRole(roles)) {
+            if (RbacManager.checkRole(roles)) {
                 show = true;
             }
         } else {//hide
-            if (!rbacProxy.checkRole(roles)) {
+            if (!RbacManager.checkRole(roles)) {
                 show = true;
             }
         }
@@ -68,4 +57,28 @@ public abstract class ShowHideRenderer extends BaseRenderer {
     }//encodeChildren()
 
 
+    public boolean checkRole(FacesContext context, UIComponent component) {
+        boolean show = false;
+
+        String forRole = (String) component.getAttributes().get("forRole");
+        if (forRole==null || "".equals(forRole)) {
+            if (showType) show = true;
+        }
+        
+        String[] roles = forRole.split(",");
+        
+        if (showType) {//show
+            if (RbacManager.checkRole(roles)) {
+                show = true;
+            }
+        } else {//hide
+            if (!RbacManager.checkRole(roles)) {
+                show = true;
+            }
+        }
+        
+        return show;
+    }//checkRole()
+    
+    
 }//class ShowHideRenderer

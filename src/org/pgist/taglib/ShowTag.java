@@ -13,6 +13,7 @@ public class ShowTag extends UIComponentTag {
 
     
     private String forRole;
+    private String forId;
 
     
     public ShowTag() {
@@ -20,6 +21,11 @@ public class ShowTag extends UIComponentTag {
 
     public void setForRole(String forRole) {
         this.forRole = forRole;
+    }
+    
+
+    public void setFor(String forId) {
+        this.forId = forId;
     }
     
 
@@ -37,6 +43,9 @@ public class ShowTag extends UIComponentTag {
         super.setProperties(component);
         if (forRole != null) {
             component.getAttributes().put("forRole", forRole);
+        }
+        if (forId != null) {
+            component.getAttributes().put("forId", forId);
         }
     }//setProperties()
     

@@ -33,6 +33,12 @@
             <rtexprvalue>false</rtexprvalue>
             <description></description>
         </attribute>
+        <attribute>
+            <name>for</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
     </tag>
 
 
@@ -52,6 +58,12 @@
         <attribute>
             <name>forRole</name>
             <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>for</name>
+            <required>false</required>
             <rtexprvalue>false</rtexprvalue>
             <description></description>
         </attribute>

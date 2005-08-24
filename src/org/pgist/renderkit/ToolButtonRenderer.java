@@ -90,6 +90,8 @@ public class ToolButtonRenderer extends HtmlBasicRenderer {
         String formClientId = uiform.getClientId(context);
         HtmlBasicRenderer.Param paramList[] = getParamList(context, command);
         StringBuffer sb = new StringBuffer();
+        writer.writeText("[", null);
+        writer.startElement("b", null);
         writer.startElement("a", component);
         writeIdAttributeIfNecessary(context, writer, component);
         writer.writeAttribute("href", "#", "href");
@@ -138,6 +140,8 @@ public class ToolButtonRenderer extends HtmlBasicRenderer {
             label = value.toString();
         if (label != null && label.length() != 0)
             writer.write(label);
+        writer.endElement("b");
+        writer.writeText("]", null);
         writer.flush();
     }
     

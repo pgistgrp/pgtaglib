@@ -337,7 +337,7 @@ public class ListTableRenderer extends BaseRenderer {
 
         }
 
-    }
+    }//encodeChildren()
 
 
     /**
