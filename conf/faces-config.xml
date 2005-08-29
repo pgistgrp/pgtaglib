@@ -51,6 +51,21 @@
     </component>
 
     
+    <component>
+        <component-type>org.pgist.faces.OptionalInput</component-type>
+        <component-class>org.pgist.component.OptionalInputComponent</component-class>
+    </component>
+
+    
+    <component>
+      <component-type>org.pgist.faces.OptionalInput</component-type>
+      <component-class>org.pgist.component.OptionalInputComponent</component-class>
+        <component-extension>
+            <component-family>org.pgist.faces.OptionalInput</component-family>
+        </component-extension>
+    </component>
+
+
     <!-- Custom Renderers -->
     <render-kit>
 
@@ -104,6 +119,16 @@
             <component-family>javax.faces.Command</component-family>
             <renderer-type>org.pgist.faces.ToolButton</renderer-type>
             <renderer-class>org.pgist.renderkit.ToolButtonRenderer</renderer-class>
+        </renderer>
+
+
+        <renderer>
+            <description>
+                Renderer for a optional input component.
+            </description>
+            <component-family>javax.faces.Input</component-family>
+            <renderer-type>org.pgist.faces.OptionalInput</renderer-type>
+            <renderer-class>org.pgist.renderkit.OptionalInputRenderer</renderer-class>
         </renderer>
 
 
