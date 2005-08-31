@@ -1,6 +1,7 @@
 package org.pgist.util;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -18,7 +19,7 @@ public class PageSetting {
     private int pageOfScreen = 10;
     private int head = 1;
     private int tail = 1;
-    private Hashtable parameters = new Hashtable();
+    private Map parameters = new HashMap();
     private int[] options = {
         10,
         15,
@@ -65,12 +66,12 @@ public class PageSetting {
     }
 
 
-    public Hashtable getParameters() {
+    public Map getParameters() {
         return parameters;
     }
 
 
-    public void setParameters(Hashtable parameters) {
+    public void setParameters(Map parameters) {
         this.parameters = parameters;
     }
 

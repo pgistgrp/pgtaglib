@@ -155,11 +155,22 @@ public class ListTableRenderer extends BaseRenderer {
         
         //Render topScroller
         writer.startElement("tr", data);
+        writer.startElement("td", data);
+        writer.writeAttribute("width", "100%", null);
+        writer.startElement("table", data);
+        writer.writeAttribute("width", "100%", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
+        writer.writeAttribute("border", "0", null);
+        writer.startElement("tr", data);
         renderTopScroller(context, data, writer);
         writer.writeText("\n", null);
         
         //Render filter
         renderFilter(context, data, writer);
+        writer.endElement("tr");
+        writer.endElement("table");
+        writer.endElement("td");
         writer.endElement("tr");
         writer.writeText("\n", null);
         
@@ -362,9 +373,23 @@ public class ListTableRenderer extends BaseRenderer {
 
         //Render bottomScroller
         writer.startElement("tr", data);
-        writer.writeText("\n", null);
+        writer.startElement("td", data);
+        writer.writeAttribute("width", "100%", null);
+        writer.startElement("table", data);
+        writer.writeAttribute("width", "100%", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
+        writer.writeAttribute("border", "0", null);
+        writer.startElement("tr", data);
         renderBottomScroller(context, data, writer);
+
+        //Render filter
+        renderFilter(context, data, writer);
         writer.endElement("tr");
+        writer.endElement("table");
+        writer.endElement("td");
+        writer.endElement("tr");
+        writer.writeText("\n", null);
 
         //end the outmost table
         writer.endElement("table");
