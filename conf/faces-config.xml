@@ -54,14 +54,17 @@
     <component>
         <component-type>org.pgist.faces.OptionalInput</component-type>
         <component-class>org.pgist.component.OptionalInputComponent</component-class>
+        <component-extension>
+            <component-family>org.pgist.faces.OptionalInput</component-family>
+        </component-extension>
     </component>
 
     
     <component>
-      <component-type>org.pgist.faces.OptionalInput</component-type>
-      <component-class>org.pgist.component.OptionalInputComponent</component-class>
+        <component-type>org.pgist.faces.Filter</component-type>
+        <component-class>org.pgist.component.FilterComponent</component-class>
         <component-extension>
-            <component-family>org.pgist.faces.OptionalInput</component-family>
+            <component-family>org.pgist.faces.Filter</component-family>
         </component-extension>
     </component>
 
@@ -132,6 +135,16 @@
         </renderer>
 
 
+        <renderer>
+            <description>
+                Renderer for a filter component.
+            </description>
+            <component-family>org.pgist.faces.Filter</component-family>
+            <renderer-type>org.pgist.faces.Filter</renderer-type>
+            <renderer-class>org.pgist.renderkit.FilterRenderer</renderer-class>
+        </renderer>
+
+        
     </render-kit>
 
 
