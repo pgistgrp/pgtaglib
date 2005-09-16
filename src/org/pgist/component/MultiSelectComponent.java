@@ -112,9 +112,13 @@ public class MultiSelectComponent extends UIComponentBase {
                     writer.writeAttribute("class", styleClass, null);
                 }
                 if (values==null) {
-                    if (sSet.contains(one)) {
-                        writer.writeAttribute("checked", Boolean.TRUE, "value");
-                    }
+                    for (Iterator iter0=sSet.iterator(); iter0.hasNext(); ) {
+                        Object another = iter0.next();
+                        if (BeanUtils.getNestedProperty(one, key).equals(BeanUtils.getNestedProperty(another, key))) {
+                            writer.writeAttribute("checked", Boolean.TRUE, "value");
+                            break;
+                        }
+                    }//for iter0
                 } else {
                     for (int i=0; i<values.length; i++) {
                         if (BeanUtils.getNestedProperty(one, key).equals(values[i])) {

@@ -155,12 +155,12 @@ public class PageSetting {
     }
     
     
-    public String get(String name) {
-        return (String) parameters.get(name);
+    public Object get(String name) {
+        return parameters.get(name);
     }
     
     
-    public void set(String name, String value) {
+    public void set(String name, Object value) {
         parameters.put(name, value);
     }
     

@@ -2,6 +2,7 @@ package org.pgist.renderkit;
 
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -40,6 +41,7 @@ public class ListTableRenderer extends BaseRenderer {
     
     private static ThreadLocal themeVar = new ThreadLocal();
     public static final String FORM_NUMBER_ATTR = "com.sun.faces.FormNumber";
+    public boolean postMode = false;
     
     
     public Theme getTheme() {
@@ -48,7 +50,8 @@ public class ListTableRenderer extends BaseRenderer {
 
     
     public void decode(FacesContext context, UIComponent component) throws NullPointerException {
-
+        postMode = true;
+        
         PageSetting setting = (PageSetting) component.getValueBinding("pageSetting").getValue(context);
         String clientId = component.getClientId(context);
 
@@ -93,8 +96,10 @@ public class ListTableRenderer extends BaseRenderer {
          * other program such as backing bean. With this binding the page itself can grab data directly. 
          */
         String binding = (String) data.getAttributes().get("actionBinding");
-        MethodBinding mb = context.getApplication().createMethodBinding(binding, new Class[] { ActionEvent.class });
-        mb.invoke(context, new Object[] { new ActionEvent(component) });
+        MethodBinding mb = context.getApplication().createMethodBinding(binding, new Class[] { ActionEvent.class, Map.class });
+        Map map = new HashMap();
+        map.put("postMode", ""+postMode);
+        mb.invoke(context, new Object[] { new ActionEvent(component), map });
         
         //Get theme definition
         String theme = (String) data.getAttributes().get("theme");
@@ -109,6 +114,7 @@ public class ListTableRenderer extends BaseRenderer {
         int formNumber = getFormNumber(context);
         writer.startElement("script", null);
         writer.writeAttribute("type", "text/javascript", null);
+        writer.writeText("\n", null);
         writer.writeText("<!--", null);
         writer.writeText("\n", null);
         writer.writeText("function "+tagId+"_scroll(page) {", null);
@@ -122,7 +128,9 @@ public class ListTableRenderer extends BaseRenderer {
         writer.writeText("document.forms[" + formNumber + "]['" + getMyForm(context, component).getClientId(context) + ":_idcl'].value='';", null);
         writer.writeText("document.forms[" + formNumber + "].submit();", null);
         writer.writeText("}", null);
+        writer.writeText("\n", null);
         writer.writeText("//-->", null);
+        writer.writeText("\n", null);
         writer.endElement("script");
         writer.writeText("\n", null);
 
