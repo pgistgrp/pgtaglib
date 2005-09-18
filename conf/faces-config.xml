@@ -69,6 +69,15 @@
     </component>
 
 
+    <component>
+        <component-type>org.pgist.faces.MultiInput</component-type>
+        <component-class>org.pgist.component.MultiInputComponent</component-class>
+        <component-extension>
+            <component-family>org.pgist.faces.MultiInput</component-family>
+        </component-extension>
+    </component>
+
+
     <!-- Custom Renderers -->
     <render-kit>
 

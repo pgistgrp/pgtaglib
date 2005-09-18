@@ -1060,5 +1060,45 @@
     </tag>
 
 
+    <tag>
+        <name>multiInput</name>
+        <tag-class>org.pgist.taglib.MultiInputTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>filter tag</description>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description>
+                Component identifier of this component.
+            </description>
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>initValue</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+    </tag>
+
+
 </taglib>
 
