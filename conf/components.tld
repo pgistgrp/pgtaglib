@@ -1100,5 +1100,61 @@
     </tag>
 
 
+    <tag>
+        <name>ajaxSelect</name>
+        <tag-class>org.pgist.taglib.AjaxSelectTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>ajaxSelect tag</description>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>key</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>label</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>initValue</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>ajax</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+    </tag>
+
+    
 </taglib>
 

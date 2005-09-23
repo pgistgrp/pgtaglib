@@ -78,6 +78,15 @@
     </component>
 
 
+    <component>
+        <component-type>org.pgist.faces.AjaxSelect</component-type>
+        <component-class>org.pgist.component.AjaxSelectComponent</component-class>
+        <component-extension>
+            <component-family>org.pgist.faces.AjaxSelect</component-family>
+        </component-extension>
+    </component>
+
+
     <!-- Custom Renderers -->
     <render-kit>
 
