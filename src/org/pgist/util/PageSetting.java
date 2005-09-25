@@ -149,7 +149,7 @@ public class PageSetting {
     public int getLastRow() {
         int lastRow = getFirstRow()+rowOfPage-1;
         if (lastRow>rowSize) {
-            lastRow = rowSize;
+            lastRow = rowSize-1;
         }
         return lastRow;
     }
