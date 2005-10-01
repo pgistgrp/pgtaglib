@@ -87,6 +87,15 @@
     </component>
 
 
+    <component>
+        <component-type>org.pgist.faces.Discourse</component-type>
+        <component-class>org.pgist.component.DiscourseComponent</component-class>
+        <component-extension>
+            <component-family>org.pgist.faces.Discourse</component-family>
+        </component-extension>
+    </component>
+
+
     <!-- Custom Renderers -->
     <render-kit>
 
@@ -162,6 +171,26 @@
             <renderer-class>org.pgist.renderkit.FilterRenderer</renderer-class>
         </renderer>
 
+        
+        <renderer>
+            <description>
+                Renderer for a discourse layout component.
+            </description>
+            <component-family>org.pgist.faces.Discourse</component-family>
+            <renderer-type>org.pgist.faces.doLayout</renderer-type>
+            <renderer-class>org.pgist.renderkit.DoLayoutRenderer</renderer-class>
+        </renderer>
+        
+        
+        <renderer>
+            <description>
+                Renderer for a discourse uptree component.
+            </description>
+            <component-family>org.pgist.faces.Discourse</component-family>
+            <renderer-type>org.pgist.faces.doUpTree</renderer-type>
+            <renderer-class>org.pgist.renderkit.DoUpTreeRenderer</renderer-class>
+        </renderer>
+        
         
     </render-kit>
 
