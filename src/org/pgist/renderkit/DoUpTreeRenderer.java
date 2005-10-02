@@ -58,7 +58,7 @@ public class DoUpTreeRenderer extends BaseRenderer {
                 writer.startElement("tr", null);
                 writer.startElement("td", null);
                 writer.writeAttribute("width", "100%", null);
-                Object content = BeanUtils.getNestedProperty(one, "content");
+                Object content = BeanUtils.getNestedProperty(one, "content.contentAsObject");
                 if (content instanceof String) {
                     String s = (String) content;
                     if (s.length()>50) s = s.substring(0, 47)+"...";
@@ -73,10 +73,10 @@ public class DoUpTreeRenderer extends BaseRenderer {
         } catch(Exception e) {
             e.printStackTrace();
         }
-        
+
     }//encodeBegin()
-
-
+    
+    
     protected UIForm getMyForm(FacesContext context, UIComponent component) {
         UIComponent parent;
         for(parent = component.getParent(); parent != null; parent = parent.getParent()) {

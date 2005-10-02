@@ -60,7 +60,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         writer.writeAttribute("cellspacing", "0", null);
         writer.writeAttribute("border", "0", null);
         writer.writeAttribute("width", "100%", null);
-        renderConbar(context, component, writer);
+        renderConbar(context, component, writer, tree, node);
         renderTarget(context, component, writer);
         renderFocus(context, component, writer);
         writer.endElement("table");
@@ -211,13 +211,18 @@ public class DoLayoutRenderer extends BaseRenderer {
      * @param writer
      * @throws IOException
      */
-    private void renderConbar(FacesContext context, UIComponent component, ResponseWriter writer) throws IOException {
+    private void renderConbar(FacesContext context, UIComponent component, ResponseWriter writer, ValueBinding tree, ValueBinding node) throws IOException {
         UIComponent conbar = component.getFacet("conbar");
         if (conbar != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
             writer.writeAttribute("width", "100%", null);
+
+            conbar.setValueBinding("tree", tree);
+            conbar.setValueBinding("node", node);
+            
             encodeRecursive(context, conbar);
+
             writer.endElement("td");
             writer.endElement("tr");
         }
