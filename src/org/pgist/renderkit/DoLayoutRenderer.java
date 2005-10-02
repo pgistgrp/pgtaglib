@@ -45,7 +45,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         renderHeader(context, component, writer);
         renderView(context, component, writer);
         renderUpTree(context, component, writer, tree, node);
-        renderTreeMap(context, component, writer);
+        renderTreeMap(context, component, writer, tree, node);
         renderDownTree(context, component, writer);
         renderFooter(context, component, writer);
         writer.endElement("table");
@@ -146,13 +146,18 @@ public class DoLayoutRenderer extends BaseRenderer {
      * @param writer
      * @throws IOException
      */
-    private void renderTreeMap(FacesContext context, UIComponent component, ResponseWriter writer) throws IOException {
+    private void renderTreeMap(FacesContext context, UIComponent component, ResponseWriter writer, ValueBinding tree, ValueBinding node) throws IOException {
         UIComponent treemap = component.getFacet("treemap");
         if (treemap != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
             writer.writeAttribute("width", "100%", null);
+
+            treemap.setValueBinding("tree", tree);
+            treemap.setValueBinding("node", node);
+            
             encodeRecursive(context, treemap);
+            
             writer.endElement("td");
             writer.endElement("tr");
         }
