@@ -36,13 +36,19 @@ public class DoLayoutRenderer extends BaseRenderer {
         writer.writeAttribute("name", clientId+"_treeId", null);
         writer.writeAttribute("value", tree.getId(), null);
         writer.endElement("input");
-
+        
         writer.startElement("input", null);
         writer.writeAttribute("type", "hidden", null);
         writer.writeAttribute("name", clientId+"_nodeId", null);
         writer.writeAttribute("value", node.getId(), null);
         writer.endElement("input");
-
+        
+        writer.startElement("input", null);
+        writer.writeAttribute("type", "hidden", null);
+        writer.writeAttribute("name", clientId+"_punctuate", null);
+        writer.writeAttribute("value", "0", null);
+        writer.endElement("input");
+        
         //Render the outmost table
         writer.startElement("table", null);
         writer.writeAttribute("cellpadding", "0", null);
