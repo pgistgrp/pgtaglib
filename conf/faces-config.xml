@@ -96,6 +96,15 @@
     </component>
 
 
+    <component>
+        <component-type>org.pgist.faces.UIAction</component-type>
+        <component-class>org.pgist.component.UIAction</component-class>
+        <component-extension>
+            <component-family>org.pgist.faces.UIAction</component-family>
+        </component-extension>
+    </component>
+
+
     <!-- Custom Renderers -->
     <render-kit>
 
@@ -196,7 +205,7 @@
             <description>
                 Renderer for a discourse treemap component.
             </description>
-            <component-family>org.pgist.faces.Discourse</component-family>
+            <component-family>org.pgist.faces.UIAction</component-family>
             <renderer-type>org.pgist.faces.doTreeMap</renderer-type>
             <renderer-class>org.pgist.renderkit.DoTreeMapRenderer</renderer-class>
         </renderer>
@@ -209,6 +218,16 @@
             <component-family>org.pgist.faces.Discourse</component-family>
             <renderer-type>org.pgist.faces.doConbar</renderer-type>
             <renderer-class>org.pgist.renderkit.DoConbarRenderer</renderer-class>
+        </renderer>
+        
+        
+        <renderer>
+            <description>
+                Renderer for a discourse target component.
+            </description>
+            <component-family>org.pgist.faces.Discourse</component-family>
+            <renderer-type>org.pgist.faces.doTarget</renderer-type>
+            <renderer-class>org.pgist.renderkit.DoTargetRenderer</renderer-class>
         </renderer>
         
         

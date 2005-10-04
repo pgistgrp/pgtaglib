@@ -8,6 +8,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.el.ValueBinding;
 
+import org.pgist.model.Node;
+import org.pgist.model.Tree;
+
 public class DoLayoutRenderer extends BaseRenderer {
 
 
@@ -19,11 +22,27 @@ public class DoLayoutRenderer extends BaseRenderer {
     public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
         super.encodeBegin(context, component);
         
-        ValueBinding tree = component.getValueBinding("tree");
-        ValueBinding node = component.getValueBinding("node");
+        ValueBinding treeBinding = component.getValueBinding("tree");
+        ValueBinding nodeBinding = component.getValueBinding("node");
+        Tree tree = (Tree) treeBinding.getValue(context);
+        Node node = (Node) nodeBinding.getValue(context);
         
         ResponseWriter writer = context.getResponseWriter();
         
+        String clientId = component.getClientId(context);
+        
+        writer.startElement("input", null);
+        writer.writeAttribute("type", "hidden", null);
+        writer.writeAttribute("name", clientId+"_treeId", null);
+        writer.writeAttribute("value", tree.getId(), null);
+        writer.endElement("input");
+
+        writer.startElement("input", null);
+        writer.writeAttribute("type", "hidden", null);
+        writer.writeAttribute("name", clientId+"_nodeId", null);
+        writer.writeAttribute("value", node.getId(), null);
+        writer.endElement("input");
+
         //Render the outmost table
         writer.startElement("table", null);
         writer.writeAttribute("cellpadding", "0", null);
@@ -44,8 +63,8 @@ public class DoLayoutRenderer extends BaseRenderer {
         writer.writeAttribute("width", "100%", null);
         renderHeader(context, component, writer);
         renderView(context, component, writer);
-        renderUpTree(context, component, writer, tree, node);
-        renderTreeMap(context, component, writer, tree, node);
+        renderUpTree(context, component, writer, treeBinding, nodeBinding);
+        renderTreeMap(context, component, writer, treeBinding, nodeBinding);
         renderDownTree(context, component, writer);
         renderFooter(context, component, writer);
         writer.endElement("table");
@@ -60,8 +79,8 @@ public class DoLayoutRenderer extends BaseRenderer {
         writer.writeAttribute("cellspacing", "0", null);
         writer.writeAttribute("border", "0", null);
         writer.writeAttribute("width", "100%", null);
-        renderConbar(context, component, writer, tree, node);
-        renderTarget(context, component, writer);
+        renderConbar(context, component, writer, treeBinding, nodeBinding);
+        renderTarget(context, component, writer, treeBinding, nodeBinding);
         renderFocus(context, component, writer);
         writer.endElement("table");
         writer.endElement("td");
@@ -130,6 +149,7 @@ public class DoLayoutRenderer extends BaseRenderer {
             
             uptree.setValueBinding("tree", tree);
             uptree.setValueBinding("node", node);
+            uptree.getAttributes().put("_PREFIX", component.getClientId(context));
             
             encodeRecursive(context, uptree);
             
@@ -155,6 +175,7 @@ public class DoLayoutRenderer extends BaseRenderer {
 
             treemap.setValueBinding("tree", tree);
             treemap.setValueBinding("node", node);
+            treemap.getAttributes().put("_PREFIX", component.getClientId(context));
             
             encodeRecursive(context, treemap);
             
@@ -220,6 +241,7 @@ public class DoLayoutRenderer extends BaseRenderer {
 
             conbar.setValueBinding("tree", tree);
             conbar.setValueBinding("node", node);
+            conbar.getAttributes().put("_PREFIX", component.getClientId(context));
             
             encodeRecursive(context, conbar);
 
@@ -236,12 +258,17 @@ public class DoLayoutRenderer extends BaseRenderer {
      * @param writer
      * @throws IOException
      */
-    private void renderTarget(FacesContext context, UIComponent component, ResponseWriter writer) throws IOException {
+    private void renderTarget(FacesContext context, UIComponent component, ResponseWriter writer, ValueBinding tree, ValueBinding node) throws IOException {
         UIComponent target = component.getFacet("target");
         if (target != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
             writer.writeAttribute("width", "100%", null);
+
+            target.setValueBinding("tree", tree);
+            target.setValueBinding("node", node);
+            target.getAttributes().put("_PREFIX", component.getClientId(context));
+
             encodeRecursive(context, target);
             writer.endElement("td");
             writer.endElement("tr");

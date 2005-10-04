@@ -46,10 +46,11 @@ public class DoUpTreeRenderer extends BaseRenderer {
             writer.endElement("tr");
 
             List nodes = new ArrayList();
-            Node theNode = node.getParent();
+            Node theNode = node; //node.getParent();
             while (theNode!=null) {
                 Node parent = theNode.getParent();
                 if (parent==null) break;
+                nodes.add(0, theNode);
                 theNode = parent;
             }//while
             

@@ -1243,6 +1243,12 @@
             <rtexprvalue>false</rtexprvalue>
             <description></description>
         </attribute>
+        <attribute>
+            <name>actionListener</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
     </tag>
 
 
@@ -1251,6 +1257,26 @@
         <tag-class>org.pgist.taglib.DoConbarTag</tag-class>
         <body-content>JSP</body-content>
         <description>doConbar tag</description>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
+    </tag>
+
+
+    <tag>
+        <name>doTarget</name>
+        <tag-class>org.pgist.taglib.DoTargetTag</tag-class>
+        <body-content>JSP</body-content>
+        <description>doTarget tag</description>
         <attribute>
             <name>id</name>
             <required>false</required>

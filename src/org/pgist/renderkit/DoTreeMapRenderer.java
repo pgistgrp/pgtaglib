@@ -2,13 +2,16 @@ package org.pgist.renderkit;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+import javax.faces.event.ActionEvent;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.pgist.component.UIAction;
 import org.pgist.model.Node;
 import org.pgist.model.Tree;
 
@@ -22,7 +25,17 @@ public class DoTreeMapRenderer extends BaseRenderer {
 
 
     public void decode(FacesContext context, UIComponent component) throws NullPointerException {
-        
+        String prefix = (String) component.getAttributes().get("_PREFIX");
+        Map requestParameterMap = context.getExternalContext().getRequestParameterValuesMap();
+        String treeId = ((String[]) requestParameterMap.get(prefix+"_treeId"))[0];
+        String nodeId = ((String[]) requestParameterMap.get(prefix+"_nodeId"))[0];
+        if (treeId!=null && !"".equals(treeId) && nodeId!=null && !"".equals(nodeId)) {
+            UIAction compt = (UIAction) component;
+            compt.getParams().put("treeId", treeId);
+            compt.getParams().put("nodeId", nodeId);
+            ActionEvent event = new ActionEvent(component);
+            component.queueEvent(event);
+        }
     }//decode()
     
     
@@ -58,6 +71,8 @@ public class DoTreeMapRenderer extends BaseRenderer {
      */
     private void encodeNode(FacesContext context, UIComponent component, Node node, int depth) throws Exception {
         ResponseWriter writer = context.getResponseWriter();
+        String formId = getMyForm(context, component).getClientId(context);
+        String prefix = (String) component.getAttributes().get("_PREFIX");
         
         //render current node
         writer.startElement("table", null);
@@ -73,6 +88,27 @@ public class DoTreeMapRenderer extends BaseRenderer {
         int n = node.getChildren().size();
         if (n>1) {
             writer.writeAttribute("colspan", ""+n, null);
+        }
+        String tone = BeanUtils.getNestedProperty(node, "tone");
+        if ("1".equals(tone)) {
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "button", null);
+            writer.writeAttribute("value", ".", null);
+            writer.writeAttribute("onClick",
+                "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
+              + "document.forms['" + formId + "'].submit();"
+                , null);
+            writer.endElement("input");
+        } else if ("2".equals(tone)) {
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "button", null);
+            writer.writeAttribute("value", "?", null);
+            writer.endElement("input");
+        } else if ("3".equals(tone)) {
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "button", null);
+            writer.writeAttribute("value", "!", null);
+            writer.endElement("input");
         }
         Object content = BeanUtils.getNestedProperty(node, "content.contentAsObject");
         if (content instanceof String) {
