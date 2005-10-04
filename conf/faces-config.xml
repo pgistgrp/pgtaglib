@@ -215,7 +215,7 @@
             <description>
                 Renderer for a discourse conbar component.
             </description>
-            <component-family>org.pgist.faces.Discourse</component-family>
+            <component-family>org.pgist.faces.UIAction</component-family>
             <renderer-type>org.pgist.faces.doConbar</renderer-type>
             <renderer-class>org.pgist.renderkit.DoConbarRenderer</renderer-class>
         </renderer>
