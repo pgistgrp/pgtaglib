@@ -231,6 +231,16 @@
         </renderer>
         
         
+        <renderer>
+            <description>
+                Renderer for a discourse focus component.
+            </description>
+            <component-family>org.pgist.faces.UIAction</component-family>
+            <renderer-type>org.pgist.faces.doFocus</renderer-type>
+            <renderer-class>org.pgist.renderkit.DoFocusRenderer</renderer-class>
+        </renderer>
+        
+        
     </render-kit>
 
 

@@ -49,6 +49,12 @@ public class DoLayoutRenderer extends BaseRenderer {
         writer.writeAttribute("value", "0", null);
         writer.endElement("input");
         
+        writer.startElement("input", null);
+        writer.writeAttribute("type", "hidden", null);
+        writer.writeAttribute("name", clientId+"_contenttype", null);
+        writer.writeAttribute("value", "-1", null);
+        writer.endElement("input");
+        
         //Render the outmost table
         writer.startElement("table", null);
         writer.writeAttribute("cellpadding", "0", null);
@@ -87,7 +93,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         writer.writeAttribute("width", "100%", null);
         renderConbar(context, component, writer, treeBinding, nodeBinding);
         renderTarget(context, component, writer, treeBinding, nodeBinding);
-        renderFocus(context, component, writer);
+        renderFocus(context, component, writer, treeBinding, nodeBinding);
         writer.endElement("table");
         writer.endElement("td");
         
@@ -276,6 +282,7 @@ public class DoLayoutRenderer extends BaseRenderer {
             target.getAttributes().put("_PREFIX", component.getClientId(context));
 
             encodeRecursive(context, target);
+            
             writer.endElement("td");
             writer.endElement("tr");
         }
@@ -289,13 +296,19 @@ public class DoLayoutRenderer extends BaseRenderer {
      * @param writer
      * @throws IOException
      */
-    private void renderFocus(FacesContext context, UIComponent component, ResponseWriter writer) throws IOException {
+    private void renderFocus(FacesContext context, UIComponent component, ResponseWriter writer, ValueBinding tree, ValueBinding node) throws IOException {
         UIComponent focus = component.getFacet("focus");
         if (focus != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
             writer.writeAttribute("width", "100%", null);
+
+            focus.setValueBinding("tree", tree);
+            focus.setValueBinding("node", node);
+            focus.getAttributes().put("_PREFIX", component.getClientId(context));
+
             encodeRecursive(context, focus);
+            
             writer.endElement("td");
             writer.endElement("tr");
         }
