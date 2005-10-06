@@ -2,6 +2,7 @@ package org.pgist.renderkit;
 
 
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 import javax.faces.render.Renderer;
 
@@ -83,6 +84,23 @@ public abstract class BaseRenderer extends Renderer {
         component.encodeEnd(context);
 
     }
+
+
+    protected String getHiddenFieldName(FacesContext context, UIComponent component) {
+        UIForm uiform = getMyForm(context, component);
+        String formClientId = uiform.getClientId(context);
+        return formClientId + ':' + "_id" + "cl";
+    }
+    
+
+    protected UIForm getMyForm(FacesContext context, UIComponent component) {
+        UIComponent parent;
+        for(parent = component.getParent(); parent != null; parent = parent.getParent()) {
+            if(parent instanceof UIForm) break;
+        }
+        
+        return (UIForm)parent;
+    }//getMyForm()
 
 
 }

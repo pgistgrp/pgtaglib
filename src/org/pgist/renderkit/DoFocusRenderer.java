@@ -1,14 +1,22 @@
 package org.pgist.renderkit;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIForm;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+import javax.faces.event.ActionEvent;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.myfaces.component.html.util.MultipartRequestWrapper;
+import org.apache.myfaces.custom.fileupload.UploadedFile;
+import org.apache.myfaces.custom.fileupload.UploadedFileDefaultFileImpl;
+import org.pgist.component.UIAction;
 import org.pgist.model.Node;
 import org.pgist.model.Tree;
 
@@ -22,7 +30,65 @@ public class DoFocusRenderer extends BaseRenderer {
 
 
     public void decode(FacesContext context, UIComponent component) throws NullPointerException {
+        String prefix = (String) component.getAttributes().get("_PREFIX");
+        String paramName = getHiddenFieldName(context, component);
+        String clientId = component.getClientId(context);
+        String varPrefix = clientId.replace(':', '_');
         
+        ServletRequest multipartRequest = (ServletRequest)context.getExternalContext().getRequest();
+        while (multipartRequest != null && !(multipartRequest instanceof MultipartRequestWrapper)) {
+            if (multipartRequest instanceof HttpServletRequestWrapper) {
+                multipartRequest = ((HttpServletRequestWrapper)multipartRequest).getRequest();
+            } else {
+                multipartRequest = null;
+            }
+        }//while
+
+        if (multipartRequest != null) {
+            MultipartRequestWrapper mpReq = (MultipartRequestWrapper)multipartRequest;
+            
+            Map map = mpReq.getParameterMap();
+            
+            String value = null;
+            
+            Object temp = map.get(paramName);
+            if (temp instanceof String[]) {
+                value = ((String[]) temp)[0];
+            } else if (temp instanceof String) {
+                value = (String) temp;
+            }
+            
+            if(value == null || value.equals("") || !clientId.equals(value)) return;
+            
+            String treeId = ((String[]) map.get(prefix+"_treeId"))[0];
+            String nodeId = ((String[]) map.get(prefix+"_nodeId"))[0];
+            if (treeId!=null && !"".equals(treeId) && nodeId!=null && !"".equals(nodeId)) {
+                UIAction compt = (UIAction) component;
+                compt.getParams().put("treeId", treeId);
+                compt.getParams().put("nodeId", nodeId);
+                String punctuate = ((String[]) map.get(prefix+"_punctuate"))[0];
+                String cttType = ((String[]) map.get(prefix+"_contenttype"))[0];
+                compt.getParams().put("punctuate", punctuate);
+                compt.getParams().put("cttType", cttType);
+                if ("0".equals(cttType)) {//text
+                    String cttText = ((String[]) map.get(varPrefix+"_text"))[0];
+                    compt.getParams().put("cttText", cttText);
+                } else if ("1".equals(cttType)) {//image
+                    FileItem fileItem = mpReq.getFileItem(varPrefix+"_image");
+                    if (fileItem != null) {
+                        try{
+                            UploadedFile upFile;
+                            upFile = new UploadedFileDefaultFileImpl(fileItem);
+                            compt.getParams().put("cttImage", upFile);
+                        }catch(IOException ioe){
+                            ioe.printStackTrace();
+                        }
+                    }
+                }
+                ActionEvent event = new ActionEvent(component);
+                component.queueEvent(event);
+            }
+        }
     }//decode()
     
     
@@ -73,7 +139,9 @@ public class DoFocusRenderer extends BaseRenderer {
         try {
             writer.write("<script language=\"JavaScript\">\n");
             writer.write("var clientId='"+clientId+"';");
-            writer.write("var cttName=[ clientId+'_text', clientId+'_image', clientId+'_link' ];\n");
+            writer.write("var varPrefix='"+varPrefix+"';");
+            writer.write("var cttId=[ clientId+'_text', clientId+'_image', clientId+'_link' ];\n");
+            writer.write("var cttName=[ varPrefix+'_text', varPrefix+'_image', varPrefix+'_link' ];\n");
             writer.write("var cttSelected=[");
             for (int i=0; i<cttSelected.length; i++) {
                 if (i>0) writer.write(",");
@@ -95,21 +163,29 @@ public class DoFocusRenderer extends BaseRenderer {
             
             writer.write("function "+varPrefix+"_clickPunctuate(n) {\n");
             writer.write("m = document.forms['" + formId+"']['"+prefix+"_punctuate'].value;\n");
-            writer.write("if (m==0) { $('"+clientId+"_dot').src='"+punctUnselected[0]+"'; }");
-            writer.write("else if (m==1) { $('"+clientId+"_question').src='"+punctUnselected[1]+"'; }");
-            writer.write("else if (m==2) { $('"+clientId+"_exclam').src='"+punctUnselected[2]+"'; }");
-            writer.write("if (n==0) { $('"+clientId+"_dot').src='"+punctSelected[0]+"'; }");
-            writer.write("else if (n==1) { $('"+clientId+"_question').src='"+punctSelected[1]+"'; }");
-            writer.write("else if (n==2) { $('"+clientId+"_exclam').src='"+punctSelected[2]+"'; }");
+            writer.write("if (m==1) { $('"+clientId+"_dot').src='"+punctUnselected[0]+"'; }");
+            writer.write("else if (m==2) { $('"+clientId+"_question').src='"+punctUnselected[1]+"'; }");
+            writer.write("else if (m==3) { $('"+clientId+"_exclam').src='"+punctUnselected[2]+"'; }");
+            writer.write("if (n==1) { $('"+clientId+"_dot').src='"+punctSelected[0]+"'; }");
+            writer.write("else if (n==2) { $('"+clientId+"_question').src='"+punctSelected[1]+"'; }");
+            writer.write("else if (n==3) { $('"+clientId+"_exclam').src='"+punctSelected[2]+"'; }");
             writer.write("document.forms['" + formId+"']['"+prefix+"_punctuate'].value=n;\n");
             writer.write("}\n");
             
             writer.write("function "+varPrefix+"_clickContentType(n) {\n");
             writer.write("m = document.forms['" + formId+"']['"+prefix+"_contenttype'].value;\n");
-            writer.write("if (m!=-1) { $(cttName[m]).src=cttUnselected[m]; $(cttPanel[m]).style.display='none'; }");
-            writer.write("$(cttName[n]).src=cttSelected[n];");
+            writer.write("if (m!=-1) { $(cttId[m]).src=cttUnselected[m]; $(cttPanel[m]).style.display='none'; }");
+            writer.write("$(cttId[n]).src=cttSelected[n];");
             writer.write("$(cttPanel[n]).style.display='inline';");
             writer.write("document.forms['" + formId+"']['"+prefix+"_contenttype'].value=n;\n");
+            writer.write("}\n");
+            
+            String paramName = getHiddenFieldName(context, component);
+
+            writer.write("function "+varPrefix+"_submitContent() {\n");
+            writer.write("n = document.forms['" + formId+"']['"+prefix+"_contenttype'].value;\n");
+            writer.write("document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';\n");
+            writer.write("document.forms['" + formId+"'].submit();\n");
             writer.write("}\n");
             
             writer.write("</script>\n");
@@ -139,7 +215,7 @@ public class DoFocusRenderer extends BaseRenderer {
             writer.writeAttribute("border", "0", null);
             writer.writeAttribute("width", "16", null);
             writer.writeAttribute("height", "16", null);
-            writer.writeAttribute("onClick", varPrefix+"_clickPunctuate(0);", null);
+            writer.writeAttribute("onClick", varPrefix+"_clickPunctuate(1);", null);
             writer.endElement("img");
             
             writer.startElement("img", null);
@@ -148,7 +224,7 @@ public class DoFocusRenderer extends BaseRenderer {
             writer.writeAttribute("border", "0", null);
             writer.writeAttribute("width", "16", null);
             writer.writeAttribute("height", "16", null);
-            writer.writeAttribute("onClick", varPrefix+"_clickPunctuate(1);", null);
+            writer.writeAttribute("onClick", varPrefix+"_clickPunctuate(2);", null);
             writer.endElement("img");
             
             writer.startElement("img", null);
@@ -157,7 +233,7 @@ public class DoFocusRenderer extends BaseRenderer {
             writer.writeAttribute("border", "0", null);
             writer.writeAttribute("width", "16", null);
             writer.writeAttribute("height", "16", null);
-            writer.writeAttribute("onClick", varPrefix+"_clickPunctuate(2);", null);
+            writer.writeAttribute("onClick", varPrefix+"_clickPunctuate(3);", null);
             writer.endElement("img");
             
             writer.endElement("td");
@@ -210,9 +286,8 @@ public class DoFocusRenderer extends BaseRenderer {
                 writer.writeAttribute("cellspacing", "0", null);
                 writer.writeAttribute("border", "0", null);
                 writer.writeAttribute("width", "100%", null);
-
                 
-                writePanel(writer, "name", i);
+                writePanel(writer, varPrefix, i);
                 
                 writer.endElement("table");
             }//for i
@@ -228,7 +303,7 @@ public class DoFocusRenderer extends BaseRenderer {
     }//encodeBegin()
 
 
-    private void writePanel(ResponseWriter writer, String field, int i) throws Exception {
+    private void writePanel(ResponseWriter writer, String varPrefix, int i) throws Exception {
         writer.startElement("tr", null);
         writer.startElement("td", null);
         switch(i) {
@@ -239,7 +314,7 @@ public class DoFocusRenderer extends BaseRenderer {
                 writer.startElement("tr", null);
                 writer.startElement("td", null);
                 writer.startElement("textarea", null);
-                writer.writeAttribute("name", field, null);
+                writer.writeAttribute("name", varPrefix+"_text", null);
                 writer.writeAttribute("cols", "30", null);
                 writer.writeAttribute("rows", "8", null);
                 writer.endElement("textarea");
@@ -252,7 +327,7 @@ public class DoFocusRenderer extends BaseRenderer {
                 writer.startElement("td", null);
                 writer.startElement("input", null);
                 writer.writeAttribute("type", "file", null);
-                writer.writeAttribute("name", field, null);
+                writer.writeAttribute("name", varPrefix+"_image", null);
                 writer.endElement("input");
                 break;
             case 2:
@@ -263,7 +338,7 @@ public class DoFocusRenderer extends BaseRenderer {
                 writer.startElement("td", null);
                 writer.startElement("input", null);
                 writer.writeAttribute("type", "text", null);
-                writer.writeAttribute("name", field, null);
+                writer.writeAttribute("name", varPrefix+"_link", null);
                 writer.endElement("input");
                 break;
         }//switch
@@ -272,22 +347,13 @@ public class DoFocusRenderer extends BaseRenderer {
         writer.startElement("tr", null);
         writer.startElement("td", null);
         writer.startElement("input", null);
-        writer.writeAttribute("type", "submit", null);
+        writer.writeAttribute("type", "button", null);
         writer.writeAttribute("value", "submit", null);
+        writer.writeAttribute("onClick", varPrefix+"_submitContent();", null);
         writer.endElement("input");
         writer.endElement("td");
         writer.endElement("tr");
     }//writePanel()
 
 
-    protected UIForm getMyForm(FacesContext context, UIComponent component) {
-        UIComponent parent;
-        for(parent = component.getParent(); parent != null; parent = parent.getParent()) {
-            if(parent instanceof UIForm) break;
-        }
-        
-        return (UIForm)parent;
-    }//getMyForm()
-    
-    
 }//class DoFocusRenderer

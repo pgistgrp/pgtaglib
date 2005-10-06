@@ -3,7 +3,6 @@ package org.pgist.renderkit;
 import java.io.IOException;
 
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
@@ -46,14 +45,4 @@ public class DoTargetRenderer extends BaseRenderer {
     }//encodeBegin()
 
 
-    protected UIForm getMyForm(FacesContext context, UIComponent component) {
-        UIComponent parent;
-        for(parent = component.getParent(); parent != null; parent = parent.getParent()) {
-            if(parent instanceof UIForm) break;
-        }
-        
-        return (UIForm)parent;
-    }//getMyForm()
-    
-    
 }//class DoTargetRenderer

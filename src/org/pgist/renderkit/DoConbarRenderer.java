@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.event.ActionEvent;
@@ -27,16 +26,23 @@ public class DoConbarRenderer extends BaseRenderer {
 
     public void decode(FacesContext context, UIComponent component) throws NullPointerException {
         String prefix = (String) component.getAttributes().get("_PREFIX");
-        Map requestParameterMap = context.getExternalContext().getRequestParameterValuesMap();
-        String treeId = ((String[]) requestParameterMap.get(prefix+"_treeId"))[0];
-        String nodeId = ((String[]) requestParameterMap.get(prefix+"_nodeId"))[0];
+        String paramName = getHiddenFieldName(context, component);
+        String clientId = component.getClientId(context);
+        
+        System.out.println("---> @ DoConbarRenderer.decode");
+
+        Map requestParameterMap = context.getExternalContext().getRequestParameterMap();
+        String value = (String)requestParameterMap.get(paramName);
+        if(value == null || value.equals("") || !clientId.equals(value)) return;
+        
+        String treeId = (String) requestParameterMap.get(prefix+"_treeId");
+        String nodeId = (String) requestParameterMap.get(prefix+"_nodeId");
         if (treeId!=null && !"".equals(treeId) && nodeId!=null && !"".equals(nodeId)) {
             UIAction compt = (UIAction) component;
             compt.getParams().put("treeId", treeId);
             compt.getParams().put("nodeId", nodeId);
             ActionEvent event = new ActionEvent(component);
             component.queueEvent(event);
-            System.out.println("---> 0000000");
         }
     }//decode()
     
@@ -46,6 +52,9 @@ public class DoConbarRenderer extends BaseRenderer {
         
         String prefix = (String) component.getAttributes().get("_PREFIX");
         String formId = getMyForm(context, component).getClientId(context);
+        String paramName = getHiddenFieldName(context, component);
+        String clientId = component.getClientId(context);
+        String varPrefix = clientId.replace(':', '_');
         
         Tree tree = (Tree) component.getValueBinding("tree").getValue(context);
         Node node = (Node) component.getValueBinding("node").getValue(context);
@@ -54,6 +63,14 @@ public class DoConbarRenderer extends BaseRenderer {
         ResponseWriter writer = context.getResponseWriter();
         
         try {
+            writer.write("<script language=\"JavaScript\">\n");
+            writer.write("function "+varPrefix+"_submitSelection(n) {\n");
+            writer.write("document.forms['" + formId+"']['"+prefix+"_nodeId'].value=n;");
+            writer.write("document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';\n");
+            writer.write("document.forms['" + formId+"'].submit();\n");
+            writer.write("}\n");
+            writer.write("</script>\n");
+            
             writer.startElement("table", null);
             writer.writeAttribute("cellpadding", "0", null);
             writer.writeAttribute("cellspacing", "0", null);
@@ -85,7 +102,12 @@ public class DoConbarRenderer extends BaseRenderer {
                     String s = (String) content;
                     if (s.length()>50) s = s.substring(0, 47)+"...";
                     
-                    writeLink(writer, s, one, prefix, formId);
+                    writer.startElement("a", null);
+                    writer.writeAttribute("href", "#", null);
+                    writer.writeAttribute("onClick", varPrefix+"_submitSelection("+one.getId()+");", null);
+                    writer.writeText("►", null);
+                    writer.writeText(s, null);
+                    writer.endElement("a");
                 }
                 writer.endElement("td");
                 writer.endElement("tr");
@@ -98,7 +120,12 @@ public class DoConbarRenderer extends BaseRenderer {
                 String s = (String) content;
                 if (s.length()>50) s = s.substring(0, 47)+"...";
 
-                writeLink(writer, s, node, prefix, formId);
+                writer.startElement("a", null);
+                writer.writeAttribute("href", "#", null);
+                writer.writeAttribute("onClick", varPrefix+"_submitSelection("+node.getId()+");", null);
+                writer.writeText("►", null);
+                writer.writeText(s, null);
+                writer.endElement("a");
             }
             writer.endElement("td");
             writer.endElement("tr");
@@ -111,26 +138,4 @@ public class DoConbarRenderer extends BaseRenderer {
     }//encodeBegin()
 
 
-    private void writeLink(ResponseWriter writer, String text, Node node, String prefix, String formId) throws Exception {
-        writer.startElement("a", null);
-        writer.writeAttribute("href", "#", null);
-        writer.writeAttribute("onClick",
-            "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
-          + "document.forms['" + formId + "'].submit();", null);
-        writer.writeText("►", null);
-        writer.writeText(text, null);
-        writer.endElement("a");
-    }//writeLink()
-    
-    
-    protected UIForm getMyForm(FacesContext context, UIComponent component) {
-        UIComponent parent;
-        for(parent = component.getParent(); parent != null; parent = parent.getParent()) {
-            if(parent instanceof UIForm) break;
-        }
-
-        return (UIForm)parent;
-    }//getMyForm()
-    
-    
 }//class DoConbarRenderer

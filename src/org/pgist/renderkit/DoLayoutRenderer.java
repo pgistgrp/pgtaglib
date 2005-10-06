@@ -3,13 +3,15 @@ package org.pgist.renderkit;
 import java.io.IOException;
 
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.el.ValueBinding;
 
 import org.pgist.model.Node;
 import org.pgist.model.Tree;
+
+import com.sun.faces.renderkit.html_basic.FormRenderer;
+import com.sun.faces.util.Util;
 
 public class DoLayoutRenderer extends BaseRenderer {
 
@@ -46,7 +48,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         writer.startElement("input", null);
         writer.writeAttribute("type", "hidden", null);
         writer.writeAttribute("name", clientId+"_punctuate", null);
-        writer.writeAttribute("value", "0", null);
+        writer.writeAttribute("value", "1", null);
         writer.endElement("input");
         
         writer.startElement("input", null);
@@ -315,14 +317,13 @@ public class DoLayoutRenderer extends BaseRenderer {
     }//renderFocus()
 
     
-    protected UIForm getMyForm(FacesContext context, UIComponent component) {
-        UIComponent parent;
-        for(parent = component.getParent(); parent != null; parent = parent.getParent()) {
-            if(parent instanceof UIForm) break;
-        }
+    public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
+        if(context == null || component == null) throw new NullPointerException(Util.getExceptionMessageString("com.sun.faces.NULL_PARAMETERS_ERROR"));
+        if(!component.isRendered()) return;
+        ResponseWriter writer = context.getResponseWriter();
+        Util.doAssert(writer != null);
+        FormRenderer.addNeededHiddenField(context, getHiddenFieldName(context, component));
+    }//encodeEnd()
+    
 
-        return (UIForm)parent;
-    }//getMyForm()
-    
-    
 }//class DoLayoutRenderer

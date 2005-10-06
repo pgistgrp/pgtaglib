@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIForm;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.event.ActionEvent;
@@ -26,9 +25,17 @@ public class DoTreeMapRenderer extends BaseRenderer {
 
     public void decode(FacesContext context, UIComponent component) throws NullPointerException {
         String prefix = (String) component.getAttributes().get("_PREFIX");
-        Map requestParameterMap = context.getExternalContext().getRequestParameterValuesMap();
-        String treeId = ((String[]) requestParameterMap.get(prefix+"_treeId"))[0];
-        String nodeId = ((String[]) requestParameterMap.get(prefix+"_nodeId"))[0];
+        String paramName = getHiddenFieldName(context, component);
+        String clientId = component.getClientId(context);
+        
+        System.out.println("---> @ DoTreeMapRenderer.decode");
+        
+        Map requestParameterMap = context.getExternalContext().getRequestParameterMap();
+        String value = (String)requestParameterMap.get(paramName);
+        if(value == null || value.equals("") || !clientId.equals(value)) return;
+        
+        String treeId = (String) requestParameterMap.get(prefix+"_treeId");
+        String nodeId = (String) requestParameterMap.get(prefix+"_nodeId");
         if (treeId!=null && !"".equals(treeId) && nodeId!=null && !"".equals(nodeId)) {
             UIAction compt = (UIAction) component;
             compt.getParams().put("treeId", treeId);
@@ -73,6 +80,8 @@ public class DoTreeMapRenderer extends BaseRenderer {
         ResponseWriter writer = context.getResponseWriter();
         String formId = getMyForm(context, component).getClientId(context);
         String prefix = (String) component.getAttributes().get("_PREFIX");
+        String paramName = getHiddenFieldName(context, component);
+        String clientId = component.getClientId(context);
         
         //render current node
         writer.startElement("table", null);
@@ -96,6 +105,7 @@ public class DoTreeMapRenderer extends BaseRenderer {
             writer.writeAttribute("value", ".", null);
             writer.writeAttribute("onClick",
                 "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
+              + "document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';"
               + "document.forms['" + formId + "'].submit();"
                 , null);
             writer.endElement("input");
@@ -140,14 +150,4 @@ public class DoTreeMapRenderer extends BaseRenderer {
     }//encodeNode()
 
 
-    protected UIForm getMyForm(FacesContext context, UIComponent component) {
-        UIComponent parent;
-        for(parent = component.getParent(); parent != null; parent = parent.getParent()) {
-            if(parent instanceof UIForm) break;
-        }
-
-        return (UIForm)parent;
-    }//getMyForm()
-    
-    
 }//class DoTreeMapRenderer
