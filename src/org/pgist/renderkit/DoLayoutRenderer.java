@@ -69,8 +69,10 @@ public class DoLayoutRenderer extends BaseRenderer {
         //left side
         writer.startElement("td", null);
         writer.writeAttribute("width", "70%", null);
-        //left table
+        //slate table
         writer.startElement("table", null);
+        writer.writeAttribute("id", clientId+"_slate_panel", null);
+        writer.writeAttribute("style", "display:inline;", null);
         writer.writeAttribute("cellpadding", "0", null);
         writer.writeAttribute("cellspacing", "0", null);
         writer.writeAttribute("border", "0", null);
@@ -82,8 +84,23 @@ public class DoLayoutRenderer extends BaseRenderer {
         renderDownTree(context, component, writer);
         renderFooter(context, component, writer);
         writer.endElement("table");
+        //viewer panel
+        writer.startElement("table", null);
+        writer.writeAttribute("id", clientId+"_viewer_panel", null);
+        writer.writeAttribute("style", "display:none;", null);
+        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellspacing", "0", null);
+        writer.writeAttribute("border", "0", null);
+        writer.writeAttribute("width", "100%", null);
+        writer.startElement("tr", null);
+        writer.startElement("td", null);
+        renderViewer(context, component, writer);
         writer.endElement("td");
+        writer.endElement("tr");
+        writer.endElement("table");
         
+        writer.endElement("td");
+
         //right side
         writer.startElement("td", null);
         writer.writeAttribute("width", "30%", null);
@@ -102,6 +119,11 @@ public class DoLayoutRenderer extends BaseRenderer {
         writer.endElement("tr");
         writer.endElement("table");
     }//encodeBegin()
+
+
+    private void renderViewer(FacesContext context, UIComponent component, ResponseWriter writer) {
+        // TODO Auto-generated method stub
+    }
 
 
     /**
