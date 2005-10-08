@@ -33,6 +33,18 @@ public class DoLayoutRenderer extends BaseRenderer {
         
         String clientId = component.getClientId(context);
         
+        writer.write("<script language=\"JavaScript\">\n");
+        writer.write("function "+clientId.replace(":", "_")+"_showImage(n) {\n");
+        writer.write("$('"+clientId+"_viewer_panel').style.display='block';");
+        writer.write("$('"+clientId+"_slate_panel').style.display='none';");
+        String link = context.getExternalContext().encodeResourceURL(
+            context.getApplication().getViewHandler().getResourceURL(context, "/files/")
+        );
+        writer.write("$('"+clientId+"_viewer_frame').width='100%';");
+        writer.write("$('"+clientId+"_viewer_frame').src='"+link+"?id='+n;");
+        writer.write("}\n");
+        writer.write("</script>\n");
+        
         writer.startElement("input", null);
         writer.writeAttribute("type", "hidden", null);
         writer.writeAttribute("name", clientId+"_treeId", null);
@@ -63,16 +75,22 @@ public class DoLayoutRenderer extends BaseRenderer {
         writer.writeAttribute("cellspacing", "0", null);
         writer.writeAttribute("border", "0", null);
         writer.writeAttribute("width", "100%", null);
+        writer.writeAttribute("height", "100%", null);
         
         writer.startElement("tr", null);
         
         //left side
         writer.startElement("td", null);
         writer.writeAttribute("width", "70%", null);
+        writer.writeAttribute("height", "100%", null);
+        writer.writeAttribute("valign", "top", null);
+        
+        writer.startElement("div", null);
+        writer.writeAttribute("id", clientId+"_slate_panel", null);
+        writer.writeAttribute("style", "display:block;width:100%;height:100%;", null);
+
         //slate table
         writer.startElement("table", null);
-        writer.writeAttribute("id", clientId+"_slate_panel", null);
-        writer.writeAttribute("style", "display:inline;", null);
         writer.writeAttribute("cellpadding", "0", null);
         writer.writeAttribute("cellspacing", "0", null);
         writer.writeAttribute("border", "0", null);
@@ -84,26 +102,23 @@ public class DoLayoutRenderer extends BaseRenderer {
         renderDownTree(context, component, writer);
         renderFooter(context, component, writer);
         writer.endElement("table");
-        //viewer panel
-        writer.startElement("table", null);
-        writer.writeAttribute("id", clientId+"_viewer_panel", null);
-        writer.writeAttribute("style", "display:none;", null);
-        writer.writeAttribute("cellpadding", "0", null);
-        writer.writeAttribute("cellspacing", "0", null);
-        writer.writeAttribute("border", "0", null);
-        writer.writeAttribute("width", "100%", null);
-        writer.startElement("tr", null);
-        writer.startElement("td", null);
-        renderViewer(context, component, writer);
-        writer.endElement("td");
-        writer.endElement("tr");
-        writer.endElement("table");
+        writer.endElement("div");
         
+        writer.startElement("div", null);
+        writer.writeAttribute("id", clientId+"_viewer_panel", null);
+        writer.writeAttribute("style", "display:none;width:100%;height:100%;zIndex:10000;border:1px solid black;", null);
+        
+        //viewer table
+        renderViewer(context, component, writer);
+        
+        writer.endElement("div");
         writer.endElement("td");
-
+        
         //right side
         writer.startElement("td", null);
         writer.writeAttribute("width", "30%", null);
+        writer.writeAttribute("height", "100%", null);
+        writer.writeAttribute("valign", "top", null);
         //right table
         writer.startElement("table", null);
         writer.writeAttribute("cellpadding", "0", null);
@@ -121,9 +136,25 @@ public class DoLayoutRenderer extends BaseRenderer {
     }//encodeBegin()
 
 
-    private void renderViewer(FacesContext context, UIComponent component, ResponseWriter writer) {
-        // TODO Auto-generated method stub
-    }
+    /**
+     * Render the viewer part
+     * @param context
+     * @param component
+     * @param writer
+     * @throws IOException
+     */
+    private void renderViewer(FacesContext context, UIComponent component, ResponseWriter writer) throws IOException {
+        String clientId = component.getClientId(context);
+        writer.startElement("iframe", null);
+        writer.writeAttribute("id", clientId+"_viewer_frame", null);
+        writer.writeAttribute("style", "width:100%; height:100%", null);
+        writer.writeAttribute("width", "100%", null);
+        writer.writeAttribute("height", "100%", null);
+        writer.writeAttribute("frameborder", "0", null);
+        writer.writeAttribute("scrolling", "auto", null);
+        writer.writeAttribute("src", "", null);
+        writer.endElement("iframe");
+    }//renderViewer()
 
 
     /**
@@ -138,6 +169,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         if (header != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
+            writer.writeAttribute("valign", "top", null);
             writer.writeAttribute("width", "100%", null);
             encodeRecursive(context, header);
             writer.endElement("td");
@@ -158,6 +190,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         if (view != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
+            writer.writeAttribute("valign", "top", null);
             writer.writeAttribute("width", "100%", null);
             encodeRecursive(context, view);
             writer.endElement("td");
@@ -181,6 +214,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         if (uptree != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
+            writer.writeAttribute("valign", "top", null);
             writer.writeAttribute("width", "100%", null);
             
             uptree.setValueBinding("tree", tree);
@@ -207,6 +241,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         if (treemap != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
+            writer.writeAttribute("valign", "top", null);
             writer.writeAttribute("width", "100%", null);
 
             treemap.setValueBinding("tree", tree);
@@ -233,6 +268,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         if (topScroller != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
+            writer.writeAttribute("valign", "top", null);
             writer.writeAttribute("width", "100%", null);
             encodeRecursive(context, topScroller);
             writer.endElement("td");
@@ -253,6 +289,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         if (footer != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
+            writer.writeAttribute("valign", "top", null);
             writer.writeAttribute("width", "100%", null);
             encodeRecursive(context, footer);
             writer.endElement("td");
@@ -273,6 +310,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         if (conbar != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
+            writer.writeAttribute("valign", "top", null);
             writer.writeAttribute("width", "100%", null);
 
             conbar.setValueBinding("tree", tree);
@@ -299,6 +337,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         if (target != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
+            writer.writeAttribute("valign", "top", null);
             writer.writeAttribute("width", "100%", null);
 
             target.setValueBinding("tree", tree);
@@ -325,6 +364,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         if (focus != null) {
             writer.startElement("tr", null);
             writer.startElement("td", null);
+            writer.writeAttribute("valign", "top", null);
             writer.writeAttribute("width", "100%", null);
 
             focus.setValueBinding("tree", tree);

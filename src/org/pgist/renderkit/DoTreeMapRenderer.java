@@ -28,8 +28,6 @@ public class DoTreeMapRenderer extends BaseRenderer {
         String paramName = getHiddenFieldName(context, component);
         String clientId = component.getClientId(context);
         
-        System.out.println("---> @ DoTreeMapRenderer.decode");
-        
         Map requestParameterMap = context.getExternalContext().getRequestParameterMap();
         String value = (String)requestParameterMap.get(paramName);
         if(value == null || value.equals("") || !clientId.equals(value)) return;
@@ -93,6 +91,7 @@ public class DoTreeMapRenderer extends BaseRenderer {
         writer.startElement("tr", null);
         writer.startElement("td", null);
         writer.writeAttribute("width", "100%", null);
+        writer.writeAttribute("valign", "top", null);
         
         int n = node.getChildren().size();
         if (n>1) {
