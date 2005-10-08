@@ -96,7 +96,6 @@ public class DoConbarRenderer extends BaseRenderer {
                 writer.startElement("td", null);
                 writer.writeAttribute("width", "100%", null);
                 Object content = BeanUtils.getNestedProperty(one, "content.contentAsObject");
-                System.out.println("---> "+BeanUtils.getNestedProperty(one, "content.type"));
                 if (content instanceof String) {
                     String s = (String) content;
                     if (s.length()>50) s = s.substring(0, 47)+"...";

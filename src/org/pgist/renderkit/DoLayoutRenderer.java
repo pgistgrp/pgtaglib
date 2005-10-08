@@ -45,6 +45,15 @@ public class DoLayoutRenderer extends BaseRenderer {
         writer.write("}\n");
         writer.write("</script>\n");
         
+        writer.write("<script language=\"JavaScript\">\n");
+        writer.write("function "+clientId.replace(":", "_")+"_showLink(theLink) {\n");
+        writer.write("$('"+clientId+"_viewer_panel').style.display='block';");
+        writer.write("$('"+clientId+"_slate_panel').style.display='none';");
+        writer.write("$('"+clientId+"_viewer_frame').width='100%';");
+        writer.write("$('"+clientId+"_viewer_frame').src=theLink;");
+        writer.write("}\n");
+        writer.write("</script>\n");
+
         writer.startElement("input", null);
         writer.writeAttribute("type", "hidden", null);
         writer.writeAttribute("name", clientId+"_treeId", null);

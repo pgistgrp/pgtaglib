@@ -41,16 +41,27 @@ public class DoTargetRenderer extends BaseRenderer {
             writer.startElement("div", null);
             writer.writeAttribute("style", "width:100%;height:100px;", null);
             
-            String type = BeanUtils.getNestedProperty(node, "content.type");
+            String cttType = BeanUtils.getNestedProperty(node, "content.type");
             Object obj = PropertyUtils.getNestedProperty(node, "content.contentAsObject");
-            if ("0".equals(type)) {//text
+            System.out.println("---> "+cttType);
+            if ("0".equals(cttType)) {//text
                 writer.writeText(obj, null);
-            } else if ("1".equals(type)) {//image
+            } else if ("1".equals(cttType)) {//image
                 IFile file = (IFile) obj;
                 writer.startElement("a", null);
                 writer.writeAttribute("href", "#", null);
                 writer.writeAttribute("onClick", prefix.replace(":", "_")+"_showImage('"+file.getId()+"');", null);
                 writer.writeText("[image]", null);
+                writer.endElement("a");
+            } else if ("2".equals(cttType)) {//link
+                writer.startElement("a", null);
+                writer.writeAttribute("href", "#", null);
+                String link = context.getExternalContext().encodeResourceURL(
+                    context.getApplication().getViewHandler().getResourceURL(context, obj.toString())
+                );
+                writer.writeAttribute("onClick", prefix.replace(":", "_")+"_showLink('"+link+"');", null);
+                writer.writeText(obj.toString(), null);
+                writer.endElement("a");
             }
             
             writer.endElement("div");

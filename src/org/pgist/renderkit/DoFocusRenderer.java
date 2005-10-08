@@ -70,6 +70,7 @@ public class DoFocusRenderer extends BaseRenderer {
                 String cttType = ((String[]) map.get(prefix+"_contenttype"))[0];
                 compt.getParams().put("punctuate", punctuate);
                 compt.getParams().put("cttType", cttType);
+                System.out.println("---> "+cttType);
                 if ("0".equals(cttType)) {//text
                     String cttText = ((String[]) map.get(varPrefix+"_text"))[0];
                     compt.getParams().put("cttText", cttText);
@@ -84,6 +85,9 @@ public class DoFocusRenderer extends BaseRenderer {
                             ioe.printStackTrace();
                         }
                     }
+                } else if ("2".equals(cttType)) {//link
+                    String cttText = ((String[]) map.get(varPrefix+"_link"))[0];
+                    compt.getParams().put("cttLink", cttText);
                 }
                 ActionEvent event = new ActionEvent(component);
                 component.queueEvent(event);
