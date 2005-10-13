@@ -43,7 +43,6 @@ public class DoTargetRenderer extends BaseRenderer {
             
             String cttType = BeanUtils.getNestedProperty(node, "content.type");
             Object obj = PropertyUtils.getNestedProperty(node, "content.contentAsObject");
-            System.out.println("---> "+cttType);
             if ("0".equals(cttType)) {//text
                 writer.writeText(obj, null);
             } else if ("1".equals(cttType)) {//image

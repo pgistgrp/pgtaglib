@@ -70,7 +70,6 @@ public class DoFocusRenderer extends BaseRenderer {
                 String cttType = ((String[]) map.get(prefix+"_contenttype"))[0];
                 compt.getParams().put("punctuate", punctuate);
                 compt.getParams().put("cttType", cttType);
-                System.out.println("---> "+cttType);
                 if ("0".equals(cttType)) {//text
                     String cttText = ((String[]) map.get(varPrefix+"_text"))[0];
                     compt.getParams().put("cttText", cttText);
