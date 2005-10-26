@@ -12,8 +12,8 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.pgist.component.UIAction;
-import org.pgist.model.Node;
-import org.pgist.model.Tree;
+import org.pgist.model.INode;
+import org.pgist.model.ITree;
 
 
 /**
@@ -54,8 +54,8 @@ public class DoConbarRenderer extends BaseRenderer {
         String clientId = component.getClientId(context);
         String varPrefix = clientId.replace(':', '_');
         
-        Tree tree = (Tree) component.getValueBinding("tree").getValue(context);
-        Node node = (Node) component.getValueBinding("node").getValue(context);
+        ITree tree = (ITree) component.getValueBinding("tree").getValue(context);
+        INode node = (INode) component.getValueBinding("node").getValue(context);
         if (node==null) node = tree.getRoot();
         
         ResponseWriter writer = context.getResponseWriter();
@@ -84,14 +84,14 @@ public class DoConbarRenderer extends BaseRenderer {
             writer.endElement("tr");
 
             List nodes = new ArrayList();
-            Node theNode = node.getParent();
+            INode theNode = node.getParent();
             while (theNode!=null) {
                 nodes.add(0, theNode);
                 theNode = theNode.getParent();
             }//while
             
             for (int i=0, n=nodes.size(); i<n; i++) {
-                Node one = (Node) nodes.get(i);
+                INode one = (INode) nodes.get(i);
                 writer.startElement("tr", null);
                 writer.startElement("td", null);
                 writer.writeAttribute("width", "100%", null);

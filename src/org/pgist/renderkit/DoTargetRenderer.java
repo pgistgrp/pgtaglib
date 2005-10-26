@@ -8,9 +8,9 @@ import javax.faces.context.ResponseWriter;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.pgist.model.Node;
-import org.pgist.model.Tree;
-import org.pgist.util.IFile;
+import org.pgist.model.IFile;
+import org.pgist.model.INode;
+import org.pgist.model.ITree;
 
 
 /**
@@ -31,8 +31,8 @@ public class DoTargetRenderer extends BaseRenderer {
         
         String prefix = (String) component.getAttributes().get("_PREFIX");
 
-        Tree tree = (Tree) component.getValueBinding("tree").getValue(context);
-        Node node = (Node) component.getValueBinding("node").getValue(context);
+        ITree tree = (ITree) component.getValueBinding("tree").getValue(context);
+        INode node = (INode) component.getValueBinding("node").getValue(context);
         if (node==null) node = tree.getRoot();
         
         ResponseWriter writer = context.getResponseWriter();

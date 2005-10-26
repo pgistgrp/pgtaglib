@@ -32,11 +32,11 @@ public class FilterRenderer extends BaseRenderer {
         
         StringBuffer sb = new StringBuffer();
         sb.append("var button=document.getElementById('")
-          .append(component.getClientId(context)).append("_button")
-          .append("');");
+            .append(component.getClientId(context)).append("_button")
+            .append("');");
         sb.append("var filter=document.getElementById('")
-        .append(component.getClientId(context)).append("_filter")
-        .append("');");
+            .append(component.getClientId(context)).append("_filter")
+            .append("');");
         sb.append("centerX2Y(filter, button);");
         sb.append("toggleDisplay(filter, 'block', 'none');");
         sb.append("return false;");

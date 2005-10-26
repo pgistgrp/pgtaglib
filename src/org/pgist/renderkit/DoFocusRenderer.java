@@ -17,8 +17,8 @@ import org.apache.myfaces.component.html.util.MultipartRequestWrapper;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.apache.myfaces.custom.fileupload.UploadedFileDefaultFileImpl;
 import org.pgist.component.UIAction;
-import org.pgist.model.Node;
-import org.pgist.model.Tree;
+import org.pgist.model.INode;
+import org.pgist.model.ITree;
 
 
 /**
@@ -98,8 +98,8 @@ public class DoFocusRenderer extends BaseRenderer {
     public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
         super.encodeBegin(context, component);
         
-        Tree tree = (Tree) component.getValueBinding("tree").getValue(context);
-        Node node = (Node) component.getValueBinding("node").getValue(context);
+        ITree tree = (ITree) component.getValueBinding("tree").getValue(context);
+        INode node = (INode) component.getValueBinding("node").getValue(context);
         if (node==null) node = tree.getRoot();
         
         String clientId = component.getClientId(context);

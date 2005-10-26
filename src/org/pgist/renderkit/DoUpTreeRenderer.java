@@ -10,8 +10,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.pgist.model.Node;
-import org.pgist.model.Tree;
+import org.pgist.model.INode;
+import org.pgist.model.ITree;
 
 public class DoUpTreeRenderer extends BaseRenderer {
 
@@ -24,8 +24,8 @@ public class DoUpTreeRenderer extends BaseRenderer {
     public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
         super.encodeBegin(context, component);
         
-        Tree tree = (Tree) component.getValueBinding("tree").getValue(context);
-        Node node = (Node) component.getValueBinding("node").getValue(context);
+        ITree tree = (ITree) component.getValueBinding("tree").getValue(context);
+        INode node = (INode) component.getValueBinding("node").getValue(context);
         if (node==null) node = tree.getRoot();
         
         ResponseWriter writer = context.getResponseWriter();
@@ -48,9 +48,9 @@ public class DoUpTreeRenderer extends BaseRenderer {
             List nodes = new ArrayList();
             if (node==tree.getRoot()) {
             } else {
-                Node theNode = node; //node.getParent();
+                INode theNode = node; //node.getParent();
                 while (theNode!=null) {
-                    Node parent = theNode.getParent();
+                    INode parent = theNode.getParent();
                     if (parent==null) break;
                     theNode = parent;
                     nodes.add(0, theNode);
@@ -58,7 +58,7 @@ public class DoUpTreeRenderer extends BaseRenderer {
             }
             
             for (int i=0, n=nodes.size(); i<n; i++) {
-                Node one = (Node) nodes.get(i);
+                INode one = (INode) nodes.get(i);
                 writer.startElement("tr", null);
                 writer.startElement("td", null);
                 writer.writeAttribute("width", "100%", null);

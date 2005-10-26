@@ -11,8 +11,12 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.pgist.component.UIAction;
-import org.pgist.model.Node;
-import org.pgist.model.Tree;
+import org.pgist.model.IContent;
+import org.pgist.model.IImage;
+import org.pgist.model.ILink;
+import org.pgist.model.INode;
+import org.pgist.model.IText;
+import org.pgist.model.ITree;
 
 
 /**
@@ -47,8 +51,8 @@ public class DoTreeMapRenderer extends BaseRenderer {
     public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
         super.encodeBegin(context, component);
         
-        Tree tree = (Tree) component.getValueBinding("tree").getValue(context);
-        Node node = (Node) component.getValueBinding("node").getValue(context);
+        ITree tree = (ITree) component.getValueBinding("tree").getValue(context);
+        INode node = (INode) component.getValueBinding("node").getValue(context);
         if (node==null) node = tree.getRoot();
         
         int depth = 5;
@@ -74,7 +78,7 @@ public class DoTreeMapRenderer extends BaseRenderer {
      * @param component
      * @throws IOException
      */
-    private void encodeNode(FacesContext context, UIComponent component, Node node, int depth) throws Exception {
+    private void encodeNode(FacesContext context, UIComponent component, INode node, int depth) throws Exception {
         ResponseWriter writer = context.getResponseWriter();
         String formId = getMyForm(context, component).getClientId(context);
         String prefix = (String) component.getAttributes().get("_PREFIX");
@@ -119,12 +123,25 @@ public class DoTreeMapRenderer extends BaseRenderer {
             writer.writeAttribute("value", "!", null);
             writer.endElement("input");
         }
-        Object content = BeanUtils.getNestedProperty(node, "content.contentAsObject");
-        if (content instanceof String) {
-            String s = (String) content;
-            writer.writeText(s, null);
-        } else {
-            writer.writeText("Non-String Contents", null);
+        IContent content = node.getContent();
+        if (content instanceof IImage) {
+            IImage image = (IImage) content;
+            
+            writer.writeText("Image: ", null);
+            writer.startElement("img", null);
+            String link = context.getExternalContext().encodeResourceURL(
+                context.getApplication().getViewHandler().getResourceURL(context, "/files/?id="+image.getThumbnail().getId())
+            );
+            writer.writeAttribute("src", link, null);
+            writer.writeAttribute("align", "top", null);
+            writer.writeAttribute("border", "0", null);
+            writer.endElement("img");
+        } else if (content instanceof IText) {
+            IText text = (IText) content;
+            writer.writeText(text.getText(), null);
+        } else if (content instanceof ILink) {
+            ILink link = (ILink) content;
+            writer.writeText(link.getLink(), null);
         }
         writer.endElement("td");
         writer.endElement("tr");
@@ -136,7 +153,7 @@ public class DoTreeMapRenderer extends BaseRenderer {
             for (Iterator iter=node.getChildren().iterator(); iter.hasNext(); ) {
                 writer.startElement("td", null);
                 
-                Node child = (Node) iter.next();
+                INode child = (INode) iter.next();
                 encodeNode(context, component, child, depth-1);
                 
                 writer.endElement("td");

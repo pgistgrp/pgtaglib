@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.el.ValueBinding;
 
-import org.pgist.model.Node;
-import org.pgist.model.Tree;
+import org.pgist.model.INode;
+import org.pgist.model.ITree;
 
 import com.sun.faces.renderkit.html_basic.FormRenderer;
 import com.sun.faces.util.Util;
@@ -26,8 +26,8 @@ public class DoLayoutRenderer extends BaseRenderer {
         
         ValueBinding treeBinding = component.getValueBinding("tree");
         ValueBinding nodeBinding = component.getValueBinding("node");
-        Tree tree = (Tree) treeBinding.getValue(context);
-        Node node = (Node) nodeBinding.getValue(context);
+        ITree tree = (ITree) treeBinding.getValue(context);
+        INode node = (INode) nodeBinding.getValue(context);
         
         ResponseWriter writer = context.getResponseWriter();
         

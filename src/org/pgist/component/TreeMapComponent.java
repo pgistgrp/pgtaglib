@@ -15,8 +15,8 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.pgist.model.Node;
-import org.pgist.model.Tree;
+import org.pgist.model.INode;
+import org.pgist.model.ITree;
 
 
 /**
@@ -36,7 +36,7 @@ public class TreeMapComponent extends UIComponentBase {
     protected String clientId;
     protected String formClientId;
     protected int toneId;
-    protected Tree tree;
+    protected ITree tree;
     protected String[] colors = {
         "#FFD8E8",
         "#D8E8FF",
@@ -49,7 +49,7 @@ public class TreeMapComponent extends UIComponentBase {
     };
     protected int nextColor = 0;
     protected int currentDepth = 0;
-    protected Node currentNode = null;
+    protected INode currentNode = null;
 
     
     public TreeMapComponent() {
@@ -80,12 +80,12 @@ public class TreeMapComponent extends UIComponentBase {
         String treeId = (String) requestParameterMap.get(clientId + "_treeId");
         if (treeId==null || "".equals(treeId)) {
             HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-            tree = (Tree) request.getAttribute("thread");
+            tree = (ITree) request.getAttribute("thread");
         } else {
             Long id = new Long(treeId);
             String binding = (String) getAttributes().get("readBinding");
             MethodBinding mb = context.getApplication().createMethodBinding(binding, new Class[] { ActionEvent.class, Long.class });
-            tree = (Tree) mb.invoke(context, new Object[] { new ActionEvent(this), id });
+            tree = (ITree) mb.invoke(context, new Object[] { new ActionEvent(this), id });
         }
         if (tree==null) throw new IOException("Can't find conversation thread!");
         
@@ -102,7 +102,7 @@ public class TreeMapComponent extends UIComponentBase {
         if ( (toneId==1 || toneId==2 || toneId==3) && replyStr!=null && !"".equals(replyStr) ) {
             String binding = (String) getAttributes().get("writeBinding");
             MethodBinding mb = context.getApplication().createMethodBinding(binding, new Class[] { ActionEvent.class, Long.class, Integer.class, String.class });
-            currentNode = (Node) mb.invoke(context, new Object[] { new ActionEvent(this), nodeId, new Integer(toneId), replyStr });
+            currentNode = (INode) mb.invoke(context, new Object[] { new ActionEvent(this), nodeId, new Integer(toneId), replyStr });
             toneId = 0;
         }
         
@@ -215,7 +215,7 @@ public class TreeMapComponent extends UIComponentBase {
     }//encodeEnd()
     
 
-    private void encodeFocus(ResponseWriter writer, Node node) throws Exception {
+    private void encodeFocus(ResponseWriter writer, INode node) throws Exception {
         writer.startElement("tr", null);
         writer.startElement("td", null);
         writer.writeAttribute("class", "focus", null);
@@ -279,8 +279,8 @@ public class TreeMapComponent extends UIComponentBase {
     }//encodeFocus()
 
 
-    private void encodeConbar(ResponseWriter writer, Node node) throws Exception {
-        Node parent = node.getParent();
+    private void encodeConbar(ResponseWriter writer, INode node) throws Exception {
+        INode parent = node.getParent();
         if (parent!=null) {
             encodeConbar(writer, parent);
         }
@@ -309,7 +309,7 @@ public class TreeMapComponent extends UIComponentBase {
      * @param isTreeMapRoot
      * @param empty
      */
-    private void encodeTreeMapNode(ResponseWriter writer, Node node, boolean isTreeMapRoot, boolean empty) throws Exception {
+    private void encodeTreeMapNode(ResponseWriter writer, INode node, boolean isTreeMapRoot, boolean empty) throws Exception {
         currentDepth++;
         Set children = node.getChildren();
 
@@ -372,7 +372,7 @@ public class TreeMapComponent extends UIComponentBase {
             writer.writeAttribute("valign", "baseline", null);
             
             for (Iterator iter = children.iterator(); iter.hasNext(); ) {
-                Node one = (Node) iter.next();
+                INode one = (INode) iter.next();
 
                 writer.startElement("td", null);
                 writer.writeAttribute("bgcolor", getColor(), null);
@@ -410,8 +410,8 @@ public class TreeMapComponent extends UIComponentBase {
      * @param node
      * @throws Exception
      */
-    public void encodeFoldingNodeStart(ResponseWriter writer, Node node) throws Exception {
-        Node parent = node.getParent();
+    public void encodeFoldingNodeStart(ResponseWriter writer, INode node) throws Exception {
+        INode parent = node.getParent();
         if (parent!=null) {
             encodeFoldingNodeStart(writer, parent); //recursive
         }
@@ -479,8 +479,8 @@ public class TreeMapComponent extends UIComponentBase {
     }//encodeFoldingNodeStart()
     
     
-    private void encodeFoldingNodeEnd(ResponseWriter writer, Node node) throws Exception {
-        Node parent = node.getParent();
+    private void encodeFoldingNodeEnd(ResponseWriter writer, INode node) throws Exception {
+        INode parent = node.getParent();
         if (parent!=null) {
             encodeFoldingNodeEnd(writer, parent);
         }
@@ -529,7 +529,7 @@ public class TreeMapComponent extends UIComponentBase {
     }//getOnClick()
     
     
-    public String getShortContent(Node node) throws Exception {
+    public String getShortContent(INode node) throws Exception {
         String s = BeanUtils.getNestedProperty(node, content);
         if (s.length()>40) {
             s = s.substring(0, 37)+"...";
