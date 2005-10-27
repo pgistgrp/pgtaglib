@@ -87,6 +87,17 @@ public class DoFocusRenderer extends BaseRenderer {
                 } else if ("2".equals(cttType)) {//link
                     String cttText = ((String[]) map.get(varPrefix+"_link"))[0];
                     compt.getParams().put("cttLink", cttText);
+                } else if ("3".equals(cttType)) {//pdf
+                    FileItem fileItem = mpReq.getFileItem(varPrefix+"_pdf");
+                    if (fileItem != null) {
+                        try{
+                            UploadedFile upFile;
+                            upFile = new UploadedFileDefaultFileImpl(fileItem);
+                            compt.getParams().put("cttPDF", upFile);
+                        }catch(IOException ioe){
+                            ioe.printStackTrace();
+                        }
+                    }
                 }
                 ActionEvent event = new ActionEvent(component);
                 component.queueEvent(event);
@@ -126,25 +137,28 @@ public class DoFocusRenderer extends BaseRenderer {
         String[] cttUnselected = new String[] {
                 cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_text.png")),
                 cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_image.png")),
-                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_link.png"))
+                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_link.png")),
+                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_pdf.png"))
         };
         String[] cttSelected = new String[] {
                 cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_text1.png")),
                 cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_image1.png")),
-                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_link1.png"))
+                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_link1.png")),
+                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_pdf1.png"))
         };
         String[] cttPanel = new String[] {
                 clientId+"_panel_text",
                 clientId+"_panel_image",
-                clientId+"_panel_link"
+                clientId+"_panel_link",
+                clientId+"_panel_pdf"
         };
         
         try {
             writer.write("<script language=\"JavaScript\">\n");
             writer.write("var clientId='"+clientId+"';");
             writer.write("var varPrefix='"+varPrefix+"';");
-            writer.write("var cttId=[ clientId+'_text', clientId+'_image', clientId+'_link' ];\n");
-            writer.write("var cttName=[ varPrefix+'_text', varPrefix+'_image', varPrefix+'_link' ];\n");
+            writer.write("var cttId=[ clientId+'_text', clientId+'_image', clientId+'_link', clientId+'_pdf' ];\n");
+            writer.write("var cttName=[ varPrefix+'_text', varPrefix+'_image', varPrefix+'_link', varPrefix+'_pdf' ];\n");
             writer.write("var cttSelected=[");
             for (int i=0; i<cttSelected.length; i++) {
                 if (i>0) writer.write(",");
@@ -269,6 +283,14 @@ public class DoFocusRenderer extends BaseRenderer {
             writer.writeAttribute("height", "16", null);
             writer.writeAttribute("onClick", varPrefix+"_clickContentType(2);", null);
             writer.endElement("img");
+            writer.startElement("img", null);
+            writer.writeAttribute("id", clientId+"_pdf", null);
+            writer.writeAttribute("src", cttUnselected[3], null);
+            writer.writeAttribute("border", "0", null);
+            writer.writeAttribute("width", "16", null);
+            writer.writeAttribute("height", "16", null);
+            writer.writeAttribute("onClick", varPrefix+"_clickContentType(3);", null);
+            writer.endElement("img");
             
             writer.endElement("td");
             writer.endElement("tr");
@@ -342,6 +364,17 @@ public class DoFocusRenderer extends BaseRenderer {
                 writer.startElement("input", null);
                 writer.writeAttribute("type", "text", null);
                 writer.writeAttribute("name", varPrefix+"_link", null);
+                writer.endElement("input");
+                break;
+            case 3:
+                writer.writeText("Upload an pdf file:", null);
+                writer.endElement("td");
+                writer.endElement("tr");
+                writer.startElement("tr", null);
+                writer.startElement("td", null);
+                writer.startElement("input", null);
+                writer.writeAttribute("type", "file", null);
+                writer.writeAttribute("name", varPrefix+"_pdf", null);
                 writer.endElement("input");
                 break;
         }//switch

@@ -12,9 +12,11 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.beanutils.BeanUtils;
 import org.pgist.component.UIAction;
 import org.pgist.model.IContent;
+import org.pgist.model.IFile;
 import org.pgist.model.IImage;
 import org.pgist.model.ILink;
 import org.pgist.model.INode;
+import org.pgist.model.IPdf;
 import org.pgist.model.IText;
 import org.pgist.model.ITree;
 
@@ -55,16 +57,16 @@ public class DoTreeMapRenderer extends BaseRenderer {
         INode node = (INode) component.getValueBinding("node").getValue(context);
         if (node==null) node = tree.getRoot();
         
-        int depth = 5;
+        int depthLimit = 5;
         String depthStr = (String) component.getAttributes().get("depth");
         try {
-            depth = Integer.parseInt(depthStr);
+            depthLimit = Integer.parseInt(depthStr);
         } catch(Exception e) {
             e.printStackTrace();
         }
         
         try {
-            encodeNode(context, component, node, depth);
+            encodeNode(context, component, node, 1, depthLimit);
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -78,7 +80,7 @@ public class DoTreeMapRenderer extends BaseRenderer {
      * @param component
      * @throws IOException
      */
-    private void encodeNode(FacesContext context, UIComponent component, INode node, int depth) throws Exception {
+    private void encodeNode(FacesContext context, UIComponent component, INode node, int depth, int depthLimit) throws Exception {
         ResponseWriter writer = context.getResponseWriter();
         String formId = getMyForm(context, component).getClientId(context);
         String prefix = (String) component.getAttributes().get("_PREFIX");
@@ -127,34 +129,42 @@ public class DoTreeMapRenderer extends BaseRenderer {
         if (content instanceof IImage) {
             IImage image = (IImage) content;
             
-            writer.writeText("Image: ", null);
-            writer.startElement("img", null);
-            String link = context.getExternalContext().encodeResourceURL(
-                context.getApplication().getViewHandler().getResourceURL(context, "/files/?id="+image.getThumbnail().getId())
-            );
-            writer.writeAttribute("src", link, null);
-            writer.writeAttribute("align", "top", null);
-            writer.writeAttribute("border", "0", null);
-            writer.endElement("img");
+            IFile thumbnail = image.getThumbnail(depth);
+            if (thumbnail!=null) {
+                writer.writeText("Image: ", null);
+                writer.startElement("img", null);
+                String link = context.getExternalContext().encodeResourceURL(
+                    context.getApplication().getViewHandler().getResourceURL(context, "/files/?id="+image.getThumbnail(depth).getId())
+                );
+                writer.writeAttribute("src", link, null);
+                writer.writeAttribute("align", "top", null);
+                writer.writeAttribute("border", "0", null);
+                writer.endElement("img");
+            } else {
+                writer.writeText("Image: ", null);
+            }
         } else if (content instanceof IText) {
             IText text = (IText) content;
             writer.writeText(text.getText(), null);
         } else if (content instanceof ILink) {
             ILink link = (ILink) content;
             writer.writeText(link.getLink(), null);
+        } else if (content instanceof IPdf) {
+            IPdf pdf = (IPdf) content;
+            writer.writeText("PDF file: "+pdf.getPDF().getName(), null);
         }
         writer.endElement("td");
         writer.endElement("tr");
         
         //render children
-        if (depth>0 && node.getChildren().size()>0) {
+        if (depth<=depthLimit && node.getChildren().size()>0) {
             writer.startElement("tr", null);
 
             for (Iterator iter=node.getChildren().iterator(); iter.hasNext(); ) {
                 writer.startElement("td", null);
                 
                 INode child = (INode) iter.next();
-                encodeNode(context, component, child, depth-1);
+                encodeNode(context, component, child, depth+1, depthLimit);
                 
                 writer.endElement("td");
             }//for iter

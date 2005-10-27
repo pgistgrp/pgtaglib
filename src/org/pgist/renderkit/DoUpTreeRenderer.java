@@ -10,7 +10,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.pgist.model.IContent;
+import org.pgist.model.IImage;
+import org.pgist.model.ILink;
 import org.pgist.model.INode;
+import org.pgist.model.IPdf;
+import org.pgist.model.IText;
 import org.pgist.model.ITree;
 
 public class DoUpTreeRenderer extends BaseRenderer {
@@ -62,13 +67,25 @@ public class DoUpTreeRenderer extends BaseRenderer {
                 writer.startElement("tr", null);
                 writer.startElement("td", null);
                 writer.writeAttribute("width", "100%", null);
-                Object content = BeanUtils.getNestedProperty(one, "content.contentAsObject");
-                if (content instanceof String) {
-                    String s = (String) content;
+                writer.writeText("►", null);
+
+                IContent content = one.getContent();
+                String s = "";
+                if (content instanceof IImage) {
+                    s = "Image:";
+                } else if (content instanceof IText) {
+                    IText is = (IText) content;
+                    s = is.getText();
                     if (s.length()>50) s = s.substring(0, 47)+"...";
-                    writer.writeText("►", null);
-                    writer.writeText(s, null);
+                } else if (content instanceof ILink) {
+                    ILink link = (ILink) content;
+                    s = link.getLink();
+                    if (s.length()>50) s = s.substring(0, 47)+"...";
+                } else if (content instanceof IPdf) {
+                    s = "PDF file: ";
                 }
+                writer.writeText(s, null);
+
                 writer.endElement("td");
                 writer.endElement("tr");
             }//for i

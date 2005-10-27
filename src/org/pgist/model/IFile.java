@@ -13,6 +13,7 @@ public interface IFile {
 
     
     public Long getId();
+    public String getName();
     public InputStream getInputStream() throws Exception;
     public OutputStream getOutputStream() throws Exception;
     

@@ -61,6 +61,13 @@ public class DoTargetRenderer extends BaseRenderer {
                 writer.writeAttribute("onClick", prefix.replace(":", "_")+"_showLink('"+link+"');", null);
                 writer.writeText(obj.toString(), null);
                 writer.endElement("a");
+            } else if ("3".equals(cttType)) {//pdf
+                IFile file = (IFile) obj;
+                writer.startElement("a", null);
+                writer.writeAttribute("href", "#", null);
+                writer.writeAttribute("onClick", prefix.replace(":", "_")+"_showImage('"+file.getId()+"');", null);
+                writer.writeText("[pdf file]", null);
+                writer.endElement("a");
             }
             
             writer.endElement("div");
