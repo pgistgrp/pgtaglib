@@ -75,7 +75,7 @@ public class DoLayoutRenderer extends BaseRenderer {
         writer.startElement("input", null);
         writer.writeAttribute("type", "hidden", null);
         writer.writeAttribute("name", clientId+"_contenttype", null);
-        writer.writeAttribute("value", "-1", null);
+        writer.writeAttribute("value", "0", null);
         writer.endElement("input");
         
         //Render the outmost table

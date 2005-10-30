@@ -66,12 +66,18 @@ public class DoFocusRenderer extends BaseRenderer {
                 UIAction compt = (UIAction) component;
                 compt.getParams().put("treeId", treeId);
                 compt.getParams().put("nodeId", nodeId);
+                Object obj = map.get(prefix+"_email_reminder");
+                if (obj!=null) {
+                    String emailReminder = ((String[]) obj)[0];
+                    compt.getParams().put("emailReminder", emailReminder);
+                }
                 String punctuate = ((String[]) map.get(prefix+"_punctuate"))[0];
                 String cttType = ((String[]) map.get(prefix+"_contenttype"))[0];
                 compt.getParams().put("punctuate", punctuate);
                 compt.getParams().put("cttType", cttType);
                 if ("0".equals(cttType)) {//text
                     String cttText = ((String[]) map.get(varPrefix+"_text"))[0];
+                    if (cttText.length()>256) cttText = cttText.substring(0, 256);
                     compt.getParams().put("cttText", cttText);
                 } else if ("1".equals(cttType)) {//image
                     FileItem fileItem = mpReq.getFileItem(varPrefix+"_image");
@@ -261,7 +267,7 @@ public class DoFocusRenderer extends BaseRenderer {
             //content types
             writer.startElement("img", null);
             writer.writeAttribute("id", clientId+"_text", null);
-            writer.writeAttribute("src", cttUnselected[0], null);
+            writer.writeAttribute("src", cttSelected[0], null);
             writer.writeAttribute("border", "0", null);
             writer.writeAttribute("width", "16", null);
             writer.writeAttribute("height", "16", null);
@@ -306,7 +312,7 @@ public class DoFocusRenderer extends BaseRenderer {
             for (int i=0; i<cttPanel.length; i++) {
                 writer.startElement("table", null);
                 writer.writeAttribute("id", cttPanel[i], null);
-                writer.writeAttribute("style", "display:none;", null);
+                if (i>0) writer.writeAttribute("style", "display:none;", null);
                 writer.writeAttribute("cellpadding", "0", null);
                 writer.writeAttribute("cellspacing", "0", null);
                 writer.writeAttribute("border", "0", null);
@@ -317,6 +323,28 @@ public class DoFocusRenderer extends BaseRenderer {
                 writer.endElement("table");
             }//for i
 
+            writer.endElement("td");
+            writer.endElement("tr");
+
+            writer.startElement("tr", null);
+            writer.startElement("td", null);
+            writer.startElement("label", null);
+            writer.startElement("input", null);
+            writer.writeAttribute("name", prefix+"_email_reminder", null);
+            writer.writeAttribute("type", "checkbox", null);
+            writer.writeAttribute("value", "true", null);
+            writer.endElement("input");
+            writer.writeText("Remind me if someone reply", null);
+            writer.endElement("label");
+            writer.endElement("td");
+            writer.endElement("tr");
+            writer.startElement("tr", null);
+            writer.startElement("td", null);
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "button", null);
+            writer.writeAttribute("value", "submit", null);
+            writer.writeAttribute("onClick", varPrefix+"_submitContent();", null);
+            writer.endElement("input");
             writer.endElement("td");
             writer.endElement("tr");
 
@@ -342,6 +370,8 @@ public class DoFocusRenderer extends BaseRenderer {
                 writer.writeAttribute("name", varPrefix+"_text", null);
                 writer.writeAttribute("cols", "30", null);
                 writer.writeAttribute("rows", "8", null);
+                writer.writeAttribute("onKeyDown", "limitTextArea(this, 256);", null);
+                writer.writeAttribute("onKeyUp", "limitTextArea(this, 256);", null);
                 writer.endElement("textarea");
                 break;
             case 1:
@@ -367,7 +397,7 @@ public class DoFocusRenderer extends BaseRenderer {
                 writer.endElement("input");
                 break;
             case 3:
-                writer.writeText("Upload an pdf file:", null);
+                writer.writeText("Upload a pdf file:", null);
                 writer.endElement("td");
                 writer.endElement("tr");
                 writer.startElement("tr", null);
@@ -378,15 +408,6 @@ public class DoFocusRenderer extends BaseRenderer {
                 writer.endElement("input");
                 break;
         }//switch
-        writer.endElement("td");
-        writer.endElement("tr");
-        writer.startElement("tr", null);
-        writer.startElement("td", null);
-        writer.startElement("input", null);
-        writer.writeAttribute("type", "button", null);
-        writer.writeAttribute("value", "submit", null);
-        writer.writeAttribute("onClick", varPrefix+"_submitContent();", null);
-        writer.endElement("input");
         writer.endElement("td");
         writer.endElement("tr");
     }//writePanel()
