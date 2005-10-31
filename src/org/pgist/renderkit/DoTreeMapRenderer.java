@@ -98,6 +98,9 @@ public class DoTreeMapRenderer extends BaseRenderer {
         writer.startElement("td", null);
         writer.writeAttribute("width", "100%", null);
         writer.writeAttribute("valign", "top", null);
+        if (depth==1) {
+            writer.writeAttribute("style", "color:red;", null);
+        }
         
         int n = node.getChildren().size();
         if (n>1) {
@@ -118,11 +121,21 @@ public class DoTreeMapRenderer extends BaseRenderer {
             writer.startElement("input", null);
             writer.writeAttribute("type", "button", null);
             writer.writeAttribute("value", "?", null);
+            writer.writeAttribute("onClick",
+                    "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
+                  + "document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';"
+                  + "document.forms['" + formId + "'].submit();"
+                    , null);
             writer.endElement("input");
         } else if ("3".equals(tone)) {
             writer.startElement("input", null);
             writer.writeAttribute("type", "button", null);
             writer.writeAttribute("value", "!", null);
+            writer.writeAttribute("onClick",
+                    "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
+                  + "document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';"
+                  + "document.forms['" + formId + "'].submit();"
+                    , null);
             writer.endElement("input");
         }
         IContent content = node.getContent();
@@ -153,6 +166,8 @@ public class DoTreeMapRenderer extends BaseRenderer {
             IPdf pdf = (IPdf) content;
             writer.writeText("PDF file: "+pdf.getPDF().getName(), null);
         }
+        writer.writeText("  --- ", null);
+        writer.writeText(node.getOwner().getLoginname(), null);
         writer.endElement("td");
         writer.endElement("tr");
         

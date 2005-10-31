@@ -1217,6 +1217,12 @@
             <rtexprvalue>false</rtexprvalue>
             <description></description>
         </attribute>
+        <attribute>
+            <name>actionListener</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
     </tag>
 
 

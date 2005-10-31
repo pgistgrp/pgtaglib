@@ -19,6 +19,7 @@ public interface INode {
     public void setChildren(Set children);
     public int getDepth();
     public IContent getContent();
+    public IUser getOwner();
     
     
 }//interface INode

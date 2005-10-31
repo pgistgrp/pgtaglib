@@ -195,7 +195,7 @@
             <description>
                 Renderer for a discourse uptree component.
             </description>
-            <component-family>org.pgist.faces.Discourse</component-family>
+            <component-family>org.pgist.faces.UIAction</component-family>
             <renderer-type>org.pgist.faces.doUpTree</renderer-type>
             <renderer-class>org.pgist.renderkit.DoUpTreeRenderer</renderer-class>
         </renderer>
