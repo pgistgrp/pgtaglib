@@ -103,10 +103,18 @@ public class DoTreeMapRenderer extends BaseRenderer {
         if (depth==1) {
             writer.writeAttribute("class", "outtop", null);
         } else {
-            if (n>0) {
-                writer.writeAttribute("class", "innertop", null);
+            if (depth>depthLimit) {
+                if (n>0) {
+                    writer.writeAttribute("class", "hidetop", null);
+                } else {
+                    writer.writeAttribute("class", "hidenone", null);
+                }
             } else {
-                writer.writeAttribute("class", "innernone", null);
+                if (n>0) {
+                    writer.writeAttribute("class", "innertop", null);
+                } else {
+                    writer.writeAttribute("class", "innernone", null);
+                }
             }
         }
         
@@ -114,6 +122,11 @@ public class DoTreeMapRenderer extends BaseRenderer {
             if (n>1) {
                 writer.writeAttribute("colspan", ""+n, null);
             }
+            writer.writeAttribute("onClick",
+                    "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
+                  + "document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';"
+                  + "document.forms['" + formId + "'].submit();"
+                    , null);
             writer.startElement("div", null);
             writer.write("&nbsp;");
             writer.startElement("div", null);
@@ -223,10 +236,18 @@ public class DoTreeMapRenderer extends BaseRenderer {
                         writer.writeAttribute("class", "outright", null);
                     }
                 } else {
-                    if (count==1) {
-                        writer.writeAttribute("class", "innerleft", null);
+                    if (depth>depthLimit) {
+                        if (count==1) {
+                            writer.writeAttribute("class", "hideleft", null);
+                        } else {
+                            writer.writeAttribute("class", "hideright", null);
+                        }
                     } else {
-                        writer.writeAttribute("class", "innerright", null);
+                        if (count==1) {
+                            writer.writeAttribute("class", "innerleft", null);
+                        } else {
+                            writer.writeAttribute("class", "innerright", null);
+                        }
                     }
                 }
                 
