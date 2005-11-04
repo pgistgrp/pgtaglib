@@ -111,6 +111,9 @@ public class DoTreeMapRenderer extends BaseRenderer {
         }
         
         if (depth>depthLimit) {
+            if (n>1) {
+                writer.writeAttribute("colspan", ""+n, null);
+            }
             writer.startElement("div", null);
             writer.write("&nbsp;");
             writer.startElement("div", null);
@@ -188,9 +191,9 @@ public class DoTreeMapRenderer extends BaseRenderer {
                 }
             } else if (content instanceof IText) {
                 IText text = (IText) content;
-                writer.startElement("pre", null);
-                writer.writeText(text.getText(), null);
-                writer.endElement("pre");
+                //writer.startElement("pre", null);
+                writer.write(text.getText());
+                //writer.endElement("pre");
             } else if (content instanceof ILink) {
                 ILink link = (ILink) content;
                 writer.writeText(link.getLink(), null);

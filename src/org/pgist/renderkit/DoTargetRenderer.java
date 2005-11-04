@@ -44,7 +44,7 @@ public class DoTargetRenderer extends BaseRenderer {
             String cttType = BeanUtils.getNestedProperty(node, "content.type");
             Object obj = PropertyUtils.getNestedProperty(node, "content.contentAsObject");
             if ("0".equals(cttType)) {//text
-                writer.writeText(obj, null);
+                writer.write(obj.toString());
             } else if ("1".equals(cttType)) {//image
                 IFile file = (IFile) obj;
                 writer.startElement("a", null);
