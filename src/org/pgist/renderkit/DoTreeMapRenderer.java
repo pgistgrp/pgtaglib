@@ -81,6 +81,8 @@ public class DoTreeMapRenderer extends BaseRenderer {
      * @throws IOException
      */
     private void encodeNode(FacesContext context, UIComponent component, INode node, int depth, int depthLimit) throws Exception {
+        int n = node.getChildren().size();
+
         ResponseWriter writer = context.getResponseWriter();
         String formId = getMyForm(context, component).getClientId(context);
         String prefix = (String) component.getAttributes().get("_PREFIX");
@@ -99,84 +101,131 @@ public class DoTreeMapRenderer extends BaseRenderer {
         writer.writeAttribute("width", "100%", null);
         writer.writeAttribute("valign", "top", null);
         if (depth==1) {
-            writer.writeAttribute("style", "color:red;", null);
+            writer.writeAttribute("class", "outtop", null);
+        } else {
+            if (n>0) {
+                writer.writeAttribute("class", "innertop", null);
+            } else {
+                writer.writeAttribute("class", "innernone", null);
+            }
         }
         
-        int n = node.getChildren().size();
-        if (n>1) {
-            writer.writeAttribute("colspan", ""+n, null);
-        }
-        String tone = BeanUtils.getNestedProperty(node, "tone");
-        if ("1".equals(tone)) {
-            writer.startElement("input", null);
-            writer.writeAttribute("type", "button", null);
-            writer.writeAttribute("value", ".", null);
-            writer.writeAttribute("onClick",
-                "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
-              + "document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';"
-              + "document.forms['" + formId + "'].submit();"
-                , null);
-            writer.endElement("input");
-        } else if ("2".equals(tone)) {
-            writer.startElement("input", null);
-            writer.writeAttribute("type", "button", null);
-            writer.writeAttribute("value", "?", null);
-            writer.writeAttribute("onClick",
-                    "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
-                  + "document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';"
-                  + "document.forms['" + formId + "'].submit();"
-                    , null);
-            writer.endElement("input");
-        } else if ("3".equals(tone)) {
-            writer.startElement("input", null);
-            writer.writeAttribute("type", "button", null);
-            writer.writeAttribute("value", "!", null);
-            writer.writeAttribute("onClick",
-                    "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
-                  + "document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';"
-                  + "document.forms['" + formId + "'].submit();"
-                    , null);
-            writer.endElement("input");
-        }
-        IContent content = node.getContent();
-        if (content instanceof IImage) {
-            IImage image = (IImage) content;
+        if (depth>depthLimit) {
+            writer.startElement("div", null);
+            writer.write("&nbsp;");
+            writer.startElement("div", null);
+            writer.endElement("td");
+            writer.endElement("tr");
+        } else {
             
-            IFile thumbnail = image.getThumbnail(depth);
-            if (thumbnail!=null) {
-                writer.writeText("Image: ", null);
-                writer.startElement("img", null);
-                String link = context.getExternalContext().encodeResourceURL(
-                    context.getApplication().getViewHandler().getResourceURL(context, "/files/?id="+image.getThumbnail(depth).getId())
-                );
-                writer.writeAttribute("src", link, null);
-                writer.writeAttribute("align", "top", null);
-                writer.writeAttribute("border", "0", null);
-                writer.endElement("img");
-            } else {
-                writer.writeText("Image: ", null);
+            if (depth==1) {
+                writer.writeAttribute("style", "color:red;", null);
             }
-        } else if (content instanceof IText) {
-            IText text = (IText) content;
-            writer.writeText(text.getText(), null);
-        } else if (content instanceof ILink) {
-            ILink link = (ILink) content;
-            writer.writeText(link.getLink(), null);
-        } else if (content instanceof IPdf) {
-            IPdf pdf = (IPdf) content;
-            writer.writeText("PDF file: "+pdf.getPDF().getName(), null);
+            
+            if (n>1) {
+                writer.writeAttribute("colspan", ""+n, null);
+            }
+            
+            String tone = BeanUtils.getNestedProperty(node, "tone");
+            if ("1".equals(tone)) {
+                writer.startElement("input", null);
+                writer.writeAttribute("style", "float:left;", null);
+                writer.writeAttribute("type", "button", null);
+                writer.writeAttribute("value", ".", null);
+                if (depth>1) {
+                    writer.writeAttribute("onClick",
+                        "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
+                      + "document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';"
+                      + "document.forms['" + formId + "'].submit();"
+                        , null);
+                }
+                writer.endElement("input");
+            } else if ("2".equals(tone)) {
+                writer.startElement("input", null);
+                writer.writeAttribute("style", "float:left;", null);
+                writer.writeAttribute("type", "button", null);
+                writer.writeAttribute("value", "?", null);
+                if (depth>1) {
+                    writer.writeAttribute("onClick",
+                            "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
+                          + "document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';"
+                          + "document.forms['" + formId + "'].submit();"
+                            , null);
+                }
+                writer.endElement("input");
+            } else if ("3".equals(tone)) {
+                writer.startElement("input", null);
+                writer.writeAttribute("style", "float:left;", null);
+                writer.writeAttribute("type", "button", null);
+                writer.writeAttribute("value", "!", null);
+                if (depth>1) {
+                    writer.writeAttribute("onClick",
+                            "document.forms['" + formId+"']['"+prefix+"_nodeId'].value="+node.getId()+";"
+                          + "document.forms['" + formId+"']['"+paramName+"'].value='"+clientId+"';"
+                          + "document.forms['" + formId + "'].submit();"
+                            , null);
+                }
+                writer.endElement("input");
+            }
+
+            IContent content = node.getContent();
+            if (content instanceof IImage) {
+                IImage image = (IImage) content;
+                
+                IFile thumbnail = image.getThumbnail(depth);
+                if (thumbnail!=null) {
+                    writer.writeText("Image: ", null);
+                    writer.startElement("img", null);
+                    String link = context.getExternalContext().encodeResourceURL(
+                        context.getApplication().getViewHandler().getResourceURL(context, "/files/?id="+image.getThumbnail(depth).getId())
+                    );
+                    writer.writeAttribute("src", link, null);
+                    writer.writeAttribute("align", "top", null);
+                    writer.writeAttribute("border", "0", null);
+                    writer.endElement("img");
+                } else {
+                    writer.writeText("Image: ", null);
+                }
+            } else if (content instanceof IText) {
+                IText text = (IText) content;
+                writer.startElement("pre", null);
+                writer.writeText(text.getText(), null);
+                writer.endElement("pre");
+            } else if (content instanceof ILink) {
+                ILink link = (ILink) content;
+                writer.writeText(link.getLink(), null);
+            } else if (content instanceof IPdf) {
+                IPdf pdf = (IPdf) content;
+                writer.writeText("PDF file: "+pdf.getPDF().getName(), null);
+            }
+            writer.writeText("  --- ", null);
+            writer.writeText(node.getOwner().getLoginname(), null);
+            writer.endElement("td");
+            writer.endElement("tr");
         }
-        writer.writeText("  --- ", null);
-        writer.writeText(node.getOwner().getLoginname(), null);
-        writer.endElement("td");
-        writer.endElement("tr");
         
         //render children
-        if (depth<=depthLimit && node.getChildren().size()>0) {
+        if (node.getChildren().size()>0) {
             writer.startElement("tr", null);
 
+            int count = 0;
             for (Iterator iter=node.getChildren().iterator(); iter.hasNext(); ) {
+                count++;
+                
                 writer.startElement("td", null);
+                if (depth==1) {
+                    if (count==1) {
+                        writer.writeAttribute("class", "outleft", null);
+                    } else {
+                        writer.writeAttribute("class", "outright", null);
+                    }
+                } else {
+                    if (count==1) {
+                        writer.writeAttribute("class", "innerleft", null);
+                    } else {
+                        writer.writeAttribute("class", "innerright", null);
+                    }
+                }
                 
                 INode child = (INode) iter.next();
                 encodeNode(context, component, child, depth+1, depthLimit);
