@@ -92,7 +92,7 @@ public class DoTreeMapRenderer extends BaseRenderer {
         
         //render current node
         writer.startElement("table", null);
-        writer.writeAttribute("cellpadding", "0", null);
+        writer.writeAttribute("cellpadding", "2", null);
         writer.writeAttribute("cellspacing", "0", null);
         writer.writeAttribute("border", "0", null);
         writer.writeAttribute("width", "100%", null);
