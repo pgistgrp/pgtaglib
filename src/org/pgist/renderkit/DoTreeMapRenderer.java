@@ -101,7 +101,7 @@ public class DoTreeMapRenderer extends BaseRenderer {
         writer.startElement("td", null);
         writer.writeAttribute("width", "100%", null);
         writer.writeAttribute("valign", "top", null);
-        writer.writeAttribute("style", "background-color:"+Utils.getGrayColor(1.0F - 0.05F * (depth - 1)), null);
+        writer.writeAttribute("style", "background-color:"+Utils.getGrayColor(1.0F - 0.1F * (depth - 1)), null);
         if (depth==1) {
             writer.writeAttribute("class", "outtop", null);
         } else {
