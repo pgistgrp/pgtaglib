@@ -66,11 +66,6 @@ public class DoFocusRenderer extends BaseRenderer {
                 UIAction compt = (UIAction) component;
                 compt.getParams().put("treeId", treeId);
                 compt.getParams().put("nodeId", nodeId);
-                Object obj = map.get(prefix+"_email_reminder");
-                if (obj!=null) {
-                    String emailReminder = ((String[]) obj)[0];
-                    compt.getParams().put("emailReminder", emailReminder);
-                }
                 String punctuate = ((String[]) map.get(prefix+"_punctuate"))[0];
                 String cttType = ((String[]) map.get(prefix+"_contenttype"))[0];
                 compt.getParams().put("punctuate", punctuate);
@@ -326,18 +321,6 @@ public class DoFocusRenderer extends BaseRenderer {
             writer.endElement("td");
             writer.endElement("tr");
 
-            writer.startElement("tr", null);
-            writer.startElement("td", null);
-            writer.startElement("label", null);
-            writer.startElement("input", null);
-            writer.writeAttribute("name", prefix+"_email_reminder", null);
-            writer.writeAttribute("type", "checkbox", null);
-            writer.writeAttribute("value", "true", null);
-            writer.endElement("input");
-            writer.writeText("Remind me if someone reply", null);
-            writer.endElement("label");
-            writer.endElement("td");
-            writer.endElement("tr");
             writer.startElement("tr", null);
             writer.startElement("td", null);
             writer.startElement("input", null);
