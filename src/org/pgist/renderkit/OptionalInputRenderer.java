@@ -17,7 +17,7 @@ public class OptionalInputRenderer extends HtmlBasicInputRenderer {
      public OptionalInputRenderer() {
      }
      
-
+     
      public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
          if(context == null || component == null)
              throw new NullPointerException("Error @ OptionalInputRenderer.encodeBegin");
@@ -25,7 +25,7 @@ public class OptionalInputRenderer extends HtmlBasicInputRenderer {
              return;
      }//encodeBegin()
      
-
+     
      public void encodeChildren(FacesContext context, UIComponent component) throws IOException {
          if(context == null || component == null)
              throw new NullPointerException("Error @ OptionalInputRenderer.encodeChildren");
@@ -33,7 +33,7 @@ public class OptionalInputRenderer extends HtmlBasicInputRenderer {
              return;
      }//encodeChildren()
      
-
+     
      protected void getEndTextToRender(FacesContext context, UIComponent component, String currentValue) throws IOException {
          boolean secret = "true".equals(component.getAttributes().get("secret"));
          

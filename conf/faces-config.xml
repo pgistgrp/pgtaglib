@@ -105,6 +105,15 @@
     </component>
 
 
+    <component>
+        <component-type>org.pgist.faces.ShowList</component-type>
+        <component-class>org.pgist.component.ShowListComponent</component-class>
+        <component-extension>
+            <component-family>org.pgist.faces.ShowList</component-family>
+        </component-extension>
+    </component>
+
+
     <!-- Custom Renderers -->
     <render-kit>
 
