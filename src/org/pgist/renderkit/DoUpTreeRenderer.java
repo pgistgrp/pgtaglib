@@ -104,7 +104,10 @@ public class DoUpTreeRenderer extends BaseRenderer {
                 writer.startElement("tr", null);
                 writer.startElement("td", null);
                 writer.writeAttribute("width", "100%", null);
-                writer.writeAttribute("style", "background-color:"+Utils.getGrayColor(1.0F - 0.1F * (n-i-1)), null);
+                writer.writeAttribute("style", "font-size:"
+                        + Utils.getFontSize(1.0F - 0.1F * (n-i-1))
+                        + "; background-color:"
+                        + Utils.getGrayColor(1.0F - 0.1F * (n-i-1)), null);
                 writer.startElement("a", null);
                 writer.writeAttribute("href", "#", null);
                 writer.writeAttribute("onClick", varPrefix+"_submitSelection("+one.getId()+");", null);
