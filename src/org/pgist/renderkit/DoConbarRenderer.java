@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.event.ActionEvent;
@@ -80,6 +82,17 @@ public class DoConbarRenderer extends BaseRenderer {
             writer.writeAttribute("border", "0", null);
             writer.writeAttribute("width", "100%", null);
             
+            writer.startElement("tr", null);
+            writer.startElement("td", null);
+            writer.writeAttribute("width", "100%", null);
+            writer.startElement("img", null);
+            ViewHandler handler = context.getApplication().getViewHandler();
+            ExternalContext cntxt = context.getExternalContext();
+            writer.writeAttribute("src", cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/PgisT-Medium.jpg")), null);
+            writer.endElement("img");
+            writer.endElement("td");
+            writer.endElement("tr");
+
             writer.startElement("tr", null);
             writer.startElement("td", null);
             writer.writeAttribute("width", "100%", null);
