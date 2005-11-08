@@ -1281,6 +1281,12 @@
             <rtexprvalue>false</rtexprvalue>
             <description></description>
         </attribute>
+        <attribute>
+            <name>logo</name>
+            <required>true</required>
+            <rtexprvalue>false</rtexprvalue>
+            <description></description>
+        </attribute>
     </tag>
 
 

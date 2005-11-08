@@ -56,6 +56,7 @@ public class DoConbarRenderer extends BaseRenderer {
         super.encodeBegin(context, component);
         
         String prefix = (String) component.getAttributes().get("_PREFIX");
+        String logo = (String) component.getAttributes().get("logo");
         String formId = getMyForm(context, component).getClientId(context);
         String paramName = getHiddenFieldName(context, component);
         String clientId = component.getClientId(context);
@@ -82,16 +83,18 @@ public class DoConbarRenderer extends BaseRenderer {
             writer.writeAttribute("border", "0", null);
             writer.writeAttribute("width", "100%", null);
             
-            writer.startElement("tr", null);
-            writer.startElement("td", null);
-            writer.writeAttribute("width", "100%", null);
-            writer.startElement("img", null);
-            ViewHandler handler = context.getApplication().getViewHandler();
-            ExternalContext cntxt = context.getExternalContext();
-            writer.writeAttribute("src", cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/PgisT-Medium.jpg")), null);
-            writer.endElement("img");
-            writer.endElement("td");
-            writer.endElement("tr");
+            if (logo!=null) {
+                writer.startElement("tr", null);
+                writer.startElement("td", null);
+                writer.writeAttribute("width", "100%", null);
+                writer.startElement("img", null);
+                ViewHandler handler = context.getApplication().getViewHandler();
+                ExternalContext cntxt = context.getExternalContext();
+                writer.writeAttribute("src", cntxt.encodeResourceURL(handler.getResourceURL(context, logo)), null);
+                writer.endElement("img");
+                writer.endElement("td");
+                writer.endElement("tr");
+            }
 
             writer.startElement("tr", null);
             writer.startElement("td", null);

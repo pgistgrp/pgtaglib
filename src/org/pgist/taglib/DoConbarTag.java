@@ -22,6 +22,7 @@ public class DoConbarTag extends UIComponentTag {
     
     protected String styleClass = null;
     protected String actionListener = null;
+    protected String logo = null;
 
     
     public String getComponentType() {
@@ -39,8 +40,13 @@ public class DoConbarTag extends UIComponentTag {
     }
     
 
-    public void setactionListener(String actionListener) {
+    public void setActionListener(String actionListener) {
         this.actionListener = actionListener;
+    }
+
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
 
@@ -48,6 +54,7 @@ public class DoConbarTag extends UIComponentTag {
         super.release();
         styleClass = "";
         actionListener = "";
+        logo = "";
     }
     
 
@@ -81,6 +88,14 @@ public class DoConbarTag extends UIComponentTag {
             }
         }
 
+        if (logo != null) {
+            if (isValueReference(logo)) {
+                ValueBinding vb = context.getApplication().createValueBinding(logo);
+                component.setValueBinding("logo", vb);
+            } else {
+                component.getAttributes().put("logo", logo);
+            }
+        }
     }//setProperties()
     
 

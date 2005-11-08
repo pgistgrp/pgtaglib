@@ -26,8 +26,8 @@ public class Utils {
         } else if (f>1.0F) {
             f = 1.0F;
         }
-        String s = ""+Math.round(f*150);
-        return s + "%";
+        String s = ""+(f*12);
+        return s + "pt";
     }//getFontSize
     
     
