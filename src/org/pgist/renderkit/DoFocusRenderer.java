@@ -124,17 +124,6 @@ public class DoFocusRenderer extends BaseRenderer {
         ViewHandler handler = context.getApplication().getViewHandler();
         ExternalContext cntxt = context.getExternalContext();
         
-        String[] punctUnselected = new String[] {
-                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/dot.png")),
-                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/question.png")),
-                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/exclam.png"))
-        };
-        String[] punctSelected = new String[] {
-                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/dot1.png")),
-                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/question1.png")),
-                cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/exclam1.png"))
-        };
-        
         String[] cttUnselected = new String[] {
                 cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_text.png")),
                 cntxt.encodeResourceURL(handler.getResourceURL(context, "/images/ctt_image.png")),
@@ -181,12 +170,12 @@ public class DoFocusRenderer extends BaseRenderer {
             
             writer.write("function "+varPrefix+"_clickPunctuate(n) {\n");
             writer.write("m = document.forms['" + formId+"']['"+prefix+"_punctuate'].value;\n");
-            writer.write("if (m==1) { $('"+clientId+"_dot').src='"+punctUnselected[0]+"'; }");
-            writer.write("else if (m==2) { $('"+clientId+"_question').src='"+punctUnselected[1]+"'; }");
-            writer.write("else if (m==3) { $('"+clientId+"_exclam').src='"+punctUnselected[2]+"'; }");
-            writer.write("if (n==1) { $('"+clientId+"_dot').src='"+punctSelected[0]+"'; }");
-            writer.write("else if (n==2) { $('"+clientId+"_question').src='"+punctSelected[1]+"'; }");
-            writer.write("else if (n==3) { $('"+clientId+"_exclam').src='"+punctSelected[2]+"'; }");
+            writer.write("if (m==1) { $('"+clientId+"_dot').disabled=false; $('"+clientId+"_dot').style.color='black';}");
+            writer.write("else if (m==2) { $('"+clientId+"_question').disabled=false; $('"+clientId+"_question').style.color='black'; }");
+            writer.write("else if (m==3) { $('"+clientId+"_exclam').disabled=false; $('"+clientId+"_exclam').style.color='black'; }");
+            writer.write("if (n==1) { $('"+clientId+"_dot').disabled=true; $('"+clientId+"_dot').style.color='red'; }");
+            writer.write("else if (n==2) { $('"+clientId+"_question').disabled=true; $('"+clientId+"_question').style.color='red'; }");
+            writer.write("else if (n==3) { $('"+clientId+"_exclam').disabled=true; $('"+clientId+"_exclam').style.color='red'; }");
             writer.write("document.forms['" + formId+"']['"+prefix+"_punctuate'].value=n;\n");
             writer.write("}\n");
             
@@ -227,32 +216,31 @@ public class DoFocusRenderer extends BaseRenderer {
             writer.startElement("tr", null);
             writer.startElement("td", null);
 
-            writer.startElement("img", null);
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "button", null);
             writer.writeAttribute("id", clientId+"_dot", null);
-            writer.writeAttribute("src", punctSelected[0], null);
-            writer.writeAttribute("border", "0", null);
-            writer.writeAttribute("width", "16", null);
-            writer.writeAttribute("height", "16", null);
+            writer.writeAttribute("style", "color:red;", null);
+            writer.writeAttribute("class", "imperative", null);
             writer.writeAttribute("onClick", varPrefix+"_clickPunctuate(1);", null);
-            writer.endElement("img");
+            writer.writeAttribute("disabled", "true", null);
+            writer.writeAttribute("value", ".", null);
+            writer.endElement("input");
             
-            writer.startElement("img", null);
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "button", null);
             writer.writeAttribute("id", clientId+"_question", null);
-            writer.writeAttribute("src", punctUnselected[1], null);
-            writer.writeAttribute("border", "0", null);
-            writer.writeAttribute("width", "16", null);
-            writer.writeAttribute("height", "16", null);
+            writer.writeAttribute("class", "imperative", null);
             writer.writeAttribute("onClick", varPrefix+"_clickPunctuate(2);", null);
-            writer.endElement("img");
-            
-            writer.startElement("img", null);
+            writer.writeAttribute("value", "?", null);
+            writer.endElement("input");
+
+            writer.startElement("input", null);
+            writer.writeAttribute("type", "button", null);
             writer.writeAttribute("id", clientId+"_exclam", null);
-            writer.writeAttribute("src", punctUnselected[2], null);
-            writer.writeAttribute("border", "0", null);
-            writer.writeAttribute("width", "16", null);
-            writer.writeAttribute("height", "16", null);
+            writer.writeAttribute("class", "imperative", null);
             writer.writeAttribute("onClick", varPrefix+"_clickPunctuate(3);", null);
-            writer.endElement("img");
+            writer.writeAttribute("value", "!", null);
+            writer.endElement("input");
             
             writer.endElement("td");
 

@@ -150,7 +150,7 @@ public class DoTreeMapRenderer extends BaseRenderer {
             String tone = BeanUtils.getNestedProperty(node, "tone");
             if ("1".equals(tone)) {
                 writer.startElement("input", null);
-                writer.writeAttribute("style", "float:left;", null);
+                writer.writeAttribute("class", "imperative", null);
                 writer.writeAttribute("type", "button", null);
                 writer.writeAttribute("value", ".", null);
                 if (depth>1) {
@@ -163,7 +163,7 @@ public class DoTreeMapRenderer extends BaseRenderer {
                 writer.endElement("input");
             } else if ("2".equals(tone)) {
                 writer.startElement("input", null);
-                writer.writeAttribute("style", "float:left;", null);
+                writer.writeAttribute("class", "imperative", null);
                 writer.writeAttribute("type", "button", null);
                 writer.writeAttribute("value", "?", null);
                 if (depth>1) {
@@ -176,7 +176,7 @@ public class DoTreeMapRenderer extends BaseRenderer {
                 writer.endElement("input");
             } else if ("3".equals(tone)) {
                 writer.startElement("input", null);
-                writer.writeAttribute("style", "float:left;", null);
+                writer.writeAttribute("class", "imperative", null);
                 writer.writeAttribute("type", "button", null);
                 writer.writeAttribute("value", "!", null);
                 if (depth>1) {
@@ -234,6 +234,7 @@ public class DoTreeMapRenderer extends BaseRenderer {
                 count++;
                 
                 writer.startElement("td", null);
+                writer.writeAttribute("valign", "top", null);
                 if (depth==1) {
                     if (count==1) {
                         writer.writeAttribute("class", "outleft", null);
