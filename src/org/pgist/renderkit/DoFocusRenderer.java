@@ -233,7 +233,7 @@ public class DoFocusRenderer extends BaseRenderer {
             writer.writeAttribute("onClick", varPrefix+"_clickPunctuate(2);", null);
             writer.writeAttribute("value", "?", null);
             writer.endElement("input");
-
+            
             writer.startElement("input", null);
             writer.writeAttribute("type", "button", null);
             writer.writeAttribute("id", clientId+"_exclam", null);

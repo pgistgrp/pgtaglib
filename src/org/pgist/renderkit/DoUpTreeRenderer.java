@@ -79,6 +79,7 @@ public class DoUpTreeRenderer extends BaseRenderer {
             //Render the root node
             writer.startElement("tr", null);
             writer.startElement("td", null);
+            writer.writeAttribute("class", "discourse", null);
             writer.writeAttribute("width", "100%", null);
             writer.writeText("● Discourse Object : ", null);
             writer.writeText(BeanUtils.getNestedProperty(tree, "title"), null);
