@@ -112,7 +112,17 @@ public class DoUpTreeRenderer extends BaseRenderer {
                 writer.startElement("a", null);
                 writer.writeAttribute("href", "#", null);
                 writer.writeAttribute("onClick", varPrefix+"_submitSelection("+one.getId()+");", null);
-                writer.writeText("►", null);
+                writer.startElement("span", null);
+                writer.writeAttribute("class", "uptreeLink1", null);
+                String tone = BeanUtils.getNestedProperty(one, "tone");
+                if ("1".equals(tone)) {
+                    writer.writeText(".", null);
+                } else if ("2".equals(tone)) {
+                    writer.writeText("?", null);
+                } else if ("3".equals(tone)) {
+                    writer.writeText("!", null);
+                }
+                writer.endElement("span");
                 
                 IContent content = one.getContent();
                 String s = "";
@@ -129,7 +139,10 @@ public class DoUpTreeRenderer extends BaseRenderer {
                 } else if (content instanceof IPdf) {
                     s = "PDF file: ";
                 }
+                writer.startElement("span", null);
+                writer.writeAttribute("class", "uptreeLink2", null);
                 writer.writeText(s, null);
+                writer.endElement("span");
 
                 writer.endElement("a");
                 writer.writeText("  --- ", null);
