@@ -109,6 +109,7 @@ public class DoUpTreeRenderer extends BaseRenderer {
                         + Utils.getFontSize(1.0F - 0.1F * (n-i-1))
                         + "; background-color:"
                         + Utils.getGrayColor(1.0F - 0.1F * (n-i-1)), null);
+                writer.startElement("p", null);
                 writer.startElement("a", null);
                 writer.writeAttribute("href", "#", null);
                 writer.writeAttribute("onClick", varPrefix+"_submitSelection("+one.getId()+");", null);
@@ -116,11 +117,11 @@ public class DoUpTreeRenderer extends BaseRenderer {
                 writer.writeAttribute("class", "uptreeLink1", null);
                 String tone = BeanUtils.getNestedProperty(one, "tone");
                 if ("1".equals(tone)) {
-                    writer.writeText(".", null);
+                    writer.writeText(" . ", null);
                 } else if ("2".equals(tone)) {
-                    writer.writeText("?", null);
+                    writer.writeText(" ? ", null);
                 } else if ("3".equals(tone)) {
-                    writer.writeText("!", null);
+                    writer.writeText(" ! ", null);
                 }
                 writer.endElement("span");
                 
@@ -147,6 +148,7 @@ public class DoUpTreeRenderer extends BaseRenderer {
                 writer.endElement("a");
                 writer.writeText("  --- ", null);
                 writer.writeText(one.getOwner().getLoginname(), null);
+                writer.endElement("p");
                 writer.endElement("td");
                 writer.endElement("tr");
             }//for i

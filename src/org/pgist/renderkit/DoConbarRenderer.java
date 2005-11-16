@@ -117,6 +117,7 @@ public class DoConbarRenderer extends BaseRenderer {
                 writer.startElement("td", null);
                 writer.writeAttribute("width", "100%", null);
                 
+                writer.startElement("p", null);
                 writer.startElement("a", null);
                 writer.writeAttribute("href", "#", null);
                 writer.writeAttribute("onClick", varPrefix+"_submitSelection("+one.getId()+");", null);
@@ -124,11 +125,11 @@ public class DoConbarRenderer extends BaseRenderer {
                 writer.writeAttribute("class", "uptreeLink1", null);
                 String tone = BeanUtils.getNestedProperty(one, "tone");
                 if ("1".equals(tone)) {
-                    writer.writeText(".", null);
+                    writer.writeText(" . ", null);
                 } else if ("2".equals(tone)) {
-                    writer.writeText("?", null);
+                    writer.writeText(" ? ", null);
                 } else if ("3".equals(tone)) {
-                    writer.writeText("!", null);
+                    writer.writeText(" ! ", null);
                 }
                 writer.endElement("span");
 
@@ -153,6 +154,7 @@ public class DoConbarRenderer extends BaseRenderer {
                 writer.endElement("span");
 
                 writer.endElement("a");
+                writer.endElement("p");
 
                 writer.endElement("td");
                 writer.endElement("tr");
@@ -176,6 +178,7 @@ public class DoConbarRenderer extends BaseRenderer {
             } else if (content instanceof IPdf) {
                 s = "PDF file: ";
             }
+            writer.startElement("p", null);
             writer.startElement("a", null);
             writer.writeAttribute("href", "#", null);
             writer.writeAttribute("onClick", varPrefix+"_submitSelection("+node.getId()+");", null);
@@ -184,11 +187,11 @@ public class DoConbarRenderer extends BaseRenderer {
             writer.writeAttribute("class", "uptreeLink1", null);
             String tone = BeanUtils.getNestedProperty(node, "tone");
             if ("1".equals(tone)) {
-                writer.writeText(".", null);
+                writer.writeText(" . ", null);
             } else if ("2".equals(tone)) {
-                writer.writeText("?", null);
+                writer.writeText(" ? ", null);
             } else if ("3".equals(tone)) {
-                writer.writeText("!", null);
+                writer.writeText(" ! ", null);
             }
             writer.endElement("span");
 
@@ -198,6 +201,7 @@ public class DoConbarRenderer extends BaseRenderer {
             writer.endElement("span");
 
             writer.endElement("a");
+            writer.endElement("p");
             writer.endElement("td");
             writer.endElement("tr");
 
